@@ -55,16 +55,16 @@ jobs:
           $crypto = Get-ChildItem $bin -Filter "libcrypto*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
 
           if (-not $ssl -or -not $crypto) {
-            Write-Host "Conteúdo de $bin:"
+            Write-Host "Conteúdo de ${bin}:"
             Get-ChildItem $bin | Select-Object Name
-            throw "DLLs libssl/libcrypto não encontradas em $bin"
+            throw "DLLs libssl/libcrypto não encontradas em ${bin}"
           }
 
           "OPENSSL_LIBSSL_PATH=$($ssl.FullName)"       | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           "OPENSSL_LIBCRYPTO_PATH=$($crypto.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           $bin | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
-          Write-Host "OpenSSL bin: $bin"
+          Write-Host "OpenSSL bin: ${bin}"
           Write-Host "libssl: $($ssl.FullName)"
           Write-Host "libcrypto: $($crypto.FullName)"
 
