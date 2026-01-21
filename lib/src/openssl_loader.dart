@@ -1,5 +1,7 @@
 import 'dart:ffi' as ffi;
 import 'dart:io';
+import 'package:openssl_bindings/src/infra/ssl_exception.dart';
+
 import 'generated/ffi.dart';
 
 /// Encapsulates the libssl/libcrypto bindings that higher level code consumes.
@@ -164,12 +166,7 @@ String _joinIfDir(String dir, String name) {
   return Directory(dir).uri.resolve(name).toFilePath(windows: Platform.isWindows);
 }
 
-class OpenSslLoadException implements Exception {
-  final String message;
-  OpenSslLoadException(this.message);
-  @override
-  String toString() => 'OpenSslLoadException: $message';
-}
+
 
 List<String> _sslCandidates() {
   if (Platform.isWindows) {

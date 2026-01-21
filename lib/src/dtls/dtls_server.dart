@@ -9,7 +9,7 @@ import "buffer.dart";
 import "certificate.dart";
 import "dtls_alert.dart";
 import "dtls_connection.dart";
-import "dtls_exception.dart";
+import "../infra/ssl_exception.dart";
 import "../generated/ffi.dart";
 import "../openssl_loader.dart";
 import "util.dart";
@@ -416,7 +416,7 @@ class _DtlsServerConnection extends Stream<Datagram> with DtlsConnection {
   @override
   Future<int> send(List<int> data) {
     if (state != ConnectionState.connected) {
-      throw DtlsException("Sending failed: Not connected!");
+      throw OpenSslDtlsException("Sending failed: Not connected!");
     }
 
     return _dtlsServer._send(this, data);
@@ -429,7 +429,7 @@ class _DtlsServerConnection extends Stream<Datagram> with DtlsConnection {
     final code = _libSsl.SSL_get_error(_ssl, ret);
     if (code == SSL_ERROR_SSL) {
       errorHandler?.call(
-        DtlsException(
+        OpenSslDtlsException(
           _libCrypto.ERR_error_string(_libCrypto.ERR_get_error(), nullptr)
               .cast<Utf8>()
               .toDartString(),

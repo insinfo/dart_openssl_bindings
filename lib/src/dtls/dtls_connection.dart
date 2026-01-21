@@ -1,5 +1,4 @@
 import "dart:io";
-import "dtls_exception.dart";
 
 /// Represents a DTLS connection to a peer.
 ///
@@ -17,7 +16,7 @@ mixin DtlsConnection on Stream<Datagram> {
 
   /// Sends [data] to the endpoint of this [DtlsConnection].
   ///
-  /// Returns the number of bytes written. A [DtlsException] is thrown if the
+  /// Returns the number of bytes written. A [OpenSslDtlsException] is thrown if the
   /// client or server is not connected to the peer anymore.
   Future<int> send(List<int> data);
 

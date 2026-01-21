@@ -9,6 +9,7 @@ import 'package:ffi/ffi.dart';
 import '../native/native_buffer_utils.dart';
 import '../generated/ffi.dart';
 import '../openssl_loader.dart';
+import '../infra/ssl_exception.dart';
 
 import 'ciphertext_callback.dart';
 import 'ssl_constants.dart';
@@ -139,7 +140,7 @@ class SecureSocketOpenSSLSync {
       if (error == kSslErrorWantRead) {
         final filled = await _fillReadBio();
         if (!filled) {
-          throw io.SocketException(
+          throw OpenSslHandshakeException(
             'TLS handshake aborted: socket closed before completion.',
           );
         }
@@ -148,7 +149,7 @@ class SecureSocketOpenSSLSync {
       if (error == kSslErrorWantWrite) {
         continue;
       }
-      throw io.SocketException(
+      throw OpenSslHandshakeException(
         'TLS handshake failed (OpenSSL code $error, mode ${_isServer ? 'server' : 'client'}).',
       );
     }
@@ -175,7 +176,7 @@ class SecureSocketOpenSSLSync {
         if (error == kSslErrorWantRead) {
           final filled = await _fillReadBio();
           if (!filled) {
-            throw io.SocketException(
+            throw OpenSslTlsException(
               'Socket closed while SSL_write was waiting for data.',
             );
           }
@@ -184,7 +185,7 @@ class SecureSocketOpenSSLSync {
         if (error == kSslErrorWantWrite) {
           continue;
         }
-        throw io.SocketException('SSL write failed (OpenSSL code $error).');
+        throw OpenSslTlsException('SSL write failed (OpenSSL code $error).');
       }
     } finally {
       buffer.release();
@@ -222,7 +223,7 @@ class SecureSocketOpenSSLSync {
         if (error == kSslErrorZeroReturn) {
           return Uint8List(0);
         }
-        throw io.SocketException('SSL read failed (OpenSSL code $error).');
+        throw OpenSslTlsException('SSL read failed (OpenSSL code $error).');
       }
     } finally {
       buffer.release();
@@ -269,7 +270,7 @@ class SecureSocketOpenSSLSync {
   Future<bool> _fillReadBio({int? preferredSize}) async {
     final bio = _networkReadBio;
     if (bio == null || bio == ffi.nullptr) {
-      throw io.SocketException('TLS read BIO is unavailable.');
+      throw OpenSslTlsException('TLS read BIO is unavailable.');
     }
     Uint8List? bytes;
     if (_useCallbacks) {
@@ -307,7 +308,7 @@ class SecureSocketOpenSSLSync {
         bytes.length,
       );
       if (written <= 0) {
-        throw io.SocketException('Failed to feed the TLS read BIO.');
+        throw OpenSslTlsException('Failed to feed the TLS read BIO.');
       }
     } finally {
       buffer.release();
@@ -355,7 +356,7 @@ class SecureSocketOpenSSLSync {
   io.RawSynchronousSocket _requireSocket() {
     final socket = _socket;
     if (socket == null) {
-      throw io.SocketException(
+      throw OpenSslTlsException(
           'No underlying socket available in callback mode');
     }
     return socket;
@@ -373,11 +374,11 @@ class SecureSocketOpenSSLSync {
         _isServer ? _openSsl.TLS_server_method() : _openSsl.TLS_client_method();
     _ctx = _openSsl.SSL_CTX_new(method);
     if (_ctx == ffi.nullptr || _ctx == null) {
-      throw io.SocketException('Failed to create the SSL context.');
+      throw OpenSslTlsException('Failed to create the SSL context.');
     }
     if (_isServer) {
       if (certFile == null || keyFile == null) {
-        throw io.SocketException(
+        throw OpenSslTlsException(
           'Certificate and private key are required in server mode.',
         );
       }
@@ -397,10 +398,10 @@ class SecureSocketOpenSSLSync {
       calloc.free(certFilePtr);
       calloc.free(keyFilePtr);
       if (certResult != 1) {
-        throw io.SocketException('Failed to load the certificate file.');
+        throw OpenSslTlsException('Failed to load the certificate file.');
       }
       if (keyResult != 1) {
-        throw io.SocketException('Failed to load the private key file.');
+        throw OpenSslTlsException('Failed to load the private key file.');
       }
     }
   }
@@ -409,12 +410,12 @@ class SecureSocketOpenSSLSync {
     final ctxPtr = _ctxPtr;
     _ssl = _openSsl.SSL_new(ctxPtr);
     if (_ssl == ffi.nullptr || _ssl == null) {
-      throw io.SocketException('Failed to create the SSL instance.');
+      throw OpenSslTlsException('Failed to create the SSL instance.');
     }
     _networkReadBio = _openSslCrypto.BIO_new(_openSslCrypto.BIO_s_mem());
     _networkWriteBio = _openSslCrypto.BIO_new(_openSslCrypto.BIO_s_mem());
     if (_networkReadBio == ffi.nullptr || _networkWriteBio == ffi.nullptr) {
-      throw io.SocketException('Failed to create the TLS transport BIOs.');
+      throw OpenSslTlsException('Failed to create the TLS transport BIOs.');
     }
     _openSsl.SSL_set_bio(_sslPtr, _networkReadBioPtr, _networkWriteBioPtr);
     if (_isServer) {
@@ -427,7 +428,7 @@ class SecureSocketOpenSSLSync {
   ffi.Pointer<ssl_ctx_st> get _ctxPtr {
     final ctx = _ctx;
     if (ctx == null || ctx == ffi.nullptr) {
-      throw io.SocketException('SSL context is unavailable.');
+      throw OpenSslTlsException('SSL context is unavailable.');
     }
     return ctx;
   }
@@ -435,7 +436,7 @@ class SecureSocketOpenSSLSync {
   ffi.Pointer<ssl_st> get _sslPtr {
     final ssl = _ssl;
     if (ssl == null || ssl == ffi.nullptr) {
-      throw io.SocketException('SSL object is unavailable.');
+      throw OpenSslTlsException('SSL object is unavailable.');
     }
     return ssl;
   }
@@ -443,7 +444,7 @@ class SecureSocketOpenSSLSync {
   ffi.Pointer<BIO> get _networkReadBioPtr {
     final bio = _networkReadBio;
     if (bio == null || bio == ffi.nullptr) {
-      throw io.SocketException('TLS read BIO is unavailable.');
+      throw OpenSslTlsException('TLS read BIO is unavailable.');
     }
     return bio;
   }
@@ -451,7 +452,7 @@ class SecureSocketOpenSSLSync {
   ffi.Pointer<BIO> get _networkWriteBioPtr {
     final bio = _networkWriteBio;
     if (bio == null || bio == ffi.nullptr) {
-      throw io.SocketException('TLS write BIO is unavailable.');
+      throw OpenSslTlsException('TLS write BIO is unavailable.');
     }
     return bio;
   }

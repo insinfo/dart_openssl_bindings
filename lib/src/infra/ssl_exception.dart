@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'openssl_lib.dart';
@@ -24,10 +25,10 @@ class OpenSslException implements Exception {
     final lib = OpenSslLib.instance;
     // Get the most recent error
     final code = lib.ERR_get_error();
-    
+
     if (code != 0) {
       if (!throwIfError) return;
-      
+
       final buffer = calloc<Char>(256);
       try {
         lib.ERR_error_string(code, buffer);
@@ -38,9 +39,71 @@ class OpenSslException implements Exception {
       }
     }
   }
-  
+
   /// Clears the error queue.
   static void clearError() {
-     while(OpenSslLib.instance.ERR_get_error() != 0) {}
+    while (OpenSslLib.instance.ERR_get_error() != 0) {}
   }
+}
+
+class OpenSslLoadException implements Exception {
+  final String message;
+  OpenSslLoadException(this.message);
+  @override
+  String toString() => 'OpenSslLoadException: $message';
+}
+
+/// This [Exception] is thrown when a DTLS related error occurs.
+class OpenSslDtlsException implements Exception {
+  /// Constructor.
+  OpenSslDtlsException(this.message);
+
+  /// The error message of this [OpenSslDtlsException].
+  final String message;
+
+  @override
+  String toString() => "OpenSslDtlsException: $message";
+}
+
+/// A [OpenSslDtlsException] that is thrown when a DTLS handshake fails.
+class OpenSslDtlsHandshakeException extends OpenSslDtlsException {
+  /// Constructor.
+  OpenSslDtlsHandshakeException(super.message);
+
+  @override
+  String toString() => "OpenSslDtlsHandshakeException: $message";
+}
+
+/// [OpenSslDtlsException] that indicates that a timeout has occured.
+class OpenSslDtlsTimeoutException extends OpenSslDtlsException
+    implements TimeoutException {
+  /// Constructor.
+  OpenSslDtlsTimeoutException(super.message, this.duration);
+
+  @override
+  final Duration duration;
+
+  @override
+  String toString() => "OpenSslDtlsTimeoutException after $duration: $message";
+}
+
+/// This [Exception] is thrown when a TLS related error occurs.
+class OpenSslTlsException implements Exception {
+  /// Constructor.
+  OpenSslTlsException(this.message);
+
+  /// The error message.
+  final String message;
+
+  @override
+  String toString() => "OpenSslTlsException: $message";
+}
+
+/// Thrown when a TLS handshake fails.
+class OpenSslHandshakeException extends OpenSslTlsException {
+  /// Constructor.
+  OpenSslHandshakeException(super.message);
+
+  @override
+  String toString() => "OpenSslHandshakeException: $message";
 }

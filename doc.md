@@ -1,201 +1,174 @@
 # OpenSSL Bindings para Dart
 
-Esta biblioteca fornece bindings FFI para a biblioteca OpenSSL, permitindo operações criptográficas avançadas e comunicação segura (TLS) diretamente via Dart, sem dependências nativas compiladas além das DLLs do OpenSSL instaladas no sistema.
+Esta biblioteca fornece bindings FFI robustos e idiomáticos para a biblioteca OpenSSL 3.x, permitindo operações criptográficas avançadas, geração de certificadose comunicação segura (TLS/DTLS) diretamente via Dart. 
 
-## Funcionalidades Implementadas
+O foco é fornecer uma camada de abstração segura, evitando vazamentos de memória (memory safe) e oferecendo flexibilidade para carregar bibliotecas dinâmicas de locais personalizados.
 
-### Criptografia e Chaves
-*   **Carregamento Dinâmico**: Carrega `libcrypto` e `libssl` do sistema ou de caminhos especificados.
-*   **Geração de Chaves**: Suporte para geração de pares de chaves RSA (via `EvpPkey`).
-*   **Exportação PEM**: Exportação de chaves privadas e públicas para formato PEM.
+## Funcionalidades Principais
+
+### Infraestrutura e Segurança
+*   **Carregamento Flexível**: Carrega `libcrypto` e `libssl` do sistema (PATH), de variáveis de ambiente, ou de **caminhos explícitos** definidos em tempo de execução.
+*   **Memory Safety**: Gerenciamento automático de memória para estruturas nativas (BIOs, X509, EVP_PKEY, Strings), prevenindo leaks.
+*   **GitHub Actions**: Testes automatizados em Windows.
 
 ### X.509 e PKI
-*   **Certificados X.509**:
-    *   Criação de certificados V3.
-    *   Certificados Auto-assinados (Self-Signed).
-    *   Definição de Serial, Validade, Subject e Issuer.
-    *   Exportação para PEM.
-*   **CSR (Certificate Signing Requests)**:
-    *   Criação de requisições de assinatura.
-    *   Definição de Subject e Public Key.
-    *   Assinatura do CSR.
-    *   Exportação para PEM.
-*   **Assinatura de Certificados**:
-    *   Assinatura de certificados usando uma CA (Issuer Key/Cert) ou Auto-assinatura.
+*   **Parsing Completo**: Leitura de versão, serial, validade (`notBefore`, `notAfter` com parsing robusto via `tm` struct), Subject, Issuer.
+*   **Builders Fluentes**:
+    *   `X509CertificateBuilder`: Criação de certificados (Self-Signed ou CA-Signed).
+    *   `X509RequestBuilder`: Geração de CSR (Certificate Signing Request).
+*   **Formatos**: Suporte a PEM e DER.
 
-### TLS / SSL
-*   **SecureSocketOpenSSLAsync**: Implementação de Socket TLS assíncrono (compatível com `dart:io`).
-*   **SecureSocketOpenSSLSync**: Implementação de Socket TLS síncrono.
-*   **Modos**: Cliente e Servidor.
-*   **Arquitetura BIO**: Utiliza BIOs de memória do OpenSSL para total controle sobre o fluxo de dados, desacoplando a criptografia do transporte de rede.
+### Criptografia e Assinatura (CMS/PAdES)
+*   **Chaves**: Geração e carregamento de RSA/EVP keys (PEM/DER/Encrypted PEM).
+*   **CMS/PKCS#7**:
+    *   Assinatura "Detached" (essencial para PAdES/CAdES).
+    *   Suporte a **Signed Attributes** (customizáveis).
+    *   Verificação de assinaturas CMS com certificados de confiança (TrustStore).
+    *   Assinatura de Digests pré-calculados (para fluxos de "Network Restocking").
 
-## Instalação
+### Networking Seguro (TLS & DTLS)
+*   **TLS Assíncrono**: `SecureSocketOpenSSLAsync` (API similar a `dart:io`).
+*   **TLS Síncrono**: `SecureSocketOpenSSLSync` (blocado, útil para tunnels/proxies).
+*   **DTLS 1.2+**: `DtlsClient` e `DtlsServer` sobre UDP.
+*   **Path Injection**: Todos os sockets aceitam caminhos customizados para `libcrypto` e `libssl`, facilitando o deploy embarcado.
 
-Adicione ao seu `pubspec.yaml`:
+---
 
+## Configuração
+
+Adicione ao `pubspec.yaml`:
 ```yaml
 dependencies:
   openssl_bindings:
-    path: . # ou git/pub
+    path: .
 ```
 
-Certifique-se de ter o OpenSSL 3.x instalado. No Windows, recomenda-se as distribuições [Win64OpenSSL](https://slproweb.com/products/Win32OpenSSL.html).
+Requer **OpenSSL 3.0+**. No Windows, instale via [Win64OpenSSL](https://slproweb.com/products/Win32OpenSSL.html).
 
-As variáveis de ambiente podem ser usadas para apontar para as DLLs:
-*   `OPENSSL_LIBCRYPTO_PATH`
-*   `OPENSSL_LIBSSL_PATH`
+---
 
 ## Exemplos de Uso
 
-### 1. Inicialização
+### 1. Inicialização e Caminhos Customizados
+
+A classe `OpenSSL` é o ponto de entrada. Você pode especificar onde as DLLs estão localizadas:
 
 ```dart
 import 'package:openssl_bindings/src/api/openssl.dart';
 
+// Uso padrão (busca no PATH ou variáveis de ambiente)
 final openssl = OpenSSL();
+
+// Uso com caminhos específicos (ex: deploy com binários locais)
+final opensslCustom = OpenSSL(
+  cryptoPath: r'C:\App\libs\libcrypto-3-x64.dll',
+  sslPath:    r'C:\App\libs\libssl-3-x64.dll',
+);
 ```
 
-### 2. Gerando um Certificado Auto-Assinado
+### 2. X.509 e Dates
+
+Parsing robusto de datas e versão:
+
+```dart
+final cert = openssl.x509FromPem(pemString);
+
+print("Versão: ${cert.version}"); // Ex: 3
+print("Serial: ${cert.serialNumber}");
+print("Válido de: ${cert.notBefore} até ${cert.notAfter}");
+
+// Acesso ao Subject/Issuer como Strings formatadas
+print("Subject: ${cert.subject.debugString()}"); 
+```
+
+### 3. Gerando Certificados (Builder)
 
 ```dart
 import 'package:openssl_bindings/src/x509/x509_builder.dart';
 
-// Gerar chave RSA
+// 1. Gerar Chave
 final key = openssl.generateRsaKey(2048);
 
-// Configurar o Builder
-final builder = X509CertificateBuilder(openssl);
-builder.setSerialNumber(1001);
-builder.setValidity(notAfterOffset: 365 * 24 * 3600); // 1 ano
-builder.setSubject(
-  commonName: 'localhost',
-  organization: 'Minha Empresa Ltda',
-  country: 'BR'
-);
-builder.setIssuerAsSubject(); // Self-signed
-builder.setPublicKey(key);
+// 2. Configurar Builder
+final builder = X509CertificateBuilder(openssl)
+  ..setSerialNumber(123456)
+  ..setVersion(3)
+  ..setValidity(days: 365)
+  ..setSubject(commonName: 'MyApp Root CA', country: 'BR')
+  ..setIssuerAsSubject() // Self-Signed
+  ..setPublicKey(key);
 
-// Assinar
-builder.sign(key);
-
-// Obter certificado
+// 3. Assinar e Exportar
+builder.sign(key, digest: 'sha256');
 final cert = builder.build();
 
-// Exportar
-print(key.toPrivateKeyPem());
 print(cert.toPem());
 ```
 
-### 3. Cliente/Servidor TLS
+### 4. CMS/PAdES (Assinatura Digital)
 
-Do lado do **Servidor**:
+Para assinar documentos (PDF/PAdES) ou dados genéricos:
 
 ```dart
-import 'dart:io';
-import 'package:openssl_bindings/src/ssl/secure_socket_openssl_async.dart';
+import 'package:openssl_bindings/src/cms/cms_pkcs7_signer.dart';
 
-void startServer(String certPath, String keyPath) async {
-  final server = await ServerSocket.bind('127.0.0.1', 8443);
-  print('Servidor ouvindo na 8443...');
+final signer = CmsPkcs7Signer(openssl);
 
-  server.listen((socket) async {
-    try {
-      final secureSocket = SecureSocketOpenSSLAsync.serverFromSocket(
-        socket,
-        certFile: certPath,
-        keyFile: keyPath,
-      );
-      
-      // Handshake acontece automaticamente ou sob demanda
-      await secureSocket.ensureHandshakeCompleted();
-      
-      final data = await secureSocket.recv(1024);
-      print('Recebido: ${String.fromCharCodes(data)}');
-      
-      await secureSocket.send(Uint8List.fromList('Olá TLS!'.codeUnits));
-      await secureSocket.close();
-    } catch (e) {
-      print('Erro TLS: $e');
-    }
+// Assinatura Detached (O CMS contém apenas a assinatura, não o arquivo original)
+final signatureDer = signer.signDetached(
+  content: fileBytes,
+  certificateDer: myCertBytes,
+  privateKey: myPrivateKey,
+); // Retorna bytes DER do CMS
+
+// Assinar Hash (Se você já calculou o SHA-256 externamente)
+final digest = openssl.sha256(fileBytes);
+final sigFromHash = signer.signDetachedDigest(
+  contentDigest: digest,
+  certificateDer: myCertBytes,
+  privateKey: myPrivateKey,
+);
+```
+
+### 5. DTLS (UDP Seguro) com DLLs Customizadas
+
+Exemplo de Cliente DTLS injetando caminhos das bibliotecas:
+
+```dart
+import 'package:openssl_bindings/src/dtls/dtls_client.dart';
+
+void main() async {
+  final client = DtlsClient(
+    cryptoPath: r'./libs/libcrypto.dll',
+    sslPath:    r'./libs/libssl.dll',
+  );
+
+  final connection = await client.connect(
+    InternetAddress('127.0.0.1'), 
+    4433,
+    pskIdentity: 'user',
+    pskKey: 'password', // Ou usar certificados
+  );
+
+  connection.send(Uint8List.fromList('Hello DTLS'.codeUnits));
+  
+  connection.listen((data) {
+    print('Recebido: ${String.fromCharCodes(data)}');
   });
 }
 ```
 
-Do lado do **Cliente**:
+### 6. TLS TCP Assíncrono
 
 ```dart
 import 'package:openssl_bindings/src/ssl/secure_socket_openssl_async.dart';
 
-void runClient() async {
-  final socket = await SecureSocketOpenSSLAsync.connect('127.0.0.1', 8443);
-  
-  await socket.send(Uint8List.fromList('Hello Server'.codeUnits));
-  
-  final response = await socket.recv(1024);
-  print('Resposta: ${String.fromCharCodes(response)}');
-  
-  await socket.close();
-}
-```
-
-### 4. CMS/PKCS#7 (Assinatura Detached)
-
-Assinar **conteúdo bruto** (OpenSSL calcula o digest):
-
-```dart
-import 'dart:typed_data';
-import 'package:openssl_bindings/src/api/openssl.dart';
-import 'package:openssl_bindings/src/cms/cms_pkcs7_signer.dart';
-
-final openssl = OpenSSL();
-
-// Carregue a chave e o certificado
-final key = openssl.loadPrivateKeyPem(privateKeyPem);
-final certDer = Uint8List.fromList(certDerBytes);
-
-final signer = CmsPkcs7Signer(openssl);
-final signature = signer.signDetached(
-  content: Uint8List.fromList(contentBytes),
-  certificateDer: certDer,
-  privateKey: key,
+// Factory aceita caminhos opcionais também
+final socket = await SecureSocketOpenSSLAsync.connect(
+  'google.com', 443,
+  // cryptoPath: ..., sslPath: ...
 );
+
+await socket.send(utf8.encode('GET / HTTP/1.1\r\nHost: google.com\r\n\r\n'));
 ```
 
-Assinar **hash pré-calculado** (use quando seu fluxo já produz digest):
-
-```dart
-import 'dart:typed_data';
-import 'package:openssl_bindings/src/api/openssl.dart';
-import 'package:openssl_bindings/src/cms/cms_pkcs7_signer.dart';
-
-final openssl = OpenSSL();
-final key = openssl.loadPrivateKeyPem(privateKeyPem);
-final certDer = Uint8List.fromList(certDerBytes);
-
-final digest = openssl.sha256(contentBytes);
-
-final signer = CmsPkcs7Signer(openssl);
-final signature = signer.signDetachedDigest(
-  contentDigest: digest,
-  certificateDer: certDer,
-  privateKey: key,
-);
-```
-
-### 5. CMS: decode/encode + verify
-
-```dart
-import 'dart:typed_data';
-import 'package:openssl_bindings/src/api/openssl.dart';
-
-final openssl = OpenSSL();
-
-final cms = openssl.decodeCms(cmsDerBytes);
-final cmsDer = openssl.encodeCms(cms);
-
-final ok = openssl.verifyCmsDetached(
-  cmsDer: cmsDer,
-  content: Uint8List.fromList(contentBytes),
-  trustedCertDer: Uint8List.fromList(certDerBytes),
-);
-```

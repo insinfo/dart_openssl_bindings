@@ -1,7 +1,4 @@
-
-
 import "dart:io";
-
 import "dtls_connection.dart";
 import "../generated/ffi.dart";
 

@@ -3,11 +3,11 @@ import "dart:ffi";
 import "dart:io";
 import "dart:math";
 import "dart:typed_data";
+import "../infra/ssl_exception.dart";
 import "buffer.dart";
 import "certificate.dart";
 import "dtls_alert.dart";
 import "dtls_connection.dart";
-import "dtls_exception.dart";
 import "../generated/ffi.dart";
 import "../openssl_loader.dart";
 import "psk_credentials.dart";
@@ -141,7 +141,7 @@ class DtlsClient {
   /// one. If you want to establish a connection using different credentials,
   /// then you need to close the old connection first.
   ///
-  /// If a [timeout] duration is defined, a [DtlsTimeoutException] will be
+  /// If a [timeout] duration is defined, a [OpenSslDtlsTimeoutException] will be
   /// thrown if no connection could be established within the given time period.
   Future<DtlsConnection> connect(
     InternetAddress address,
@@ -192,7 +192,7 @@ class DtlsClient {
       final hasFailed = await dtlsClientConnection._processErrorCode(ret);
 
       if (hasFailed) {
-        throw DtlsException("Sending data to peer has failed.");
+        throw OpenSslDtlsException("Sending data to peer has failed.");
       }
     }
     return ret;
@@ -284,7 +284,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
         timeout,
         onTimeout: () async {
           await connection.close();
-          throw DtlsTimeoutException("Handshake timed out.", timeout);
+          throw OpenSslDtlsTimeoutException("Handshake timed out.", timeout);
         },
       );
     }
@@ -374,7 +374,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
     malloc.free(hostnameStr);
   }
 
-  /// Throws a [DtlsException] if no ciphers are available for this connection
+  /// Throws a [OpenSslDtlsException] if no ciphers are available for this connection
   /// attempt.
   ///
   /// If this is the case, the allocated resources are cleaned up by calling the
@@ -385,7 +385,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
     if (ciphersPointer == nullptr) {
       await close();
 
-      throw DtlsException(
+      throw OpenSslDtlsException(
         "No ciphers available. "
         "If you are using PSK cipher suites, check you have defined a "
         "pskCredentialsCallback.",
@@ -506,7 +506,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
     }
 
     if (ret == 0) {
-      await _performShutdown(DtlsException("Handshake shut down"));
+      await _performShutdown(OpenSslDtlsException("Handshake shut down"));
       return;
     }
 
@@ -514,7 +514,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
 
     if (hasFailed) {
       await _performShutdown(
-        DtlsHandshakeException("DTLS Handshake has failed."),
+        OpenSslDtlsHandshakeException("DTLS Handshake has failed."),
       );
       return;
     }
@@ -539,7 +539,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
   /// Closes the connection and frees all allocated resources.
   ///
   /// After the connection is closed, trying to send will throw a
-  /// [DtlsException].
+  /// [OpenSslDtlsException].
   @override
   Future<void> close() async {
     if (!state.canBeClosed) {
@@ -609,7 +609,7 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
 
         final hasFailed = await _processErrorCode(ret);
         if (hasFailed) {
-          _received.addError(DtlsException("An error has occured."));
+          _received.addError(OpenSslDtlsException("An error has occured."));
         }
       }
     } else {
