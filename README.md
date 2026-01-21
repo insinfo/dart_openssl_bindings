@@ -1,5 +1,7 @@
 # OpenSSL Bindings for Dart
 
+[![Dart CI](https://github.com/insinfo/dart_openssl_bindings/actions/workflows/dart.yml/badge.svg)](https://github.com/insinfo/dart_openssl_bindings/actions/workflows/dart.yml)
+
 Robust and idiomatic FFI bindings for **OpenSSL 3.x** in Dart. This library provides advanced cryptographic operations, X.509 certificate generation/parsing, and secure networking (TLS/DTLS) directly via Dart FFI, without requiring native compilation steps (beyond having OpenSSL installed/available).
 
 It focuses on **memory safety** (automatic resource management), **flexibility** (customizable DLL paths), and providing a clean Object-Oriented API.
