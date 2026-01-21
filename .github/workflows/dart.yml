@@ -30,47 +30,47 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
+          # Lista de possíveis locais de instalação do OpenSSL via Chocolatey/Installer
           $candidates = @(
             "$env:ProgramFiles\OpenSSL-Win64\bin",
             "$env:ProgramFiles\OpenSSL\bin",
             "C:\Program Files\OpenSSL-Win64\bin",
             "C:\Program Files\OpenSSL\bin",
-            "C:\ProgramData\chocolatey\lib\openssl\tools\bin",
-            "C:\ProgramData\chocolatey\lib\openssl\tools"
+            "C:\ProgramData\chocolatey\lib\openssl\tools\bin"
           )
 
+          # Seleciona o primeiro diretório existente
           $bin = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 
-          if (-not $bin) {
-            Write-Host "OpenSSL bin não encontrado. Listando candidatos e pastas relevantes..."
-            $candidates | ForEach-Object { Write-Host "  - $_ (exists=$((Test-Path $_)))" }
-            Write-Host "`nProgram Files:"
-            Get-ChildItem "$env:ProgramFiles" | Where-Object Name -like "*OpenSSL*" | Select-Object FullName
-            Write-Host "`nChocolatey libs:"
-            Get-ChildItem "C:\ProgramData\chocolatey\lib" | Where-Object Name -like "*openssl*" | Select-Object FullName
-            throw "Não foi possível localizar o OpenSSL no runner."
-          }
+          if (-not $bin) { throw "Não foi possível localizar o binário do OpenSSL no runner." }
 
+          # Localiza as DLLs dinamicamente (independente da versão no nome do arquivo)
           $ssl    = Get-ChildItem $bin -Filter "libssl*.dll"    -ErrorAction SilentlyContinue | Select-Object -First 1
           $crypto = Get-ChildItem $bin -Filter "libcrypto*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
 
           if (-not $ssl -or -not $crypto) {
-            Write-Host "Conteúdo de ${bin}:"
-            Get-ChildItem $bin | Select-Object Name
             throw "DLLs libssl/libcrypto não encontradas em ${bin}"
           }
 
+          # Define variáveis de ambiente para o Dart (FFI) e adiciona ao PATH
           "OPENSSL_LIBSSL_PATH=$($ssl.FullName)"       | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           "OPENSSL_LIBCRYPTO_PATH=$($crypto.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           $bin | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
-          Write-Host "OpenSSL bin: ${bin}"
-          Write-Host "libssl: $($ssl.FullName)"
-          Write-Host "libcrypto: $($crypto.FullName)"
+          # (Opcional) Tenta localizar e setar o openssl.cfg para evitar warnings
+          $conf = Join-Path $bin "openssl.cfg"
+          if (-not (Test-Path $conf)) {
+             $conf = Join-Path $bin "..\openssl.cfg" 
+          }
+          if (Test-Path $conf) {
+             "OPENSSL_CONF=$conf" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+             Write-Host "Configuração OpenSSL encontrada: $conf"
+          }
 
-          # Status check
-          $opensslExe = Join-Path $bin "openssl.exe"
-          if (Test-Path $opensslExe) { & $opensslExe version -a }
+          Write-Host "Ambiente Configurado:"
+          Write-Host "  Bin: ${bin}"
+          Write-Host "  SSL: $($ssl.Name)"
+          Write-Host "  Crypto: $($crypto.Name)"
 
       - name: Install OpenSSL (Linux)
         if: matrix.os == 'ubuntu-latest'
