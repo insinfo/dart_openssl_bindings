@@ -1,6 +1,7 @@
 name: openssl_bindings
 version: 0.1.0
 description: FFI bindings to OpenSSL cryptographic library for Dart, providing native access to encryption, hashing, and SSL/TLS functionality.
+repository: https://github.com/insinfo/dart_openssl_bindings
 
 environment:
   sdk: '^3.6.0'

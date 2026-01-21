@@ -4,7 +4,7 @@ import "dart:ffi";
 import "dart:io";
 import "dart:math";
 import "dart:typed_data";
-import "package:collection/collection.dart";
+// import "package:collection/collection.dart";
 import "buffer.dart";
 import "certificate.dart";
 import "dtls_alert.dart";
@@ -672,10 +672,21 @@ int _dtlsCookieVerifyCallback(
 
   final peerCookie = cookie.cast<Uint8>().asTypedList(cookieLength);
 
-  return const ListEquality<int>().equals(connectionCookie, peerCookie) ? 1 : 0;
+  return _listEquals(connectionCookie, peerCookie) ? 1 : 0;
+}
+
+bool _listEquals<T>(List<T>? list1, List<T>? list2) {
+  if (identical(list1, list2)) return true;
+  if (list1 == null || list2 == null) return false;
+  if (list1.length != list2.length) return false;
+  for (var i = 0; i < list1.length; i++) {
+    if (list1[i] != list2[i]) return false;
+  }
+  return true;
 }
 
 extension _ClintHelloParseExtension on Uint8List {
+
   bool isValidClientHello() {
     var valid = true;
 
