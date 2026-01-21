@@ -56,7 +56,7 @@ dependencies:
 The `OpenSSL` class is the main entry point. You can let it find the library automatically or inject specific paths.
 
 ```dart
-import 'package:openssl_bindings/src/api/openssl.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 // 1. Standard usage (uses PATH or env vars)
 final openssl = OpenSSL();
@@ -73,7 +73,7 @@ final opensslCustom = OpenSSL(
 Easily create RSA keys and self-signed certificates.
 
 ```dart
-import 'package:openssl_bindings/src/x509/x509_builder.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 // Generate RSA Key
 final key = openssl.generateRsaKey(2048);
@@ -100,7 +100,7 @@ print(key.toPrivateKeyPem());
 Create digital signatures for documents (like PDF/PAdES) where the signature is separate from the content.
 
 ```dart
-import 'package:openssl_bindings/src/cms/cms_pkcs7_signer.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 final signer = CmsPkcs7Signer(openssl);
 
@@ -124,7 +124,7 @@ final isValid = openssl.verifyCmsDetached(
 Example of a DTLS client connecting to a server, using custom library paths.
 
 ```dart
-import 'package:openssl_bindings/src/dtls/dtls_client.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 void main() async {
   // Initialize DTLS with custom OpenSSL paths
@@ -153,7 +153,7 @@ void main() async {
 ### 5. Async TLS Client (TCP)
 
 ```dart
-import 'package:openssl_bindings/src/ssl/secure_socket_openssl_async.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 final socket = await SecureSocketOpenSSLAsync.connect('example.com', 443);
 

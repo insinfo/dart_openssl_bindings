@@ -16,13 +16,14 @@ class Bio extends SslObject<BIO> {
     OpenSslLib.lookup<Void Function(Pointer<BIO>)>('BIO_free').cast(),
   );
 
-  Bio._(Pointer<BIO> ptr) : super(ptr) {
+  final OpenSsl _openSsl;
+
+  Bio._(this._openSsl, Pointer<BIO> ptr) : super(ptr) {
     attachFinalizer(_finalizer, ptr.cast());
   }
 
   /// Creates a BIO from a memory buffer (Uint8List).
-  factory Bio.fromBytes(Uint8List bytes) {
-    final lib = OpenSslLib.instance;
+  factory Bio.fromBytes(OpenSsl openSsl, Uint8List bytes) {
     // We need to copy bytes to C memory because BIO_new_mem_buf can take a read-only buffer,
     // but if we want it to be safe, we might allocate.
     // However, BIO_new_mem_buf(buf, len) doesn't copy if len is positive? 
@@ -31,15 +32,15 @@ class Bio extends SslObject<BIO> {
     // if we want to own the memory in the BIO.
     
     // Simplest: Create a memory BIO (writeable) and write data into it.
-    final bio = lib.BIO_new(lib.BIO_s_mem());
+    final bio = openSsl.BIO_new(openSsl.BIO_s_mem());
     if (bio == nullptr) throw OpenSslException('Failed to create BIO');
     
-    final wrapper = Bio._(bio);
+    final wrapper = Bio._(openSsl, bio);
     
     final buffer = calloc<Uint8>(bytes.length);
     try {
       buffer.asTypedList(bytes.length).setAll(0, bytes);
-      final written = lib.BIO_write(bio, buffer.cast(), bytes.length);
+      final written = openSsl.BIO_write(bio, buffer.cast(), bytes.length);
       if (written <= 0) {
         throw OpenSslException('Failed to write to BIO');
       }
@@ -51,15 +52,14 @@ class Bio extends SslObject<BIO> {
   }
 
   /// Creates a BIO from a String (utf8).
-  factory Bio.fromString(String text) {
-    return Bio.fromBytes(Uint8List.fromList(text.codeUnits)); // Simple ASCII/UTF8
+  factory Bio.fromString(OpenSsl openSsl, String text) {
+    return Bio.fromBytes(openSsl, Uint8List.fromList(text.codeUnits)); // Simple ASCII/UTF8
   }
   
-  factory Bio.empty() {
-     final lib = OpenSslLib.instance;
-     final bio = lib.BIO_new(lib.BIO_s_mem());
+  factory Bio.empty(OpenSsl openSsl) {
+     final bio = openSsl.BIO_new(openSsl.BIO_s_mem());
      if (bio == nullptr) throw OpenSslException('Failed to create BIO');
-     return Bio._(bio);
+     return Bio._(openSsl, bio);
   }
 
   /// Reads the entire content of the BIO into a String.
@@ -70,12 +70,11 @@ class Bio extends SslObject<BIO> {
 
   /// Reads the entire content of the BIO into Uint8List.
   Uint8List toBytes() {
-    final lib = OpenSslLib.instance;
     final pp = calloc<Pointer<Char>>();
     try {
       // BIO_get_mem_data sets pp to verify the internal buffer and returns length.
       // NOTE: This usually only works for memory BIOs.
-      final len = lib.BIO_ctrl(handle, BIO_CTRL_INFO, 0, pp.cast());
+      final len = _openSsl.BIO_ctrl(handle, BIO_CTRL_INFO, 0, pp.cast());
       if (len < 0) {
          throw OpenSslException('BIO_ctrl failed to get data');
       }

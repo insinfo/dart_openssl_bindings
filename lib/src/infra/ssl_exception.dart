@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
-import 'openssl_lib.dart';
+import '../generated/ffi.dart';
 
 /// Exception thrown when an OpenSSL error occurs.
 class OpenSslException implements Exception {
@@ -21,8 +21,8 @@ class OpenSslException implements Exception {
 
   /// Checks the OpenSSL error queue. If there are errors, throws an SslException.
   /// Should be called after a C function returns a failure code.
-  static void checkError({String? function, bool throwIfError = true}) {
-    final lib = OpenSslLib.instance;
+  static void checkError(OpenSsl lib,
+      {String? function, bool throwIfError = true}) {
     // Get the most recent error
     final code = lib.ERR_get_error();
 
@@ -41,8 +41,8 @@ class OpenSslException implements Exception {
   }
 
   /// Clears the error queue.
-  static void clearError() {
-    while (OpenSslLib.instance.ERR_get_error() != 0) {}
+  static void clearError(OpenSsl lib) {
+    while (lib.ERR_get_error() != 0) {}
   }
 }
 

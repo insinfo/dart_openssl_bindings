@@ -62,6 +62,7 @@ class CmsPkcs7Signer {
 
       // Add signing cert and extra certs
       SslObject.checkCode(
+        bindings,
         bindings.CMS_add1_cert(cms, certPtr),
         msg: 'CMS_add1_cert (signer) failed',
       );
@@ -70,6 +71,7 @@ class CmsPkcs7Signer {
         final extraPtr = _d2iX509(der);
         extraCertPtrs.add(extraPtr);
         SslObject.checkCode(
+          bindings,
           bindings.CMS_add1_cert(cms, extraPtr),
           msg: 'CMS_add1_cert (extra) failed',
         );
@@ -78,6 +80,7 @@ class CmsPkcs7Signer {
       dataBio = _bioFromBytes(content);
 
       SslObject.checkCode(
+        bindings,
         bindings.CMS_final(
           cms,
           dataBio,
@@ -155,6 +158,7 @@ class CmsPkcs7Signer {
 
       // Add signing cert and extra certs
       SslObject.checkCode(
+        bindings,
         bindings.CMS_add1_cert(cms, certPtr),
         msg: 'CMS_add1_cert (signer) failed',
       );
@@ -163,6 +167,7 @@ class CmsPkcs7Signer {
         final extraPtr = _d2iX509(der);
         extraCertPtrs.add(extraPtr);
         SslObject.checkCode(
+          bindings,
           bindings.CMS_add1_cert(cms, extraPtr),
           msg: 'CMS_add1_cert (extra) failed',
         );
@@ -174,6 +179,7 @@ class CmsPkcs7Signer {
 
       // contentType attribute
       SslObject.checkCode(
+        bindings,
         bindings.CMS_signed_add1_attr_by_OBJ(
           signerInfo,
           oidAttrContentType,
@@ -191,6 +197,7 @@ class CmsPkcs7Signer {
           .setAll(0, contentDigest);
 
       SslObject.checkCode(
+        bindings,
         bindings.CMS_signed_add1_attr_by_OBJ(
           signerInfo,
           oidAttrMessageDigest,
@@ -202,6 +209,7 @@ class CmsPkcs7Signer {
       );
 
       SslObject.checkCode(
+        bindings,
         bindings.CMS_SignerInfo_sign(signerInfo),
         msg: 'CMS_SignerInfo_sign failed',
       );

@@ -33,7 +33,7 @@ mixin SignatureMixin on OpenSslContext {
         nullptr,
         key.handle,
       );
-      SslObject.checkCode(initResult, msg: 'EVP_DigestSignInit failed');
+      SslObject.checkCode(bindings, initResult, msg: 'EVP_DigestSignInit failed');
 
       // Update
       final dataPtr = calloc<Uint8>(data.length);
@@ -45,12 +45,12 @@ mixin SignatureMixin on OpenSslContext {
         data.length,
       );
       calloc.free(dataPtr);
-      SslObject.checkCode(updateResult, msg: 'EVP_DigestSignUpdate failed');
+      SslObject.checkCode(bindings, updateResult, msg: 'EVP_DigestSignUpdate failed');
 
       // Final (Get Length)
       final lenPtr = calloc<Size>();
       final finalLenResult = bindings.EVP_DigestSignFinal(ctx, nullptr, lenPtr);
-      SslObject.checkCode(finalLenResult, msg: 'EVP_DigestSignFinal (length) failed');
+      SslObject.checkCode(bindings, finalLenResult, msg: 'EVP_DigestSignFinal (length) failed');
 
       final sigLen = lenPtr.value;
       final sigPtr = calloc<Uint8>(sigLen);
@@ -100,7 +100,7 @@ mixin SignatureMixin on OpenSslContext {
         nullptr,
         key.handle,
       );
-      SslObject.checkCode(initResult, msg: 'EVP_DigestVerifyInit failed');
+      SslObject.checkCode(bindings, initResult, msg: 'EVP_DigestVerifyInit failed');
 
       // Update
       final dataPtr = calloc<Uint8>(data.length);
@@ -112,7 +112,7 @@ mixin SignatureMixin on OpenSslContext {
         data.length,
       );
       calloc.free(dataPtr);
-      SslObject.checkCode(updateResult, msg: 'EVP_DigestVerifyUpdate failed');
+      SslObject.checkCode(bindings, updateResult, msg: 'EVP_DigestVerifyUpdate failed');
 
       // Final (Verify)
       final sigPtr = calloc<Uint8>(signature.length);
@@ -130,7 +130,7 @@ mixin SignatureMixin on OpenSslContext {
       if (verifyResult == 1) return true;
       if (verifyResult == 0) return false;
       
-      SslObject.checkCode(verifyResult, msg: 'EVP_DigestVerifyFinal error');
+      SslObject.checkCode(bindings, verifyResult, msg: 'EVP_DigestVerifyFinal error');
       return false; // Should satisfy analyzer
     } finally {
       bindings.EVP_MD_CTX_free(ctx);

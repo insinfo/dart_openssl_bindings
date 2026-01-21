@@ -1,5 +1,7 @@
 import 'dart:ffi';
+import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
+import 'package:openssl_bindings/src/generated/ffi.dart';
 
 /// Base class for all OpenSSL objects that hold a native pointer
 /// and require automatic memory management via NativeFinalizer.
@@ -30,10 +32,22 @@ abstract class SslObject<T extends NativeType> implements Finalizable {
 
   /// Helper to check OpenSSL result codes.
   /// Standard OpenSSL convention: 1 is success, 0 is failure (e.g. signature verify), <0 is error.
-  static void checkCode(int result, {String msg = 'Operation failed'}) {
+  static void checkCode(OpenSsl lib, int result, {String msg = 'Operation failed'}) {
     if (result <= 0) {
-      // In a real implementation we would call ERR_get_error() here.
-      throw Exception('OpenSSL Error: $msg (Code: $result)');
+      // Retrieve the error from OpenSSL error queue
+      final errorCode = lib.ERR_get_error();
+      if (errorCode != 0) {
+        final buffer = calloc<Char>(256);
+        try {
+          lib.ERR_error_string(errorCode, buffer);
+          final errorParams = buffer.cast<Utf8>().toDartString();
+          throw Exception('OpenSSL Error: $msg. Code: $result. OpenSSL: $errorParams');
+        } finally {
+          calloc.free(buffer);
+        }
+      }
+      // If no error code in queue, just throw generic
+      throw Exception('OpenSSL Error: $msg (Code: $result) - No detail in error queue');
     }
   }
 
