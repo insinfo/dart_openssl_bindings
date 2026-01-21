@@ -22,15 +22,23 @@ jobs:
 
       - name: Install OpenSSL (Windows)
         if: matrix.os == 'windows-latest'
-        run: choco install openssl
+        run: |
+            choco feature enable -n allowGlobalConfirmation
+            choco install openssl -y --no-progress
 
       - name: Configure Environment (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
-          echo "OPENSSL_LIBSSL_PATH=C:\Program Files\OpenSSL-Win64\bin\libssl-3-x64.dll" >> $env:GITHUB_ENV
-          echo "OPENSSL_LIBCRYPTO_PATH=C:\Program Files\OpenSSL-Win64\bin\libcrypto-3-x64.dll" >> $env:GITHUB_ENV
-          echo "C:\Program Files\OpenSSL-Win64\bin" >> $env:GITHUB_PATH
+          $bin = "C:\Program Files\OpenSSL-Win64\bin"
+          $ssl = Get-ChildItem "$bin\libssl-*.dll" | Select-Object -First 1
+          $crypto = Get-ChildItem "$bin\libcrypto-*.dll" | Select-Object -First 1
+
+          if (-not $ssl -or -not $crypto) { throw "DLLs do OpenSSL não encontradas em $bin" }
+
+          "OPENSSL_LIBSSL_PATH=$($ssl.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "OPENSSL_LIBCRYPTO_PATH=$($crypto.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          $bin | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
       - name: Install OpenSSL (Linux)
         if: matrix.os == 'ubuntu-latest'

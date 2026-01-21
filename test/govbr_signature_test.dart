@@ -227,6 +227,12 @@ Future<Uint8List> _signHash(
   req.write(jsonEncode({'hashBase64': base64Encode(digest)}));
   final res = await req.close();
   final bytes = await _readResponseBytes(res);
+
+  if (res.statusCode != 200) {
+    final body = utf8.decode(bytes, allowMalformed: true);
+    throw StateError('AssinarPKCS7 falhou: HTTP ${res.statusCode}: $body');
+  }
+
   return Uint8List.fromList(bytes);
 }
 

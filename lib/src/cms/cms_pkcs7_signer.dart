@@ -29,6 +29,9 @@ class CmsPkcs7Signer {
   }) {
     final bindings = _openSsl.bindings;
 
+    // Evita “lixo” na error queue afetar checagens posteriores.
+    OpenSslException.clearError(bindings);
+
     final certPtr = _d2iX509(certificateDer);
     final extraCertPtrs = <Pointer<X509>>[];
 
@@ -60,16 +63,18 @@ class CmsPkcs7Signer {
         throw OpenSslException('CMS_add1_signer failed');
       }
 
-      // Add signing cert and extra certs
-      SslObject.checkCode(
-        bindings,
-        bindings.CMS_add1_cert(cms, certPtr),
-        msg: 'CMS_add1_cert (signer) failed',
-      );
+      // IMPORTANTE:
+      // Não chame CMS_add1_cert(cms, certPtr) aqui.
+      // Em OpenSSL (especialmente 3.x), CMS_add1_signer normalmente já inclui
+      // o certificado do signer no CMS, e adicionar de novo pode falhar com:
+      // "certificate already present" (0x170000AF).
 
+      // Adiciona apenas certificados extras (cadeia), se fornecidos.
       for (final der in extraCertsDer) {
         final extraPtr = _d2iX509(der);
         extraCertPtrs.add(extraPtr);
+
+        OpenSslException.clearError(bindings);
         SslObject.checkCode(
           bindings,
           bindings.CMS_add1_cert(cms, extraPtr),
@@ -79,6 +84,7 @@ class CmsPkcs7Signer {
 
       dataBio = _bioFromBytes(content);
 
+      OpenSslException.clearError(bindings);
       SslObject.checkCode(
         bindings,
         bindings.CMS_final(
@@ -90,6 +96,7 @@ class CmsPkcs7Signer {
         msg: 'CMS_final failed',
       );
 
+      OpenSslException.clearError(bindings);
       return _i2dCms(cms);
     } finally {
       if (dataBio != nullptr) {
@@ -120,6 +127,8 @@ class CmsPkcs7Signer {
     String hashAlgorithm = 'SHA256',
   }) {
     final bindings = _openSsl.bindings;
+
+    OpenSslException.clearError(bindings);
 
     final certPtr = _d2iX509(certificateDer);
     final extraCertPtrs = <Pointer<X509>>[];
@@ -156,16 +165,12 @@ class CmsPkcs7Signer {
         throw OpenSslException('CMS_add1_signer failed');
       }
 
-      // Add signing cert and extra certs
-      SslObject.checkCode(
-        bindings,
-        bindings.CMS_add1_cert(cms, certPtr),
-        msg: 'CMS_add1_cert (signer) failed',
-      );
-
+      // Mesmo motivo do signDetached(): não adicione o cert do signer manualmente.
       for (final der in extraCertsDer) {
         final extraPtr = _d2iX509(der);
         extraCertPtrs.add(extraPtr);
+
+        OpenSslException.clearError(bindings);
         SslObject.checkCode(
           bindings,
           bindings.CMS_add1_cert(cms, extraPtr),
@@ -177,7 +182,7 @@ class CmsPkcs7Signer {
       oidAttrContentType = _objFromText(_oidAttrContentType);
       oidAttrMessageDigest = _objFromText(_oidAttrMessageDigest);
 
-      // contentType attribute
+      OpenSslException.clearError(bindings);
       SslObject.checkCode(
         bindings,
         bindings.CMS_signed_add1_attr_by_OBJ(
@@ -190,12 +195,10 @@ class CmsPkcs7Signer {
         msg: 'CMS_signed_add1_attr_by_OBJ (contentType) failed',
       );
 
-      // messageDigest attribute
       digestPtr = calloc<Uint8>(contentDigest.length);
-      digestPtr
-          .asTypedList(contentDigest.length)
-          .setAll(0, contentDigest);
+      digestPtr.asTypedList(contentDigest.length).setAll(0, contentDigest);
 
+      OpenSslException.clearError(bindings);
       SslObject.checkCode(
         bindings,
         bindings.CMS_signed_add1_attr_by_OBJ(
@@ -208,12 +211,14 @@ class CmsPkcs7Signer {
         msg: 'CMS_signed_add1_attr_by_OBJ (messageDigest) failed',
       );
 
+      OpenSslException.clearError(bindings);
       SslObject.checkCode(
         bindings,
         bindings.CMS_SignerInfo_sign(signerInfo),
         msg: 'CMS_SignerInfo_sign failed',
       );
 
+      OpenSslException.clearError(bindings);
       return _i2dCms(cms);
     } finally {
       if (digestPtr != nullptr) {
