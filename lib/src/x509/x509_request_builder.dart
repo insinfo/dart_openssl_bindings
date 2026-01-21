@@ -44,7 +44,7 @@ class X509RequestBuilder {
         }
 
         // Sign
-        final digestLabel = digestName.toNativeUtf8();
+        final digestLabel = digestName.toNativeUtf8(allocator: calloc);
         final md = _context.bindings.EVP_get_digestbyname(digestLabel.cast());
         calloc.free(digestLabel);
         

@@ -1,0 +1,36 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install OpenSSL
+        run: choco install openssl
+
+      - name: Install Dependencies
+        run: dart pub get
+
+      - name: Run Tests
+        run: dart test
+        env:
+          # Chocolatey installs to standard paths, typically C:\Program Files\OpenSSL-Win64
+          # The openssl_loader logic looks in env vars or standard paths.
+          # We might need to ensure the DLLs are findable.
+          # Adding to PATH or setting specific ENV vars.
+          OPENSSL_LIBSSL_PATH: "C:\\Program Files\\OpenSSL-Win64\\bin\\libssl-3-x64.dll"
+          OPENSSL_LIBCRYPTO_PATH: "C:\\Program Files\\OpenSSL-Win64\\bin\\libcrypto-3-x64.dll"
+          # Also adding bin to path just in case
+          PATH: "C:\\Program Files\\OpenSSL-Win64\\bin;${{ env.PATH }}"

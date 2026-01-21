@@ -87,14 +87,20 @@ final OpenSsl _defaultLibCrypto = _createDefaultBinding(
 /// Tries to load libcrypto from a [dynamicLibrary].
 ///
 /// If that fails, the function tries to load libcrypto from a default location.
-OpenSsl loadLibCrypto(ffi.DynamicLibrary? dynamicLibrary) =>
-    dynamicLibrary != null ? OpenSsl(dynamicLibrary) : _defaultLibCrypto;
+OpenSsl loadLibCrypto(ffi.DynamicLibrary? dynamicLibrary, {String? path}) {
+  if (dynamicLibrary != null) return OpenSsl(dynamicLibrary);
+  if (path != null) return OpenSsl(ffi.DynamicLibrary.open(path));
+  return _defaultLibCrypto;
+}
 
 /// Tries to load libssl from a [dynamicLibrary].
 ///
 /// If that fails, the function tries to load libssl from a default location.
-OpenSsl loadLibSsl(ffi.DynamicLibrary? dynamicLibrary) =>
-    dynamicLibrary != null ? OpenSsl(dynamicLibrary) : _defaultLibSsl;
+OpenSsl loadLibSsl(ffi.DynamicLibrary? dynamicLibrary, {String? path}) {
+  if (dynamicLibrary != null) return OpenSsl(dynamicLibrary);
+  if (path != null) return OpenSsl(ffi.DynamicLibrary.open(path));
+  return _defaultLibSsl;
+}
 
 OpenSsl _createDefaultBinding({
   required String description,

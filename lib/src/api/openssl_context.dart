@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import '../generated/ffi.dart' as ffi;
 import '../openssl_loader.dart';
 
@@ -9,4 +10,7 @@ abstract class OpenSslContext {
   
   /// Acesso ao loader/configuração (opcional, se precisarmos de caminhos).
   OpenSslBindings get loader;
+
+  /// Helper para pegar endereços de funções (para NativeFinalizer).
+  Pointer<NativeFunction<T>> lookup<T extends Function>(String name);
 }

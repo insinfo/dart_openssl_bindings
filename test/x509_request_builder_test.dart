@@ -32,7 +32,6 @@ void main() {
 
     // 4. Export to PEM
     final pem = csr.toPem();
-    print('Generated CSR:\n$pem');
 
     expect(pem, startsWith('-----BEGIN CERTIFICATE REQUEST-----'));
     expect(pem, contains('-----END CERTIFICATE REQUEST-----'));

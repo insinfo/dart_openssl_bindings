@@ -19,7 +19,6 @@ void main() {
     caBuilder.setIssuerAsSubject(); // Self-signed
     caBuilder.setPublicKey(caKey);
     final caCert = caBuilder.sign(caKey);
-    print('CA Certificate created');
 
     // 2. Setup User & CSR
     final userKey = openssl.generateRsa(2048);
@@ -29,7 +28,6 @@ void main() {
     
     final csrBuilder = X509RequestBuilder(openssl);
     final csr = csrBuilder.build(subject: userSubject, keyPair: userKey);
-    print('CSR created');
 
     // 3. Sign CSR to create User Cert
     final certBuilder = X509CertificateBuilder(openssl);
@@ -40,11 +38,9 @@ void main() {
     certBuilder.setValidity(notAfterOffset: 86400); // 1 day
     
     final userCert = certBuilder.sign(caKey); // Sign with CA Key
-    print('User Certificate created');
     
     // 4. Verify
     final pem = userCert.toPem();
-    print('User Certificate PEM:\n$pem');
     expect(pem, startsWith('-----BEGIN CERTIFICATE-----'));
     
     // Check Issuer

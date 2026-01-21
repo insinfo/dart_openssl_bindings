@@ -53,6 +53,25 @@ class OpenSsl {
   late final _OPENSSL_version_patch =
       _OPENSSL_version_patchPtr.asFunction<int Function()>();
 
+  void CRYPTO_free(
+    ffi.Pointer<ffi.Void> ptr,
+    ffi.Pointer<ffi.Char> file,
+    int line,
+  ) {
+    return _CRYPTO_free(
+      ptr,
+      file,
+      line,
+    );
+  }
+
+  late final _CRYPTO_freePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>,
+              ffi.Int)>>('CRYPTO_free');
+  late final _CRYPTO_free = _CRYPTO_freePtr.asFunction<
+      void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Char>, int)>();
+
   ffi.Pointer<BIO> BIO_new(
     ffi.Pointer<BIO_METHOD> type,
   ) {
@@ -227,6 +246,34 @@ class OpenSsl {
   late final _BN_free =
       _BN_freePtr.asFunction<void Function(ffi.Pointer<BIGNUM>)>();
 
+  ffi.Pointer<ffi.Char> BN_bn2hex(
+    ffi.Pointer<BIGNUM> a,
+  ) {
+    return _BN_bn2hex(
+      a,
+    );
+  }
+
+  late final _BN_bn2hexPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<BIGNUM>)>>('BN_bn2hex');
+  late final _BN_bn2hex = _BN_bn2hexPtr.asFunction<
+      ffi.Pointer<ffi.Char> Function(ffi.Pointer<BIGNUM>)>();
+
+  ffi.Pointer<ffi.Char> BN_bn2dec(
+    ffi.Pointer<BIGNUM> a,
+  ) {
+    return _BN_bn2dec(
+      a,
+    );
+  }
+
+  late final _BN_bn2decPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<BIGNUM>)>>('BN_bn2dec');
+  late final _BN_bn2dec = _BN_bn2decPtr.asFunction<
+      ffi.Pointer<ffi.Char> Function(ffi.Pointer<BIGNUM>)>();
+
   OSSL_PARAM OSSL_PARAM_construct_utf8_string(
     ffi.Pointer<ffi.Char> key,
     ffi.Pointer<ffi.Char> buf,
@@ -279,6 +326,20 @@ class OpenSsl {
   late final _OSSL_PARAM_construct_end =
       _OSSL_PARAM_construct_endPtr.asFunction<OSSL_PARAM Function()>();
 
+  void ASN1_OBJECT_free(
+    ffi.Pointer<ASN1_OBJECT> a,
+  ) {
+    return _ASN1_OBJECT_free(
+      a,
+    );
+  }
+
+  late final _ASN1_OBJECT_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ASN1_OBJECT>)>>(
+          'ASN1_OBJECT_free');
+  late final _ASN1_OBJECT_free = _ASN1_OBJECT_freePtr.asFunction<
+      void Function(ffi.Pointer<ASN1_OBJECT>)>();
+
   ffi.Pointer<ASN1_INTEGER> ASN1_INTEGER_new() {
     return _ASN1_INTEGER_new();
   }
@@ -303,6 +364,88 @@ class OpenSsl {
   late final _ASN1_INTEGER_free = _ASN1_INTEGER_freePtr.asFunction<
       void Function(ffi.Pointer<ASN1_INTEGER>)>();
 
+  int i2d_ASN1_INTEGER(
+    ffi.Pointer<ASN1_INTEGER> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_ASN1_INTEGER(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_ASN1_INTEGERPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ASN1_INTEGER>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>('i2d_ASN1_INTEGER');
+  late final _i2d_ASN1_INTEGER = _i2d_ASN1_INTEGERPtr.asFunction<
+      int Function(ffi.Pointer<ASN1_INTEGER>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  ffi.Pointer<ASN1_OCTET_STRING> ASN1_OCTET_STRING_new() {
+    return _ASN1_OCTET_STRING_new();
+  }
+
+  late final _ASN1_OCTET_STRING_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ASN1_OCTET_STRING> Function()>>(
+          'ASN1_OCTET_STRING_new');
+  late final _ASN1_OCTET_STRING_new = _ASN1_OCTET_STRING_newPtr.asFunction<
+      ffi.Pointer<ASN1_OCTET_STRING> Function()>();
+
+  void ASN1_OCTET_STRING_free(
+    ffi.Pointer<ASN1_OCTET_STRING> a,
+  ) {
+    return _ASN1_OCTET_STRING_free(
+      a,
+    );
+  }
+
+  late final _ASN1_OCTET_STRING_freePtr = _lookup<
+          ffi
+          .NativeFunction<ffi.Void Function(ffi.Pointer<ASN1_OCTET_STRING>)>>(
+      'ASN1_OCTET_STRING_free');
+  late final _ASN1_OCTET_STRING_free = _ASN1_OCTET_STRING_freePtr.asFunction<
+      void Function(ffi.Pointer<ASN1_OCTET_STRING>)>();
+
+  int ASN1_OCTET_STRING_set(
+    ffi.Pointer<ASN1_OCTET_STRING> str,
+    ffi.Pointer<ffi.UnsignedChar> data,
+    int len,
+  ) {
+    return _ASN1_OCTET_STRING_set(
+      str,
+      data,
+      len,
+    );
+  }
+
+  late final _ASN1_OCTET_STRING_setPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ASN1_OCTET_STRING>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Int)>>('ASN1_OCTET_STRING_set');
+  late final _ASN1_OCTET_STRING_set = _ASN1_OCTET_STRING_setPtr.asFunction<
+      int Function(ffi.Pointer<ASN1_OCTET_STRING>,
+          ffi.Pointer<ffi.UnsignedChar>, int)>();
+
+  int ASN1_TIME_to_tm(
+    ffi.Pointer<ASN1_TIME> s,
+    ffi.Pointer<tm> tm,
+  ) {
+    return _ASN1_TIME_to_tm(
+      s,
+      tm,
+    );
+  }
+
+  late final _ASN1_TIME_to_tmPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ASN1_TIME>, ffi.Pointer<tm>)>>('ASN1_TIME_to_tm');
+  late final _ASN1_TIME_to_tm = _ASN1_TIME_to_tmPtr.asFunction<
+      int Function(ffi.Pointer<ASN1_TIME>, ffi.Pointer<tm>)>();
+
   int ASN1_INTEGER_set(
     ffi.Pointer<ASN1_INTEGER> a,
     int v,
@@ -319,6 +462,58 @@ class OpenSsl {
               ffi.Pointer<ASN1_INTEGER>, ffi.Long)>>('ASN1_INTEGER_set');
   late final _ASN1_INTEGER_set = _ASN1_INTEGER_setPtr.asFunction<
       int Function(ffi.Pointer<ASN1_INTEGER>, int)>();
+
+  ffi.Pointer<BIGNUM> ASN1_INTEGER_to_BN(
+    ffi.Pointer<ASN1_INTEGER> ai,
+    ffi.Pointer<BIGNUM> bn,
+  ) {
+    return _ASN1_INTEGER_to_BN(
+      ai,
+      bn,
+    );
+  }
+
+  late final _ASN1_INTEGER_to_BNPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<BIGNUM> Function(ffi.Pointer<ASN1_INTEGER>,
+              ffi.Pointer<BIGNUM>)>>('ASN1_INTEGER_to_BN');
+  late final _ASN1_INTEGER_to_BN = _ASN1_INTEGER_to_BNPtr.asFunction<
+      ffi.Pointer<BIGNUM> Function(
+          ffi.Pointer<ASN1_INTEGER>, ffi.Pointer<BIGNUM>)>();
+
+  int ASN1_TIME_print(
+    ffi.Pointer<BIO> bp,
+    ffi.Pointer<ASN1_TIME> tm,
+  ) {
+    return _ASN1_TIME_print(
+      bp,
+      tm,
+    );
+  }
+
+  late final _ASN1_TIME_printPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<BIO>, ffi.Pointer<ASN1_TIME>)>>('ASN1_TIME_print');
+  late final _ASN1_TIME_print = _ASN1_TIME_printPtr.asFunction<
+      int Function(ffi.Pointer<BIO>, ffi.Pointer<ASN1_TIME>)>();
+
+  ffi.Pointer<ASN1_OBJECT> OBJ_txt2obj(
+    ffi.Pointer<ffi.Char> s,
+    int no_name,
+  ) {
+    return _OBJ_txt2obj(
+      s,
+      no_name,
+    );
+  }
+
+  late final _OBJ_txt2objPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_OBJECT> Function(
+              ffi.Pointer<ffi.Char>, ffi.Int)>>('OBJ_txt2obj');
+  late final _OBJ_txt2obj = _OBJ_txt2objPtr.asFunction<
+      ffi.Pointer<ASN1_OBJECT> Function(ffi.Pointer<ffi.Char>, int)>();
 
   ffi.Pointer<EVP_MD_CTX> EVP_MD_CTX_new() {
     return _EVP_MD_CTX_new();
@@ -1203,6 +1398,30 @@ class OpenSsl {
   late final _RSA_free =
       _RSA_freePtr.asFunction<void Function(ffi.Pointer<RSA>)>();
 
+  ffi.Pointer<X509_STORE> X509_STORE_new() {
+    return _X509_STORE_new();
+  }
+
+  late final _X509_STORE_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<X509_STORE> Function()>>(
+          'X509_STORE_new');
+  late final _X509_STORE_new =
+      _X509_STORE_newPtr.asFunction<ffi.Pointer<X509_STORE> Function()>();
+
+  void X509_STORE_free(
+    ffi.Pointer<X509_STORE> xs,
+  ) {
+    return _X509_STORE_free(
+      xs,
+    );
+  }
+
+  late final _X509_STORE_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<X509_STORE>)>>(
+          'X509_STORE_free');
+  late final _X509_STORE_free =
+      _X509_STORE_freePtr.asFunction<void Function(ffi.Pointer<X509_STORE>)>();
+
   int X509_STORE_add_cert(
     ffi.Pointer<X509_STORE> xs,
     ffi.Pointer<X509> x,
@@ -1380,6 +1599,24 @@ class OpenSsl {
   late final _X509_NAME_free =
       _X509_NAME_freePtr.asFunction<void Function(ffi.Pointer<X509_NAME>)>();
 
+  int i2d_X509_NAME(
+    ffi.Pointer<X509_NAME> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_X509_NAME(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_X509_NAMEPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_NAME>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>('i2d_X509_NAME');
+  late final _i2d_X509_NAME = _i2d_X509_NAMEPtr.asFunction<
+      int Function(ffi.Pointer<X509_NAME>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
   ffi.Pointer<X509> X509_new() {
     return _X509_new();
   }
@@ -1425,6 +1662,58 @@ class OpenSsl {
       ffi.Pointer<X509> Function(ffi.Pointer<ffi.Pointer<X509>>,
           ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>, int)>();
 
+  int i2d_X509(
+    ffi.Pointer<X509> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_X509(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_X509Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>('i2d_X509');
+  late final _i2d_X509 = _i2d_X509Ptr.asFunction<
+      int Function(
+          ffi.Pointer<X509>, ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  ffi.Pointer<ffi.Char> X509_NAME_oneline(
+    ffi.Pointer<X509_NAME> a,
+    ffi.Pointer<ffi.Char> buf,
+    int size,
+  ) {
+    return _X509_NAME_oneline(
+      a,
+      buf,
+      size,
+    );
+  }
+
+  late final _X509_NAME_onelinePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<X509_NAME>,
+              ffi.Pointer<ffi.Char>, ffi.Int)>>('X509_NAME_oneline');
+  late final _X509_NAME_oneline = _X509_NAME_onelinePtr.asFunction<
+      ffi.Pointer<ffi.Char> Function(
+          ffi.Pointer<X509_NAME>, ffi.Pointer<ffi.Char>, int)>();
+
+  int X509_get_version(
+    ffi.Pointer<X509> x,
+  ) {
+    return _X509_get_version(
+      x,
+    );
+  }
+
+  late final _X509_get_versionPtr =
+      _lookup<ffi.NativeFunction<ffi.Long Function(ffi.Pointer<X509>)>>(
+          'X509_get_version');
+  late final _X509_get_version =
+      _X509_get_versionPtr.asFunction<int Function(ffi.Pointer<X509>)>();
+
   int X509_set_version(
     ffi.Pointer<X509> x,
     int version,
@@ -1457,6 +1746,21 @@ class OpenSsl {
               ffi.Pointer<ASN1_INTEGER>)>>('X509_set_serialNumber');
   late final _X509_set_serialNumber = _X509_set_serialNumberPtr.asFunction<
       int Function(ffi.Pointer<X509>, ffi.Pointer<ASN1_INTEGER>)>();
+
+  ffi.Pointer<ASN1_INTEGER> X509_get_serialNumber(
+    ffi.Pointer<X509> x,
+  ) {
+    return _X509_get_serialNumber(
+      x,
+    );
+  }
+
+  late final _X509_get_serialNumberPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_INTEGER> Function(
+              ffi.Pointer<X509>)>>('X509_get_serialNumber');
+  late final _X509_get_serialNumber = _X509_get_serialNumberPtr.asFunction<
+      ffi.Pointer<ASN1_INTEGER> Function(ffi.Pointer<X509>)>();
 
   int X509_set_issuer_name(
     ffi.Pointer<X509> x,
@@ -1679,6 +1983,27 @@ class OpenSsl {
               ffi.Pointer<X509_REQ>)>>('X509_REQ_get_pubkey');
   late final _X509_REQ_get_pubkey = _X509_REQ_get_pubkeyPtr.asFunction<
       ffi.Pointer<EVP_PKEY> Function(ffi.Pointer<X509_REQ>)>();
+
+  int X509_NAME_print_ex(
+    ffi.Pointer<BIO> out,
+    ffi.Pointer<X509_NAME> nm,
+    int indent,
+    int flags,
+  ) {
+    return _X509_NAME_print_ex(
+      out,
+      nm,
+      indent,
+      flags,
+    );
+  }
+
+  late final _X509_NAME_print_exPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<BIO>, ffi.Pointer<X509_NAME>, ffi.Int,
+              ffi.UnsignedLong)>>('X509_NAME_print_ex');
+  late final _X509_NAME_print_ex = _X509_NAME_print_exPtr.asFunction<
+      int Function(ffi.Pointer<BIO>, ffi.Pointer<X509_NAME>, int, int)>();
 
   int X509_NAME_add_entry_by_txt(
     ffi.Pointer<X509_NAME> name,
@@ -2713,6 +3038,240 @@ class OpenSsl {
               ffi.UnsignedLong, ffi.Pointer<ffi.Char>)>>('ERR_error_string');
   late final _ERR_error_string = _ERR_error_stringPtr.asFunction<
       ffi.Pointer<ffi.Char> Function(int, ffi.Pointer<ffi.Char>)>();
+
+  void CMS_ContentInfo_free(
+    ffi.Pointer<CMS_ContentInfo> a,
+  ) {
+    return _CMS_ContentInfo_free(
+      a,
+    );
+  }
+
+  late final _CMS_ContentInfo_freePtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<CMS_ContentInfo>)>>(
+      'CMS_ContentInfo_free');
+  late final _CMS_ContentInfo_free = _CMS_ContentInfo_freePtr.asFunction<
+      void Function(ffi.Pointer<CMS_ContentInfo>)>();
+
+  ffi.Pointer<CMS_ContentInfo> d2i_CMS_ContentInfo(
+    ffi.Pointer<ffi.Pointer<CMS_ContentInfo>> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> in$,
+    int len,
+  ) {
+    return _d2i_CMS_ContentInfo(
+      a,
+      in$,
+      len,
+    );
+  }
+
+  late final _d2i_CMS_ContentInfoPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<CMS_ContentInfo> Function(
+              ffi.Pointer<ffi.Pointer<CMS_ContentInfo>>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+              ffi.Long)>>('d2i_CMS_ContentInfo');
+  late final _d2i_CMS_ContentInfo = _d2i_CMS_ContentInfoPtr.asFunction<
+      ffi.Pointer<CMS_ContentInfo> Function(
+          ffi.Pointer<ffi.Pointer<CMS_ContentInfo>>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+          int)>();
+
+  int i2d_CMS_ContentInfo(
+    ffi.Pointer<CMS_ContentInfo> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_CMS_ContentInfo(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_CMS_ContentInfoPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Int Function(ffi.Pointer<CMS_ContentInfo>,
+                  ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>(
+      'i2d_CMS_ContentInfo');
+  late final _i2d_CMS_ContentInfo = _i2d_CMS_ContentInfoPtr.asFunction<
+      int Function(ffi.Pointer<CMS_ContentInfo>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  int CMS_final(
+    ffi.Pointer<CMS_ContentInfo> cms,
+    ffi.Pointer<BIO> data,
+    ffi.Pointer<BIO> dcont,
+    int flags,
+  ) {
+    return _CMS_final(
+      cms,
+      data,
+      dcont,
+      flags,
+    );
+  }
+
+  late final _CMS_finalPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<CMS_ContentInfo>, ffi.Pointer<BIO>,
+              ffi.Pointer<BIO>, ffi.UnsignedInt)>>('CMS_final');
+  late final _CMS_final = _CMS_finalPtr.asFunction<
+      int Function(ffi.Pointer<CMS_ContentInfo>, ffi.Pointer<BIO>,
+          ffi.Pointer<BIO>, int)>();
+
+  ffi.Pointer<CMS_ContentInfo> CMS_sign(
+    ffi.Pointer<X509> signcert,
+    ffi.Pointer<EVP_PKEY> pkey,
+    ffi.Pointer<stack_st_X509> certs,
+    ffi.Pointer<BIO> data,
+    int flags,
+  ) {
+    return _CMS_sign(
+      signcert,
+      pkey,
+      certs,
+      data,
+      flags,
+    );
+  }
+
+  late final _CMS_signPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<CMS_ContentInfo> Function(
+              ffi.Pointer<X509>,
+              ffi.Pointer<EVP_PKEY>,
+              ffi.Pointer<stack_st_X509>,
+              ffi.Pointer<BIO>,
+              ffi.UnsignedInt)>>('CMS_sign');
+  late final _CMS_sign = _CMS_signPtr.asFunction<
+      ffi.Pointer<CMS_ContentInfo> Function(
+          ffi.Pointer<X509>,
+          ffi.Pointer<EVP_PKEY>,
+          ffi.Pointer<stack_st_X509>,
+          ffi.Pointer<BIO>,
+          int)>();
+
+  int CMS_verify(
+    ffi.Pointer<CMS_ContentInfo> cms,
+    ffi.Pointer<stack_st_X509> certs,
+    ffi.Pointer<X509_STORE> store,
+    ffi.Pointer<BIO> dcont,
+    ffi.Pointer<BIO> out,
+    int flags,
+  ) {
+    return _CMS_verify(
+      cms,
+      certs,
+      store,
+      dcont,
+      out,
+      flags,
+    );
+  }
+
+  late final _CMS_verifyPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<CMS_ContentInfo>,
+              ffi.Pointer<stack_st_X509>,
+              ffi.Pointer<X509_STORE>,
+              ffi.Pointer<BIO>,
+              ffi.Pointer<BIO>,
+              ffi.UnsignedInt)>>('CMS_verify');
+  late final _CMS_verify = _CMS_verifyPtr.asFunction<
+      int Function(ffi.Pointer<CMS_ContentInfo>, ffi.Pointer<stack_st_X509>,
+          ffi.Pointer<X509_STORE>, ffi.Pointer<BIO>, ffi.Pointer<BIO>, int)>();
+
+  int CMS_add1_cert(
+    ffi.Pointer<CMS_ContentInfo> cms,
+    ffi.Pointer<X509> cert,
+  ) {
+    return _CMS_add1_cert(
+      cms,
+      cert,
+    );
+  }
+
+  late final _CMS_add1_certPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<CMS_ContentInfo>,
+              ffi.Pointer<X509>)>>('CMS_add1_cert');
+  late final _CMS_add1_cert = _CMS_add1_certPtr.asFunction<
+      int Function(ffi.Pointer<CMS_ContentInfo>, ffi.Pointer<X509>)>();
+
+  ffi.Pointer<CMS_SignerInfo> CMS_add1_signer(
+    ffi.Pointer<CMS_ContentInfo> cms,
+    ffi.Pointer<X509> signer,
+    ffi.Pointer<EVP_PKEY> pk,
+    ffi.Pointer<EVP_MD> md,
+    int flags,
+  ) {
+    return _CMS_add1_signer(
+      cms,
+      signer,
+      pk,
+      md,
+      flags,
+    );
+  }
+
+  late final _CMS_add1_signerPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<CMS_SignerInfo> Function(
+              ffi.Pointer<CMS_ContentInfo>,
+              ffi.Pointer<X509>,
+              ffi.Pointer<EVP_PKEY>,
+              ffi.Pointer<EVP_MD>,
+              ffi.UnsignedInt)>>('CMS_add1_signer');
+  late final _CMS_add1_signer = _CMS_add1_signerPtr.asFunction<
+      ffi.Pointer<CMS_SignerInfo> Function(
+          ffi.Pointer<CMS_ContentInfo>,
+          ffi.Pointer<X509>,
+          ffi.Pointer<EVP_PKEY>,
+          ffi.Pointer<EVP_MD>,
+          int)>();
+
+  int CMS_SignerInfo_sign(
+    ffi.Pointer<CMS_SignerInfo> si,
+  ) {
+    return _CMS_SignerInfo_sign(
+      si,
+    );
+  }
+
+  late final _CMS_SignerInfo_signPtr = _lookup<
+          ffi.NativeFunction<ffi.Int Function(ffi.Pointer<CMS_SignerInfo>)>>(
+      'CMS_SignerInfo_sign');
+  late final _CMS_SignerInfo_sign = _CMS_SignerInfo_signPtr.asFunction<
+      int Function(ffi.Pointer<CMS_SignerInfo>)>();
+
+  int CMS_signed_add1_attr_by_OBJ(
+    ffi.Pointer<CMS_SignerInfo> si,
+    ffi.Pointer<ASN1_OBJECT> obj,
+    int type,
+    ffi.Pointer<ffi.Void> bytes,
+    int len,
+  ) {
+    return _CMS_signed_add1_attr_by_OBJ(
+      si,
+      obj,
+      type,
+      bytes,
+      len,
+    );
+  }
+
+  late final _CMS_signed_add1_attr_by_OBJPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<CMS_SignerInfo>,
+              ffi.Pointer<ASN1_OBJECT>,
+              ffi.Int,
+              ffi.Pointer<ffi.Void>,
+              ffi.Int)>>('CMS_signed_add1_attr_by_OBJ');
+  late final _CMS_signed_add1_attr_by_OBJ =
+      _CMS_signed_add1_attr_by_OBJPtr.asFunction<
+          int Function(ffi.Pointer<CMS_SignerInfo>, ffi.Pointer<ASN1_OBJECT>,
+              int, ffi.Pointer<ffi.Void>, int)>();
 }
 
 typedef va_list = ffi.Pointer<ffi.Char>;
@@ -66187,6 +66746,36 @@ typedef LPPROTOENT = ffi.Pointer<protoent>;
 typedef TIMEVAL = timeval;
 typedef PTIMEVAL = ffi.Pointer<timeval>;
 typedef LPTIMEVAL = ffi.Pointer<timeval>;
+
+final class tm extends ffi.Struct {
+  @ffi.Int()
+  external int tm_sec;
+
+  @ffi.Int()
+  external int tm_min;
+
+  @ffi.Int()
+  external int tm_hour;
+
+  @ffi.Int()
+  external int tm_mday;
+
+  @ffi.Int()
+  external int tm_mon;
+
+  @ffi.Int()
+  external int tm_year;
+
+  @ffi.Int()
+  external int tm_wday;
+
+  @ffi.Int()
+  external int tm_yday;
+
+  @ffi.Int()
+  external int tm_isdst;
+}
+
 typedef clock_t = ffi.Long;
 typedef Dartclock_t = int;
 
@@ -71496,7 +72085,125 @@ typedef PKCS12_create_cb = ffi.NativeFunction<
     ffi.Int Function(
         ffi.Pointer<PKCS12_SAFEBAG> bag, ffi.Pointer<ffi.Void> cbarg)>;
 
+final class CMS_EnvelopedData_st extends ffi.Opaque {}
+
+typedef CMS_EnvelopedData = CMS_EnvelopedData_st;
+
+final class CMS_ContentInfo_st extends ffi.Opaque {}
+
+typedef CMS_ContentInfo = CMS_ContentInfo_st;
+
+final class CMS_SignerInfo_st extends ffi.Opaque {}
+
+typedef CMS_SignerInfo = CMS_SignerInfo_st;
+
+final class CMS_SignedData_st extends ffi.Opaque {}
+
+typedef CMS_SignedData = CMS_SignedData_st;
+
+final class CMS_RevocationInfoChoice_st extends ffi.Opaque {}
+
+typedef CMS_RevocationInfoChoice = CMS_RevocationInfoChoice_st;
+
+final class CMS_RecipientInfo_st extends ffi.Opaque {}
+
+typedef CMS_RecipientInfo = CMS_RecipientInfo_st;
+
+final class CMS_ReceiptRequest_st extends ffi.Opaque {}
+
+typedef CMS_ReceiptRequest = CMS_ReceiptRequest_st;
+
+final class CMS_Receipt_st extends ffi.Opaque {}
+
+typedef CMS_Receipt = CMS_Receipt_st;
+
+final class CMS_RecipientEncryptedKey_st extends ffi.Opaque {}
+
+typedef CMS_RecipientEncryptedKey = CMS_RecipientEncryptedKey_st;
+
+final class CMS_OtherKeyAttribute_st extends ffi.Opaque {}
+
+typedef CMS_OtherKeyAttribute = CMS_OtherKeyAttribute_st;
+typedef sk_CMS_SignerInfo_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<CMS_SignerInfo>> a,
+    ffi.Pointer<ffi.Pointer<CMS_SignerInfo>> b);
+typedef Dartsk_CMS_SignerInfo_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<CMS_SignerInfo>> a,
+    ffi.Pointer<ffi.Pointer<CMS_SignerInfo>> b);
+typedef sk_CMS_SignerInfo_compfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_CMS_SignerInfo_compfuncFunction>>;
+typedef sk_CMS_SignerInfo_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<CMS_SignerInfo> a);
+typedef Dartsk_CMS_SignerInfo_freefuncFunction = void Function(
+    ffi.Pointer<CMS_SignerInfo> a);
+typedef sk_CMS_SignerInfo_freefunc
+    = ffi.Pointer<ffi.NativeFunction<sk_CMS_SignerInfo_freefuncFunction>>;
+typedef sk_CMS_SignerInfo_copyfuncFunction = ffi.Pointer<CMS_SignerInfo>
+    Function(ffi.Pointer<CMS_SignerInfo> a);
+typedef sk_CMS_SignerInfo_copyfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_CMS_SignerInfo_copyfuncFunction>>;
+typedef sk_CMS_RecipientEncryptedKey_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<CMS_RecipientEncryptedKey>> a,
+    ffi.Pointer<ffi.Pointer<CMS_RecipientEncryptedKey>> b);
+typedef Dartsk_CMS_RecipientEncryptedKey_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<CMS_RecipientEncryptedKey>> a,
+    ffi.Pointer<ffi.Pointer<CMS_RecipientEncryptedKey>> b);
+typedef sk_CMS_RecipientEncryptedKey_compfunc = ffi
+    .Pointer<ffi.NativeFunction<sk_CMS_RecipientEncryptedKey_compfuncFunction>>;
+typedef sk_CMS_RecipientEncryptedKey_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<CMS_RecipientEncryptedKey> a);
+typedef Dartsk_CMS_RecipientEncryptedKey_freefuncFunction = void Function(
+    ffi.Pointer<CMS_RecipientEncryptedKey> a);
+typedef sk_CMS_RecipientEncryptedKey_freefunc = ffi
+    .Pointer<ffi.NativeFunction<sk_CMS_RecipientEncryptedKey_freefuncFunction>>;
+typedef sk_CMS_RecipientEncryptedKey_copyfuncFunction
+    = ffi.Pointer<CMS_RecipientEncryptedKey> Function(
+        ffi.Pointer<CMS_RecipientEncryptedKey> a);
+typedef sk_CMS_RecipientEncryptedKey_copyfunc = ffi
+    .Pointer<ffi.NativeFunction<sk_CMS_RecipientEncryptedKey_copyfuncFunction>>;
+typedef sk_CMS_RecipientInfo_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<CMS_RecipientInfo>> a,
+    ffi.Pointer<ffi.Pointer<CMS_RecipientInfo>> b);
+typedef Dartsk_CMS_RecipientInfo_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<CMS_RecipientInfo>> a,
+    ffi.Pointer<ffi.Pointer<CMS_RecipientInfo>> b);
+typedef sk_CMS_RecipientInfo_compfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_CMS_RecipientInfo_compfuncFunction>>;
+typedef sk_CMS_RecipientInfo_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<CMS_RecipientInfo> a);
+typedef Dartsk_CMS_RecipientInfo_freefuncFunction = void Function(
+    ffi.Pointer<CMS_RecipientInfo> a);
+typedef sk_CMS_RecipientInfo_freefunc
+    = ffi.Pointer<ffi.NativeFunction<sk_CMS_RecipientInfo_freefuncFunction>>;
+typedef sk_CMS_RecipientInfo_copyfuncFunction = ffi.Pointer<CMS_RecipientInfo>
+    Function(ffi.Pointer<CMS_RecipientInfo> a);
+typedef sk_CMS_RecipientInfo_copyfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_CMS_RecipientInfo_copyfuncFunction>>;
+typedef sk_CMS_RevocationInfoChoice_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<CMS_RevocationInfoChoice>> a,
+    ffi.Pointer<ffi.Pointer<CMS_RevocationInfoChoice>> b);
+typedef Dartsk_CMS_RevocationInfoChoice_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<CMS_RevocationInfoChoice>> a,
+    ffi.Pointer<ffi.Pointer<CMS_RevocationInfoChoice>> b);
+typedef sk_CMS_RevocationInfoChoice_compfunc = ffi
+    .Pointer<ffi.NativeFunction<sk_CMS_RevocationInfoChoice_compfuncFunction>>;
+typedef sk_CMS_RevocationInfoChoice_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<CMS_RevocationInfoChoice> a);
+typedef Dartsk_CMS_RevocationInfoChoice_freefuncFunction = void Function(
+    ffi.Pointer<CMS_RevocationInfoChoice> a);
+typedef sk_CMS_RevocationInfoChoice_freefunc = ffi
+    .Pointer<ffi.NativeFunction<sk_CMS_RevocationInfoChoice_freefuncFunction>>;
+typedef sk_CMS_RevocationInfoChoice_copyfuncFunction
+    = ffi.Pointer<CMS_RevocationInfoChoice> Function(
+        ffi.Pointer<CMS_RevocationInfoChoice> a);
+typedef sk_CMS_RevocationInfoChoice_copyfunc = ffi
+    .Pointer<ffi.NativeFunction<sk_CMS_RevocationInfoChoice_copyfuncFunction>>;
+
 const int BIO_C_SET_BUF_MEM_EOF_RETURN = 130;
+
+const int V_ASN1_OCTET_STRING = 4;
+
+const int V_ASN1_OBJECT = 6;
 
 const int EVP_CTRL_AEAD_SET_IVLEN = 9;
 
@@ -71537,3 +72244,11 @@ const int SSL_ERROR_ZERO_RETURN = 6;
 const int SSL_CTRL_SET_TLSEXT_HOSTNAME = 55;
 
 const int DTLS_CTRL_GET_TIMEOUT = 73;
+
+const int CMS_DETACHED = 64;
+
+const int CMS_BINARY = 128;
+
+const int CMS_NOSMIMECAP = 512;
+
+const int CMS_PARTIAL = 16384;

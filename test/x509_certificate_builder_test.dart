@@ -21,8 +21,6 @@ void main() {
       final cert = builder.sign(key);
       final pem = cert.toPem();
       final keyPem = key.toPrivateKeyPem();
-
-      print('Cert PEM:\n$pem');
       
       expect(pem, contains('BEGIN CERTIFICATE'));
       expect(keyPem, contains('BEGIN PRIVATE KEY'));

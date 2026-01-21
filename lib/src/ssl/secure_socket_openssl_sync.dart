@@ -6,7 +6,7 @@ import 'dart:io' as io;
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 
-import '../net_ffi/native_buffer_utils.dart';
+import '../native/native_buffer_utils.dart';
 import '../generated/ffi.dart';
 import '../openssl_loader.dart';
 
@@ -23,12 +23,14 @@ class SecureSocketOpenSSLSync {
     String? certFile,
     String? keyFile,
     bool eagerHandshake = false,
+    String? cryptoPath,
+    String? sslPath,
   })  : _socket = socket,
         _ciphertextWriter = writer,
         _ciphertextReader = reader,
         _useCallbacks = writer != null && reader != null,
         _isServer = isServer {
-    _initOpenSsl();
+    _initOpenSsl(cryptoPath: cryptoPath, sslPath: sslPath);
     _initializeSSL(certFile: certFile, keyFile: keyFile);
     _attachSslObject();
     if (eagerHandshake || isServer) {
@@ -40,29 +42,38 @@ class SecureSocketOpenSSLSync {
     String host,
     int port, {
     bool eagerHandshake = true,
+    String? cryptoPath,
+    String? sslPath,
   }) {
     final socket = io.RawSynchronousSocket.connectSync(host, port);
     return SecureSocketOpenSSLSync._(
       socket: socket,
       isServer: false,
       eagerHandshake: eagerHandshake,
+      cryptoPath: cryptoPath,
+      sslPath: sslPath,
     );
   }
 
   factory SecureSocketOpenSSLSync.clientFromSocket(
     io.RawSynchronousSocket socket, {
     bool eagerHandshake = true,
+    String? cryptoPath,
+    String? sslPath,
   }) =>
       SecureSocketOpenSSLSync._(
-        socket: socket,
-        isServer: false,
-        eagerHandshake: eagerHandshake,
-      );
+          socket: socket,
+          isServer: false,
+          eagerHandshake: eagerHandshake,
+          cryptoPath: cryptoPath,
+          sslPath: sslPath);
 
   factory SecureSocketOpenSSLSync.clientWithCallbacks({
     required CiphertextWriterSync writer,
     required CiphertextReaderSync reader,
     bool eagerHandshake = true,
+    String? cryptoPath,
+    String? sslPath,
   }) =>
       SecureSocketOpenSSLSync._(
         socket: null,
@@ -70,6 +81,8 @@ class SecureSocketOpenSSLSync {
         reader: reader,
         isServer: false,
         eagerHandshake: eagerHandshake,
+        cryptoPath: cryptoPath,
+        sslPath: sslPath,
       );
 
   factory SecureSocketOpenSSLSync.serverFromSocket(
@@ -77,6 +90,8 @@ class SecureSocketOpenSSLSync {
     required String certFile,
     required String keyFile,
     bool eagerHandshake = true,
+    String? cryptoPath,
+    String? sslPath,
   }) =>
       SecureSocketOpenSSLSync._(
         socket: socket,
@@ -84,6 +99,8 @@ class SecureSocketOpenSSLSync {
         certFile: certFile,
         keyFile: keyFile,
         eagerHandshake: eagerHandshake,
+        cryptoPath: cryptoPath,
+        sslPath: sslPath,
       );
 
   final io.RawSynchronousSocket? _socket;
@@ -344,8 +361,9 @@ class SecureSocketOpenSSLSync {
     return socket;
   }
 
-  void _initOpenSsl() {
-    final bindings = OpenSslBindings.load();
+  void _initOpenSsl({String? cryptoPath, String? sslPath}) {
+    final bindings =
+        OpenSslBindings.load(cryptoPath: cryptoPath, sslPath: sslPath);
     _openSsl = bindings.ssl;
     _openSslCrypto = bindings.crypto;
   }
@@ -363,8 +381,8 @@ class SecureSocketOpenSSLSync {
           'Certificate and private key are required in server mode.',
         );
       }
-      final certFilePtr = certFile.toNativeUtf8();
-      final keyFilePtr = keyFile.toNativeUtf8();
+      final certFilePtr = certFile.toNativeUtf8(allocator: calloc);
+      final keyFilePtr = keyFile.toNativeUtf8(allocator: calloc);
       final ctxPtr = _ctxPtr;
       final certResult = _openSsl.SSL_CTX_use_certificate_file(
         ctxPtr,

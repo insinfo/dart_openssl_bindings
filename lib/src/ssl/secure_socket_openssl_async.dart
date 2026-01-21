@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:logging/logging.dart';
 
-import '../net_ffi/native_buffer_utils.dart';
+import '../native/native_buffer_utils.dart';
 import '../generated/ffi.dart';
 import '../openssl_loader.dart';
 import 'ciphertext_callback.dart';
@@ -16,16 +16,18 @@ import 'ssl_constants.dart';
 
 /// A dart SecureSocket with dart io.Socket and OpenSSL FFI
 class SecureSocketOpenSSLAsync {
-  SecureSocketOpenSSLAsync._({
-    io.Socket? socket,
-    CiphertextWriterAsync? writer,
-    CiphertextReaderAsync? reader,
-    required bool isServer,
-    String? certFile,
-    String? keyFile,
-    bool eagerHandshake = false,
-    Logger? logger,
-  })  : _socket = socket,
+  SecureSocketOpenSSLAsync._(
+      {io.Socket? socket,
+      CiphertextWriterAsync? writer,
+      CiphertextReaderAsync? reader,
+      required bool isServer,
+      String? certFile,
+      String? keyFile,
+      bool eagerHandshake = false,
+      Logger? logger,
+      String? cryptoPath,
+      String? sslPath})
+      : _socket = socket,
         _ciphertextWriter = writer,
         _ciphertextReader = reader,
         _useCallbacks = writer != null && reader != null,
@@ -40,7 +42,7 @@ class SecureSocketOpenSSLAsync {
         cancelOnError: true,
       );
     }
-    _initOpenSsl();
+    _initOpenSsl(cryptoPath: cryptoPath, sslPath: sslPath);
     _initializeSSL(certFile: certFile, keyFile: keyFile);
     _attachSslObject();
     if (eagerHandshake || isServer) {
@@ -48,64 +50,68 @@ class SecureSocketOpenSSLAsync {
     }
   }
 
-  static Future<SecureSocketOpenSSLAsync> connect(
-    String host,
-    int port, {
-    Duration? timeout,
-    bool eagerHandshake = true,
-    Logger? logger,
-  }) async {
+  static Future<SecureSocketOpenSSLAsync> connect(String host, int port,
+      {Duration? timeout,
+      bool eagerHandshake = true,
+      Logger? logger,
+      String? cryptoPath,
+      String? sslPath}) async {
     final socket = await io.Socket.connect(host, port, timeout: timeout);
     return SecureSocketOpenSSLAsync._(
-      socket: socket,
-      isServer: false,
-      eagerHandshake: eagerHandshake,
-      logger: logger,
-    );
+        socket: socket,
+        isServer: false,
+        eagerHandshake: eagerHandshake,
+        logger: logger,
+        cryptoPath: cryptoPath,
+        sslPath: sslPath);
   }
 
-  factory SecureSocketOpenSSLAsync.clientFromSocket(
-    io.Socket socket, {
-    bool eagerHandshake = true,
-    Logger? logger,
-  }) =>
+  factory SecureSocketOpenSSLAsync.clientFromSocket(io.Socket socket,
+          {bool eagerHandshake = true,
+          Logger? logger,
+          String? cryptoPath,
+          String? sslPath}) =>
       SecureSocketOpenSSLAsync._(
-        socket: socket,
-        isServer: false,
-        eagerHandshake: eagerHandshake,
-        logger: logger,
-      );
+          socket: socket,
+          isServer: false,
+          eagerHandshake: eagerHandshake,
+          logger: logger,
+          cryptoPath: cryptoPath,
+          sslPath: sslPath);
 
-  factory SecureSocketOpenSSLAsync.clientWithCallbacks({
-    required CiphertextWriterAsync writer,
-    required CiphertextReaderAsync reader,
-    bool eagerHandshake = true,
-    Logger? logger,
-  }) =>
+  factory SecureSocketOpenSSLAsync.clientWithCallbacks(
+          {required CiphertextWriterAsync writer,
+          required CiphertextReaderAsync reader,
+          bool eagerHandshake = true,
+          Logger? logger,
+          String? cryptoPath,
+          String? sslPath}) =>
       SecureSocketOpenSSLAsync._(
-        socket: null,
-        writer: writer,
-        reader: reader,
-        isServer: false,
-        eagerHandshake: eagerHandshake,
-        logger: logger,
-      );
+          socket: null,
+          writer: writer,
+          reader: reader,
+          isServer: false,
+          eagerHandshake: eagerHandshake,
+          logger: logger,
+          cryptoPath: cryptoPath,
+          sslPath: sslPath);
 
-  factory SecureSocketOpenSSLAsync.serverFromSocket(
-    io.Socket socket, {
-    required String certFile,
-    required String keyFile,
-    bool eagerHandshake = true,
-    Logger? logger,
-  }) =>
+  factory SecureSocketOpenSSLAsync.serverFromSocket(io.Socket socket,
+          {required String certFile,
+          required String keyFile,
+          bool eagerHandshake = true,
+          Logger? logger,
+          String? cryptoPath,
+          String? sslPath}) =>
       SecureSocketOpenSSLAsync._(
-        socket: socket,
-        isServer: true,
-        certFile: certFile,
-        keyFile: keyFile,
-        eagerHandshake: eagerHandshake,
-        logger: logger,
-      );
+          socket: socket,
+          isServer: true,
+          certFile: certFile,
+          keyFile: keyFile,
+          eagerHandshake: eagerHandshake,
+          logger: logger,
+          cryptoPath: cryptoPath,
+          sslPath: sslPath);
 
   final io.Socket? _socket;
   final CiphertextWriterAsync? _ciphertextWriter;
@@ -472,8 +478,12 @@ class SecureSocketOpenSSLAsync {
     }
   }
 
-  void _initOpenSsl() {
-    final bindings = OpenSslBindings.load();
+  void _initOpenSsl({
+    String? cryptoPath,
+    String? sslPath,
+  }) {
+    final bindings =
+        OpenSslBindings.load(cryptoPath: cryptoPath, sslPath: sslPath);
     _openSsl = bindings.ssl;
     _openSslCrypto = bindings.crypto;
   }

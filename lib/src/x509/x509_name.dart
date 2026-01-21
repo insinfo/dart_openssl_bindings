@@ -32,8 +32,8 @@ class X509Name extends SslObject<X509_NAME> {
   /// [field] is the short name (e.g., "CN", "O", "C", "OU").
   /// [value] is the value.
   void addEntry(String field, String value) {
-    final fieldPtr = field.toNativeUtf8();
-    final valuePtr = value.toNativeUtf8();
+    final fieldPtr = field.toNativeUtf8(allocator: calloc);
+    final valuePtr = value.toNativeUtf8(allocator: calloc);
     try {
       // MBSTRING_UTF8 = 0x1000
       final result = _context.bindings.X509_NAME_add_entry_by_txt(

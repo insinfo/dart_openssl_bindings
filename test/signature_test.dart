@@ -18,7 +18,6 @@ void main() {
       
       final signature = openSsl.sign(key, dataBytes);
       expect(signature, isNotEmpty);
-      print('Signature length: ${signature.length}'); // Should be 256 bytes for RSA 2048
       
       final isValid = openSsl.verify(key, dataBytes, signature);
       expect(isValid, isTrue);

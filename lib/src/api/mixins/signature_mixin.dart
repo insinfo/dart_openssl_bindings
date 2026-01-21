@@ -18,7 +18,7 @@ mixin SignatureMixin on OpenSslContext {
     }
 
     try {
-      final digestName = algorithm.toNativeUtf8();
+      final digestName = algorithm.toNativeUtf8(allocator: calloc);
       final md = bindings.EVP_get_digestbyname(digestName.cast());
       calloc.free(digestName);
 
@@ -85,7 +85,7 @@ mixin SignatureMixin on OpenSslContext {
     }
 
     try {
-      final digestName = algorithm.toNativeUtf8();
+      final digestName = algorithm.toNativeUtf8(allocator: calloc);
       final md = bindings.EVP_get_digestbyname(digestName.cast());
       calloc.free(digestName);
 

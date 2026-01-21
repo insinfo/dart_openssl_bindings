@@ -1,4 +1,7 @@
-import 'dart:ffi';
+import 'dart:ffi'; 
+import 'dart:typed_data'; // Add typed_data
+import 'package:ffi/ffi.dart'; // Add ffi/ffi
+
 import '../openssl_context.dart';
 import '../../infra/ssl_exception.dart';
 import '../../crypto/evp_pkey.dart'; // Vamos atualizar este arquivo em breve
@@ -44,19 +47,35 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
     }
   }
 
-  /// Carrega uma Chave Privada de PEM.
-  EvpPkey loadPrivateKeyPem(String pem) {
+  /// Carrega uma Chave Privada de PEM, opcionalmente decifrando com [password].
+  EvpPkey loadPrivateKeyPem(String pem, {String? password}) {
     final bio = createBioFromString(pem);
+    Pointer<Char> passwordPtr = nullptr;
+    if (password != null) {
+      passwordPtr = password.toNativeUtf8(allocator: calloc).cast<Char>();
+    }
+
     try {
-       // Precisamos usar o lookup do loader, ou bindings se tivermos mapeado.
-       // Como PEM_read... foi adicionado ao ffi.dart, usamos bindings diretamente.
-       
-       final pkey = bindings.PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr);
-       if (pkey == nullptr) throw OpenSslException('Failed to read private key');
-       
-       return EvpPkey(pkey, this as dynamic);
+      // Se password for fornecido, passamos como 4o argumento (u).
+      // Se cb (3o arg) for NULL e u não for NULL, OpenSSL usa u como senha.
+      final pkey = bindings.PEM_read_bio_PrivateKey(
+        bio,
+        nullptr,
+        nullptr,
+        passwordPtr.cast(),
+      );
+
+      if (pkey == nullptr) {
+         // Tenta pegar o erro do OpenSSL para detalhar
+         throw OpenSslException('Failed to read private key (check password?)');
+      }
+
+      return EvpPkey(pkey, this as dynamic);
     } finally {
       freeBio(bio);
+      if (passwordPtr != nullptr) {
+        calloc.free(passwordPtr);
+      }
     }
   }
 
@@ -69,6 +88,46 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
       return EvpPkey(pkey, this as dynamic);
     } finally {
       freeBio(bio);
+    }
+  }
+
+  /// Computes SHA-256 digest of [data].
+  Uint8List sha256(List<int> data) {
+    final ctx = bindings.EVP_MD_CTX_new();
+    if (ctx == nullptr) throw OpenSslException('Failed to create EVP_MD_CTX');
+
+    try {
+      final sha256 = bindings.EVP_sha256();
+      if (bindings.EVP_DigestInit_ex(ctx, sha256, nullptr) != 1) {
+        throw OpenSslException('EVP_DigestInit_ex failed');
+      }
+      
+      final dataPtr = calloc<Uint8>(data.length);
+      dataPtr.asTypedList(data.length).setAll(0, data);
+      
+      try {
+        if (bindings.EVP_DigestUpdate(ctx, dataPtr.cast(), data.length) != 1) {
+          throw OpenSslException('EVP_DigestUpdate failed');
+        }
+      } finally {
+        calloc.free(dataPtr);
+      }
+
+      final hashPart = calloc<Uint8>(32); // SHA256 is 32 bytes
+      final lenPtr = calloc<UnsignedInt>();
+      
+      try {
+        if (bindings.EVP_DigestFinal_ex(ctx, hashPart.cast(), lenPtr) != 1) {
+          throw OpenSslException('EVP_DigestFinal_ex failed');
+        }
+        return Uint8List.fromList(hashPart.asTypedList(lenPtr.value));
+      } finally {
+        calloc.free(hashPart);
+        calloc.free(lenPtr);
+      }
+
+    } finally {
+        bindings.EVP_MD_CTX_free(ctx);
     }
   }
 }

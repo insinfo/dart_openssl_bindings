@@ -19,6 +19,7 @@ headers:
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/x509v3.h'
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/asn1.h'
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/pkcs12.h'
+    - 'C:/Progra~1/OpenSSL-Win64/include/openssl/cms.h'
 
 compiler-opts:
   # OpenSSL
@@ -99,6 +100,7 @@ functions:
     - X509_free
     - X509_new
     - X509_set_version
+    - X509_get_version
     - ASN1_INTEGER_new
     - ASN1_INTEGER_set
     - X509_set_serialNumber
@@ -106,6 +108,7 @@ functions:
     - X509_getm_notBefore
     - X509_getm_notAfter
     - X509_gmtime_adj
+    - ASN1_TIME_to_tm
     - X509_NAME_new
     - X509_NAME_add_entry_by_txt
     - X509_set_issuer_name
@@ -123,11 +126,41 @@ functions:
     - PEM_write_bio_X509_REQ
     - X509_get_subject_name
     - X509_get_issuer_name
+    - X509_get_serialNumber
+    - i2d_X509
+    - i2d_X509_NAME
+    - i2d_ASN1_INTEGER
+    - CMS_sign
+    - CMS_add1_signer
+    - CMS_add1_cert
+    - CMS_final
+    - CMS_ContentInfo_free
+    - i2d_CMS_ContentInfo
+    - CMS_signed_add1_attr_by_OBJ
+    - CMS_SignerInfo_sign
+    - CMS_verify
+    - d2i_CMS_ContentInfo
+    - OBJ_txt2obj
+    - ASN1_OBJECT_free
+    - ASN1_OCTET_STRING_new
+    - ASN1_OCTET_STRING_free
+    - ASN1_OCTET_STRING_set
+    - X509_store_ctx_new
+    - X509_STORE_add_cert
+    - X509_NAME_print_ex
+    - CRYPTO_free
+    - X509_STORE_new
+    - X509_STORE_free
     - X509_NAME_free
     - X509_set_pubkey
     - X509_sign
     - X509_verify
     - X509_get_pubkey
+    - X509_NAME_oneline
+    - ASN1_INTEGER_to_BN
+    - BN_bn2dec
+    - BN_bn2hex
+    - ASN1_TIME_print
     - PEM_write_bio_PrivateKey
     - PEM_write_bio_PUBKEY
     - PEM_write_bio_RSAPublicKey
@@ -225,9 +258,16 @@ macros:
     - EVP_CTRL_AEAD_SET_IVLEN
     - EVP_CTRL_AEAD_GET_TAG
     - EVP_CTRL_AEAD_SET_TAG
+    - CMS_BINARY
+    - CMS_DETACHED
+    - CMS_PARTIAL
+    - V_ASN1_OBJECT
+    - V_ASN1_OCTET_STRING
+    - CMS_NOSMIMECAP
 structs:
   include:
     - timeval
+    - tm
 unions:
   include: []
 enums:

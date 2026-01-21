@@ -149,7 +149,10 @@ class X509CertificateBuilder {
      }
 
      if (_context.bindings.X509_sign(_cert, privateKey.handle, md) == 0) {
-        throw OpenSslException('Failed to sign certificate'); 
+        final err = _context.bindings.ERR_get_error();
+        final strPtr = _context.bindings.ERR_error_string(err, nullptr);
+        final errMsg = strPtr == nullptr ? 'Unknown error' : strPtr.cast<Utf8>().toDartString();
+        throw OpenSslException('Failed to sign certificate: $errMsg ($err)'); 
      }
 
      // Transfer ownership to the wrapper

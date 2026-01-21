@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:openssl_bindings/src/api/openssl.dart';
+import 'package:openssl_bindings/src/infra/ssl_exception.dart';
 
 void main() {
   group('X509Mixin', () {
@@ -22,13 +23,7 @@ void main() {
       
       final cert = openSsl.createCertificate();
       // Just verify it allows calling toPem (might fail with OpenSSL error if empty, but shouldn't crash Dart)
-      try {
-        final pem = cert.toPem();
-        print(pem);
-      } catch (e) {
-        // Expected for empty cert: "PEM_write_bio_X509: ... missing value" or similar
-        print('Expected error on empty cert PEM export: $e');
-      }
+      expect(() => cert.toPem(), throwsA(isA<OpenSslException>()));
     });
   });
 }
