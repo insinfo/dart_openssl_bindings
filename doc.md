@@ -172,3 +172,69 @@ final socket = await SecureSocketOpenSSLAsync.connect(
 await socket.send(utf8.encode('GET / HTTP/1.1\r\nHost: google.com\r\n\r\n'));
 ```
 
+### 7. Criptografia Geral (KDF, Hashing e HMAC)
+
+Funcionalidades genéricas de criptografia para complementar o uso de PKI.
+
+**PBKDF2 (Key Derivation):**
+
+```dart
+final salt = utf8.encode('salt_randomico');
+final password = utf8.encode('minha_senha_secreta');
+
+// Deriva uma chave de 256 bits (32 bytes) usando HMAC-SHA256
+final key = openssl.pbkdf2(
+  password: Uint8List.fromList(password), 
+  salt: Uint8List.fromList(salt), 
+  iterations: 10000, 
+  keyLength: 32
+);
+```
+
+**Hashing e HMAC:**
+
+```dart
+final data = utf8.encode('Mensagem Importante');
+final secret = utf8.encode('segredo');
+
+// Hash Genérico (suporta algoritmos disponíveis no OpenSSL: sha256, sha512, sha3-256, etc)
+final digest = openssl.digest('sha256', Uint8List.fromList(data));
+
+// HMAC
+final mac = openssl.hmac('sha256', Uint8List.fromList(secret), Uint8List.fromList(data));
+```
+
+**AES-256-CBC (PKCS#7):**
+
+```dart
+final key = openssl.pbkdf2(
+  password: Uint8List.fromList(utf8.encode('senha')),
+  salt: Uint8List.fromList(utf8.encode('salt')),
+  iterations: 20000,
+  keyLength: 32,
+);
+final iv = Uint8List.fromList(List<int>.generate(16, (i) => i));
+
+final ciphertext = openssl.aes256CbcEncrypt(
+  data: Uint8List.fromList(utf8.encode('segredo')),
+  key: key,
+  iv: iv,
+);
+
+final plaintext = openssl.aes256CbcDecrypt(
+  ciphertext: ciphertext,
+  key: key,
+  iv: iv,
+);
+```
+
+### 8. Curvas Elípticas (ECC)
+
+Geração de chaves EC modernas (P-256, P-384, etc).
+
+```dart
+// Gera uma chave usando a curva prime256v1 (NIST P-256)
+final key = openssl.generateEc('prime256v1');
+
+print(key.toPrivateKeyPem());
+```

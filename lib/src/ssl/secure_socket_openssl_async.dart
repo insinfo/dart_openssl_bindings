@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:logging/logging.dart';
 
-import '../native/native_buffer_utils.dart';
+import '../utils/native_buffer_utils.dart';
 import '../generated/ffi.dart';
 import '../openssl_loader.dart';
 import '../infra/ssl_exception.dart';
@@ -16,8 +16,8 @@ import 'ciphertext_callback.dart';
 import 'ssl_constants.dart';
 
 /// A dart SecureSocket with dart io.Socket and OpenSSL FFI
-class SecureSocketOpenSSLAsync {
-  SecureSocketOpenSSLAsync._(
+class SecureSocketOpenSslAsync {
+  SecureSocketOpenSslAsync._(
       {io.Socket? socket,
       CiphertextWriterAsync? writer,
       CiphertextReaderAsync? reader,
@@ -51,14 +51,14 @@ class SecureSocketOpenSSLAsync {
     }
   }
 
-  static Future<SecureSocketOpenSSLAsync> connect(String host, int port,
+  static Future<SecureSocketOpenSslAsync> connect(String host, int port,
       {Duration? timeout,
       bool eagerHandshake = true,
       Logger? logger,
       String? cryptoPath,
       String? sslPath}) async {
     final socket = await io.Socket.connect(host, port, timeout: timeout);
-    return SecureSocketOpenSSLAsync._(
+    return SecureSocketOpenSslAsync._(
         socket: socket,
         isServer: false,
         eagerHandshake: eagerHandshake,
@@ -67,12 +67,12 @@ class SecureSocketOpenSSLAsync {
         sslPath: sslPath);
   }
 
-  factory SecureSocketOpenSSLAsync.clientFromSocket(io.Socket socket,
+  factory SecureSocketOpenSslAsync.clientFromSocket(io.Socket socket,
           {bool eagerHandshake = true,
           Logger? logger,
           String? cryptoPath,
           String? sslPath}) =>
-      SecureSocketOpenSSLAsync._(
+      SecureSocketOpenSslAsync._(
           socket: socket,
           isServer: false,
           eagerHandshake: eagerHandshake,
@@ -80,14 +80,14 @@ class SecureSocketOpenSSLAsync {
           cryptoPath: cryptoPath,
           sslPath: sslPath);
 
-  factory SecureSocketOpenSSLAsync.clientWithCallbacks(
+  factory SecureSocketOpenSslAsync.clientWithCallbacks(
           {required CiphertextWriterAsync writer,
           required CiphertextReaderAsync reader,
           bool eagerHandshake = true,
           Logger? logger,
           String? cryptoPath,
           String? sslPath}) =>
-      SecureSocketOpenSSLAsync._(
+      SecureSocketOpenSslAsync._(
           socket: null,
           writer: writer,
           reader: reader,
@@ -97,14 +97,14 @@ class SecureSocketOpenSSLAsync {
           cryptoPath: cryptoPath,
           sslPath: sslPath);
 
-  factory SecureSocketOpenSSLAsync.serverFromSocket(io.Socket socket,
+  factory SecureSocketOpenSslAsync.serverFromSocket(io.Socket socket,
           {required String certFile,
           required String keyFile,
           bool eagerHandshake = true,
           Logger? logger,
           String? cryptoPath,
           String? sslPath}) =>
-      SecureSocketOpenSSLAsync._(
+      SecureSocketOpenSslAsync._(
           socket: socket,
           isServer: true,
           certFile: certFile,
@@ -292,6 +292,27 @@ class SecureSocketOpenSSLAsync {
     return builder.takeBytes();
   }
 
+  /// Receives exactly [bufferSize] bytes unless EOF occurs.
+  /// Throws [OpenSslTlsException] if EOF is reached before [bufferSize].
+  Future<Uint8List> recvExact(int bufferSize) async {
+    if (bufferSize <= 0) {
+      throw ArgumentError.value(bufferSize, 'bufferSize', 'must be positive');
+    }
+
+    final builder = BytesBuilder(copy: false);
+    while (builder.length < bufferSize) {
+      final remaining = bufferSize - builder.length;
+      final chunk = await recv(remaining);
+      if (chunk.isEmpty) {
+        throw OpenSslTlsException(
+          'Unexpected EOF while reading $bufferSize bytes (got ${builder.length}).',
+        );
+      }
+      builder.add(chunk);
+    }
+    return builder.takeBytes();
+  }
+
   Future<void> shutdown() async {
     if (_ssl == null || _ssl == ffi.nullptr || !_sslInitialized) {
       return;
@@ -299,7 +320,10 @@ class SecureSocketOpenSSLAsync {
     final result = _openSsl.SSL_shutdown(_sslPtr);
     if (result == 0) {
       await _drainWriteBio();
-      await _fillReadBio();
+      if (!_socketClosed) {
+        await _fillReadBio()
+            .timeout(const Duration(seconds: 1), onTimeout: () => false);
+      }
       _openSsl.SSL_shutdown(_sslPtr);
     }
     await _drainWriteBio();
@@ -439,9 +463,12 @@ class SecureSocketOpenSSLAsync {
         _debug('Dequeue saw closed socket; returning null.');
         return null;
       }
-      _ciphertextSignal ??= Completer<void>();
+      final signal = _ciphertextSignal ??= Completer<void>();
+      if (_ciphertextQueue.isNotEmpty || _socketError != null || _socketClosed) {
+        continue;
+      }
       _debug('Waiting for ciphertext signal...');
-      await _ciphertextSignal!.future;
+      await signal.future;
     }
   }
 
@@ -496,33 +523,42 @@ class SecureSocketOpenSSLAsync {
     if (_ctx == ffi.nullptr || _ctx == null) {
       throw OpenSslTlsException('Failed to create the SSL context.');
     }
-    if (_isServer) {
-      if (certFile == null || keyFile == null) {
-        throw OpenSslTlsException(
-          'Certificate and private key are required in server mode.',
+    try {
+      if (_isServer) {
+        if (certFile == null || keyFile == null) {
+          throw OpenSslTlsException(
+            'Certificate and private key are required in server mode.',
+          );
+        }
+        final certFilePtr = certFile.toNativeUtf8();
+        final keyFilePtr = keyFile.toNativeUtf8();
+        final ctxPtr = _ctxPtr;
+        final certResult = _openSsl.SSL_CTX_use_certificate_file(
+          ctxPtr,
+          certFilePtr.cast(),
+          1,
         );
+        final keyResult = _openSsl.SSL_CTX_use_PrivateKey_file(
+          ctxPtr,
+          keyFilePtr.cast(),
+          1,
+        );
+        calloc.free(certFilePtr);
+        calloc.free(keyFilePtr);
+        if (certResult != 1) {
+          throw OpenSslTlsException('Failed to load the certificate file.');
+        }
+        if (keyResult != 1) {
+          throw OpenSslTlsException('Failed to load the private key file.');
+        }
       }
-      final certFilePtr = certFile.toNativeUtf8();
-      final keyFilePtr = keyFile.toNativeUtf8();
-      final ctxPtr = _ctxPtr;
-      final certResult = _openSsl.SSL_CTX_use_certificate_file(
-        ctxPtr,
-        certFilePtr.cast(),
-        1,
-      );
-      final keyResult = _openSsl.SSL_CTX_use_PrivateKey_file(
-        ctxPtr,
-        keyFilePtr.cast(),
-        1,
-      );
-      calloc.free(certFilePtr);
-      calloc.free(keyFilePtr);
-      if (certResult != 1) {
-        throw OpenSslTlsException('Failed to load the certificate file.');
+    } catch (_) {
+      final ctx = _ctx;
+      if (ctx != null && ctx != ffi.nullptr) {
+        _openSsl.SSL_CTX_free(ctx);
+        _ctx = null;
       }
-      if (keyResult != 1) {
-        throw OpenSslTlsException('Failed to load the private key file.');
-      }
+      rethrow;
     }
   }
 
@@ -532,12 +568,31 @@ class SecureSocketOpenSSLAsync {
     if (_ssl == ffi.nullptr || _ssl == null) {
       throw OpenSslTlsException('Failed to create the SSL instance.');
     }
-    _networkReadBio = _openSslCrypto.BIO_new(_openSslCrypto.BIO_s_mem());
-    _networkWriteBio = _openSslCrypto.BIO_new(_openSslCrypto.BIO_s_mem());
-    if (_networkReadBio == ffi.nullptr || _networkWriteBio == ffi.nullptr) {
-      throw OpenSslTlsException('Failed to create the TLS transport BIOs.');
+    try {
+      _networkReadBio = _openSslCrypto.BIO_new(_openSslCrypto.BIO_s_mem());
+      _networkWriteBio = _openSslCrypto.BIO_new(_openSslCrypto.BIO_s_mem());
+      if (_networkReadBio == ffi.nullptr || _networkWriteBio == ffi.nullptr) {
+        throw OpenSslTlsException('Failed to create the TLS transport BIOs.');
+      }
+      _openSsl.SSL_set_bio(_sslPtr, _networkReadBioPtr, _networkWriteBioPtr);
+    } catch (_) {
+      final readBio = _networkReadBio;
+      if (readBio != null && readBio != ffi.nullptr) {
+        _openSslCrypto.BIO_free(readBio);
+      }
+      final writeBio = _networkWriteBio;
+      if (writeBio != null && writeBio != ffi.nullptr) {
+        _openSslCrypto.BIO_free(writeBio);
+      }
+      final ssl = _ssl;
+      if (ssl != null && ssl != ffi.nullptr) {
+        _openSsl.SSL_free(ssl);
+      }
+      _ssl = null;
+      _networkReadBio = null;
+      _networkWriteBio = null;
+      rethrow;
     }
-    _openSsl.SSL_set_bio(_sslPtr, _networkReadBioPtr, _networkWriteBioPtr);
     if (_isServer) {
       _openSsl.SSL_set_accept_state(_sslPtr);
     } else {

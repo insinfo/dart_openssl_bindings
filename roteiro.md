@@ -2,6 +2,9 @@
 
 Este roteiro detalha a arquitetura refatorada para transformar os bindings FFI em uma API orientada a objetos, modular e testável, utilizando Mixins (Partial Classes) e Injeção de Dependência.
 
+regra geral: sempre editar o arquivo C:\MyDartProjects\openssl_bindings\ffigen.yaml colocar as funções necessarias
+e gerar o binding com dart run ffigen --config ffigen.yaml
+
 ## 1. Arquitetura e Estrutura
 
 A arquitetura abandona o padrão Singleton estático em favor de um Contexto (`OpenSSL`) instanciável. Isso permite:
@@ -52,30 +55,22 @@ Para evitar uma "God Class", as funcionalidades são separadas:
 - `X509Mixin`: Parsing e manipulação de certificados (Obter Subject, Issuer, Serial, Datas).
 - `CmsMixin`: Operações CMS/PKCS#7, incluindo assinatura de hash pré-calculado (Digest Signing) e validação de cadeia.
 
-## 3. Próximos Passos (Implementação)
+## 3. Estado da Implementação
 
 ### 3.1. Funcionalidades Faltantes (Prioridade Alta)
-1.  **Encrypted Private Keys**: Atualizar `CryptoMixin.loadPrivateKeyPem` para aceitar `password`.
-    - Usar 4º argumento de `PEM_read_bio_PrivateKey` como string de senha.
-2.  **X509 Details**: Implementar getters na classe `X509Certificate`.
-    - `subject` / `issuer`: Usar `X509_get_{subject,issuer}_name` e `X509_NAME_oneline`.
-    - `serialNumber`: Usar `X509_get_serialNumber` e conversão BIGNUM.
-    - `validity`: Usar `X509_getm_notBefore` / `X509_getm_notAfter`.
-3.  **CMS Digest Signing**: Implementar `signDetachedDigest` no `CmsMixin`.
-    - Permitir assinar um hash SHA-256 já calculado (necessário para PDFs grandes/PAdES).
-4.  **Trust Store Validation**: Melhorar `verifyCmsDetached` para aceitar lista de raízes.
-    - Criar abstração `OpenSqlX509Store`.
+*Todas as funcionalidades de alta prioridade foram implementadas e validadas.*
+
+1.  **Encrypted Private Keys**: Implementado em `CryptoMixin.loadPrivateKeyPem`.
+2.  **X509 Details**: Implementado em `X509Certificate` getters.
+3.  **CMS Digest Signing**: Implementado `signDetachedDigest` no `CmsMixin`.
+4.  **Trust Store Validation**: Implementado `X509Store` e integrado em `verifyCmsDetached`.
 
 ## 4. Testes e Validação
-- Criar testes unitários para cada nova funcionalidade implementada.
-- Validar interoperabilidade com arquivos reais (Certificado do Gov.br, etc).
-- `CryptoMixin`: Geração e carregamento de chaves.
-- `Asn1Mixin`: Encode/decode DER via APIs ASN.1 do OpenSSL.
-- `X509Mixin`: Operações de certificados.
+- Criado `test/validation_test.dart` cobrindo os 4 cenários principais.
 
 ---
 
-## 3. Estado da Implementação
+## 5. Histórico da Implementação
 
 ### Fase 1: Infraestrutura (Concluído)
 - [x] Loader Dinâmico (`openssl_lib.dart`).
@@ -84,10 +79,11 @@ Para evitar uma "God Class", as funcionalidades são separadas:
 - [x] Arquitetura de Mixins (`OpenSslContext`, `OpenSSL`).
 - [x] Mixin de IO (`BioMixin`) com testes.
 
-### Fase 2: Criptografia Core (Em Progresso)
+### Fase 2: Criptografia Core (Concluído)
 - [x] Wrapper `EvpPkey` refatorado para OO.
 - [x] Geração de Chaves RSA (via `CryptoMixin`).
 - [x] Exportação/Importação PEM (Privada/Pública).
+- [x] **Carregamento de Chaves Criptogradas (Senha)**.
 - [x] **Mixin de Assinatura (`SignatureMixin`)**.
     - Assinar dados (SHA256).
     - Verificar assinaturas.
@@ -101,49 +97,67 @@ Para evitar uma "God Class", as funcionalidades são separadas:
 ### Fase 4: PKI (X509) (Concluído)
 - [x] Implementar `X509Mixin`.
 - [x] Wrapper `X509Certificate`.
+    - [x] Getters: `subject`, `issuer`, `serialNumber`, `notBefore`, `notAfter`.
 - [x] Wrapper `X509Name` (Subject/Issuer).
 - [x] Builder de Certificados (`X509CertificateBuilder`).
     - [x] Self-Signed.
     - [x] Definição de Subject/Issuer.
     - [x] Assinatura.
+- [x] **Trust Store (`X509Store`)**.
 
-## 4. Próximos Passos (Possíveis Expansões)
+### Fase 5: CMS (PKCS#7) (Concluído)
+- [x] Implementar `CmsMixin`.
+- [x] **Digest Signing**: `signDetachedDigest` (Assinatura de Hash pré-calculado).
+- [x] Validação (`verifyCmsDetached`) com suporte a `X509Store`.
+
+## 6. Próximos Passos (Possíveis Expansões)
 1. **CSR (Certificate Signing Request)**: Permitir gerar `.csr` para enviar a uma CA real.
-2. **Assinatura de CA**: Permitir que uma chave CA assine um CSR ou um certificado de outra entidade.
-3. **Validação**: Verificar chain de certificados (Root -> Intermediate -> Leaf).
+2. **Escrita de Chaves Criptografadas**: Implementar `savePrivateKeyPem({String? password})`.
+3. **Validação de Cadeia Completa**: Expor detalhes da validação (erros específicos baseados na flag de verify).
+
+## 6. Próximos Passos (Expansão General Purpose - Substituir PointyCastle)
+
+Para tornar a library uma solução completa de criptografia, as seguintes funcionalidades serão implementadas:
+
+### 6.1. Criptografia Simétrica (AES)
+- [x] **AES-GCM**: Implementado e Testado (ver `test/cipher_test.dart` e `CipherMixin`).
+- **AES-CBC (Cipher Block Chaining)**: Suporte legado (com PKCS#7 padding).
+
+### 6.2. Derivação de Chaves (KDF)
+- [x] **PBKDF2**: Gerar chaves seguras a partir de chaves/senhas (`CryptoMixin.pbkdf2`).
+
+### 6.3. Hashing e MAC
+- [x] **Hashing Genérico**: `CryptoMixin.digest` (SHA-256, etc).
+- [x] **HMAC**: `CryptoMixin.hmac` (Autenticação de mensagens).
+
+### 6.4. Criptografia Assimétrica Moderna (ECC)
+- [x] **Chaves EC**: `CryptoMixin.generateEc` (Lookup dinâmico de funções de KDF/Keygen para OpenSSL 3).
+- **ECDH**: Troca de chaves Diffie-Hellman.
+
+## 7. Histórico da Implementação
+- implementar funcionalidades para converção de formatos de certificados como .crt, .der, .pem .p7b PEM, DER, CRT e CER, pfx PKCS12: Codificações e conversões X.509  Os formatos .pem, .crt, .der e .p7b são extensões comuns para arquivos de certificados digitais SSL/TLS .pem (Privacy-Enhanced Mail): Formato ASCII Base64 mais popular, frequentemente usado no Apache/Linux. Contém cabeçalhos -----BEGIN CERTIFICATE-----.
+.crt (Certificate): Similar ao PEM, usado comumente para certificados únicos. Pode conter dados PEM ou DER.
+.der (Distinguished Encoding Rules): Formato binário do certificado. Não é legível em editores de texto e é comum em plataformas Java.
+.p7b (PKCS#7): Arquivo ASCII Base64, usado principalmente no Windows/Java para armazenar apenas certificados (pública + intermediários), sem a chave privada. 
+Esses formatos podem ser convertidos entre si usando ferramentas como o OpenSSL. 
+ - [x] implementar conversão PEM/DER/CRT/CER e auto-detecção de bytes (X509)
+ - [x] implementar funcionalidades para extrair certificados de .p7b (PKCS#7/CMS)
+ - [x] implementar funcionalidades para ler/gravar PKCS#12/PFX
+ - [x] implementar funcionalidades para extrair informações de certificados ICP-BRASIL como nome, CPF, data de nascimento, politicas etc
+
+- [x] Expor extraCertsDer e hashAlgorithm diretamente em CmsMixin.signDetachedDigest (hoje isso só está em CmsPkcs7Signer, então o mixin não deixa incluir cadeia). Veja cms_mixin.dart e cms_pkcs7_signer.dart.
+- [x] Builder de extensões X.509 (SAN otherName, CRL/OCSP URLs, policies) para substituir o fluxo que hoje usa dart_pdf/basic_utils para emissão de certificados. Veja x509_builder.dart.
+- [x] Helpers utilitários para “cadeia PEM → lista de X509Certificate/DER” ( facilita substituir basic_utils).
 
 
-Com base na análise do seu código atual e do estado atual da biblioteca openssl_bindings, identifiquei as seguintes lacunas (APIs faltantes) que precisam ser implementadas para que você possa substituir pdfbox_dart, asn1lib e pointycastle:
+Possíveis lacunas de API para o seu cenário:
 
-1. Assinatura de Hash Pré-calculado (Para PAdES/PDF)
-O seu PdfAssinaturaInternaService calcula o hash do byte range do PDF (_computeByteRangeDigest) e pede para assinar esse digest.
+Extensões KeyUsage e ExtendedKeyUsage no builder de certificado não aparecem em x509_builder.dart. Isso é usado no seu código para CA/usuario, então vale implementar.
+CmsMixin.signDetached não expõe extraCertsDer/hashAlgorithm; você pode usar direto cms_pkcs7_signer.dart ou adicionar overload no mixin.
+Testes que eu adicionaria para ficar mais próximo do seu uso real:
 
-O que falta: A openssl_bindings atualmente suporta signDetached (que recebe o conteúdo completo e faz o hash internamente). Faltam métodos para assinar um hash já calculado (Digest Signing).
-Necessário implementar: Uma função que monte a estrutura CMS/PKCS#7 manualmente (usando CMS_sign com flag CMS_PARTIAL ou CMS_add1_signer) e insira o atributo autenticado messageDigest com o hash que você calculou no Dart.
-2. Leitura de Chaves Privadas Criptografadas
-Seu código atual usa pointycastle e PBKDF2 para decifrar chaves PEM manualmente (_decryptPrivateKeyPem).
-
-O que falta: Suporte a senha no método CryptoMixin.loadPrivateKeyPem.
-Necessário implementar: Atualizar o wrapper para aceitar um argumento password e passá-lo para a função nativa PEM_read_bio_PrivateKey (que já existe nos bindings, mas está sendo chamada com nullptr para a senha).
-3. Inspeção de Detalhes do Certificado X.509
-Seus controllers (GovBrAssinaturaController, ValidacaoAssinaturaController) extraem campos como Subject, Issuer, Serial Number, Common Name e datas de validade para exibir na tela e validar.
-
-O que falta: A classe X509Certificate atualmente só tem o método toPem().
-Necessário implementar: Getters na classe X509Certificate que chamem as funções nativas:
-subject (via X509_get_subject_name)
-issuer (via X509_get_issuer_name)
-serialNumber (via X509_get_serialNumber)
-notBefore / notAfter (via X509_get0_notBefore / X509_get0_notAfter)
-4. Validação de Cadeia com TrustStore Dinâmico
-Seu serviço de validação (AssinaturaValidacaoService) carrega listas de PEMs confiáveis (Gov.br, ICP-Brasil) dinamicamente.
-
-O que falta: O método verifyCmsDetached atual aceita apenas um único certificado confiável (trustedCertDer).
-Necessário implementar: Uma abstração de X509Store onde você possa adicionar múltiplos certificados (AC Raiz e Intermediárias) e passar essa store para a função de verificação.
-Resumo do Plano de Ação
-Para abandonar as outras libs, precisamos evoluir a openssl_bindings com:
-
-Wrapper de X509: Adicionar getters de texto (Subject, Issuer, Serial).
-Wrapper de Crypto: Suportar senha em loadPrivateKeyPem.
-Wrapper de CMS: Criar signDetachedDigest(digestBytes, ...)
-Store de Certificados: Permitir validação contra múltiplas raízes.
-Gostaria de começar implementando a leitura de detalhes do certificado (X509) ou prefere focar na assinatura do hash (CMS) primeiro?
+signDetachedDigest + verifyCmsDetached (incluindo cadeia) em cms_test.dart
+Falhas de validação com verifyCmsDetachedWithResult em cms_test.dart
+X.509 com SAN otherName + policies + (depois) KeyUsage/ExtendedKeyUsage em x509_certificate_builder_test.dart
+PKCS#12 com senha inválida em pkcs_test.dart
+Se quiser, implemento essas APIs e testes aqui.

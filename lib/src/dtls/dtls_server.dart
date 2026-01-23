@@ -507,29 +507,38 @@ class DtlsServerContext {
     final data = malloc.call<Pointer<UnsignedChar>>();
     final store = libSsl.SSL_CTX_get_cert_store(ctx);
 
-    for (final cert in certs) {
-      buf.cast<Uint8>().asTypedList(bufLen).setAll(0, cert.bytes);
-      data.value = buf;
-      final Pointer<X509> opensslCert;
-      switch (cert) {
-        case DerCertificate(:final bytes):
-          opensslCert = libCrypto.d2i_X509(nullptr, data, bytes.length);
-        case PemCertificate(:final bytes):
-          final bio = libCrypto.BIO_new(libCrypto.BIO_s_mem());
-          libCrypto.BIO_write(bio, buf.cast(), bytes.length);
-          opensslCert =
-              libCrypto.PEM_read_bio_X509(bio, nullptr, nullptr, nullptr);
-          libCrypto.BIO_free(bio);
+    try {
+      for (final cert in certs) {
+        buf.cast<Uint8>().asTypedList(bufLen).setAll(0, cert.bytes);
+        data.value = buf;
+        final Pointer<X509> opensslCert;
+        switch (cert) {
+          case DerCertificate(:final bytes):
+            opensslCert = libCrypto.d2i_X509(nullptr, data, bytes.length);
+          case PemCertificate(:final bytes):
+            final bio = libCrypto.BIO_new(libCrypto.BIO_s_mem());
+            if (bio == nullptr) {
+              throw OpenSslException('BIO_new failed while loading root certificate');
+            }
+            libCrypto.BIO_write(bio, buf.cast(), bytes.length);
+            opensslCert =
+                libCrypto.PEM_read_bio_X509(bio, nullptr, nullptr, nullptr);
+            libCrypto.BIO_free(bio);
+        }
+
+        if (opensslCert == nullptr) {
+          throw OpenSslException('Failed to parse root certificate');
+        }
+
+        libCrypto
+          ..X509_STORE_add_cert(store, opensslCert)
+          ..X509_free(opensslCert);
       }
-
-      libCrypto
-        ..X509_STORE_add_cert(store, opensslCert)
-        ..X509_free(opensslCert);
+    } finally {
+      malloc
+        ..free(data)
+        ..free(buf);
     }
-
-    malloc
-      ..free(data)
-      ..free(buf);
   }
 
   Pointer<SSL_CTX> _generateSslContext(OpenSsl libSsl, OpenSsl libCrypto) {

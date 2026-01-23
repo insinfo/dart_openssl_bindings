@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:openssl_bindings/src/api/openssl.dart';
-import 'package:openssl_bindings/src/x509/x509_name.dart';
 import 'package:openssl_bindings/src/x509/x509_builder.dart';
 import 'package:openssl_bindings/src/x509/x509_request_builder.dart';
 
@@ -22,12 +21,14 @@ void main() {
 
     // 2. Setup User & CSR
     final userKey = openssl.generateRsa(2048);
-    final userSubject = X509Name(openssl.bindings.X509_NAME_new(), openssl, isOwned: true);
-    userSubject.addEntry('CN', 'User 1');
-    userSubject.addEntry('C', 'US');
     
     final csrBuilder = X509RequestBuilder(openssl);
-    final csr = csrBuilder.build(subject: userSubject, keyPair: userKey);
+    csrBuilder.setSubject(
+      commonName: 'User 1',
+      country: 'US'
+    );
+    csrBuilder.setPublicKey(userKey);
+    final csr = csrBuilder.sign(userKey);
 
     // 3. Sign CSR to create User Cert
     final certBuilder = X509CertificateBuilder(openssl);

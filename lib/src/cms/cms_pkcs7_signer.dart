@@ -245,6 +245,130 @@ class CmsPkcs7Signer {
     }
   }
 
+  /// Generates a detached CMS/PKCS#7 signature (DER) using a precomputed hash
+  /// and a provided X509 pointer (avoids DER decoding).
+  Uint8List signDetachedDigestWithCert({
+    required Uint8List contentDigest,
+    required Pointer<X509> certificate,
+    required EvpPkey privateKey,
+    List<Uint8List> extraCertsDer = const [],
+    String hashAlgorithm = 'SHA256',
+  }) {
+    final bindings = _openSsl.bindings;
+
+    OpenSslException.clearError(bindings);
+
+    final extraCertPtrs = <Pointer<X509>>[];
+
+    Pointer<CMS_ContentInfo> cms = nullptr;
+    Pointer<CMS_SignerInfo> signerInfo = nullptr;
+    Pointer<ASN1_OBJECT> oidData = nullptr;
+    Pointer<ASN1_OBJECT> oidAttrContentType = nullptr;
+    Pointer<ASN1_OBJECT> oidAttrMessageDigest = nullptr;
+    Pointer<Uint8> digestPtr = nullptr;
+
+    try {
+      final md = _getDigestByName(hashAlgorithm);
+
+      cms = bindings.CMS_sign(
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        CMS_PARTIAL | CMS_BINARY | CMS_DETACHED,
+      );
+      if (cms == nullptr) {
+        throw OpenSslException('CMS_sign (partial) failed');
+      }
+
+      signerInfo = bindings.CMS_add1_signer(
+        cms,
+        certificate,
+        privateKey.handle,
+        md,
+        0,
+      );
+      if (signerInfo == nullptr) {
+        throw OpenSslException('CMS_add1_signer failed');
+      }
+
+      // Add extra certs if any.
+      for (final der in extraCertsDer) {
+        final extraPtr = _d2iX509(der);
+        extraCertPtrs.add(extraPtr);
+
+        OpenSslException.clearError(bindings);
+        SslObject.checkCode(
+          bindings,
+          bindings.CMS_add1_cert(cms, extraPtr),
+          msg: 'CMS_add1_cert (extra) failed',
+        );
+      }
+
+      oidData = _objFromText(_oidData);
+      oidAttrContentType = _objFromText(_oidAttrContentType);
+      oidAttrMessageDigest = _objFromText(_oidAttrMessageDigest);
+
+      OpenSslException.clearError(bindings);
+      SslObject.checkCode(
+        bindings,
+        bindings.CMS_signed_add1_attr_by_OBJ(
+          signerInfo,
+          oidAttrContentType,
+          V_ASN1_OBJECT,
+          oidData.cast(),
+          -1,
+        ),
+        msg: 'CMS_signed_add1_attr_by_OBJ (contentType) failed',
+      );
+
+      digestPtr = calloc<Uint8>(contentDigest.length);
+      digestPtr.asTypedList(contentDigest.length).setAll(0, contentDigest);
+
+      OpenSslException.clearError(bindings);
+      SslObject.checkCode(
+        bindings,
+        bindings.CMS_signed_add1_attr_by_OBJ(
+          signerInfo,
+          oidAttrMessageDigest,
+          V_ASN1_OCTET_STRING,
+          digestPtr.cast(),
+          contentDigest.length,
+        ),
+        msg: 'CMS_signed_add1_attr_by_OBJ (messageDigest) failed',
+      );
+
+      OpenSslException.clearError(bindings);
+      SslObject.checkCode(
+        bindings,
+        bindings.CMS_SignerInfo_sign(signerInfo),
+        msg: 'CMS_SignerInfo_sign failed',
+      );
+
+      OpenSslException.clearError(bindings);
+      return _i2dCms(cms);
+    } finally {
+      if (digestPtr != nullptr) {
+        calloc.free(digestPtr);
+      }
+      if (oidAttrMessageDigest != nullptr) {
+        bindings.ASN1_OBJECT_free(oidAttrMessageDigest);
+      }
+      if (oidAttrContentType != nullptr) {
+        bindings.ASN1_OBJECT_free(oidAttrContentType);
+      }
+      if (oidData != nullptr) {
+        bindings.ASN1_OBJECT_free(oidData);
+      }
+      if (cms != nullptr) {
+        bindings.CMS_ContentInfo_free(cms);
+      }
+      for (final p in extraCertPtrs) {
+        bindings.X509_free(p);
+      }
+    }
+  }
+
   Pointer<X509> _d2iX509(Uint8List der) {
     final dataPtr = calloc<Uint8>(der.length);
     dataPtr.asTypedList(der.length).setAll(0, der);

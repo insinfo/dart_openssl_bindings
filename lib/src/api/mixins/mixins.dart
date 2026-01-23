@@ -4,3 +4,5 @@ export 'asn1_mixin.dart';
 export 'cms_mixin.dart';
 export 'signature_mixin.dart';
 export 'x509_mixin.dart';
+export 'cipher_mixin.dart';
+export 'pkcs_mixin.dart';

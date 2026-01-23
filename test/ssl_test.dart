@@ -53,7 +53,7 @@ void main() {
       // Server Logic
       serverSocket.listen((clientSocket) async {
         try {
-          final secureSocket = SecureSocketOpenSSLAsync.serverFromSocket(
+          final secureSocket = SecureSocketOpenSslAsync.serverFromSocket(
             clientSocket,
             certFile: certPath,
             keyFile: keyPath,
@@ -91,7 +91,7 @@ void main() {
         // Let's rely on the fact that without CA configurations, OpenSSL might not verify,
         // or we expect failure `SSL_do_handshake result!=1`.
 
-        final client = await SecureSocketOpenSSLAsync.connect(
+        final client = await SecureSocketOpenSslAsync.connect(
           '127.0.0.1',
           port,
           eagerHandshake: true,
@@ -119,7 +119,7 @@ void main() {
       final port = serverSocket.port;
 
       serverSocket.listen((clientSocket) async {
-        final secureSocket = SecureSocketOpenSSLAsync.serverFromSocket(
+        final secureSocket = SecureSocketOpenSslAsync.serverFromSocket(
             clientSocket,
             certFile: certPath,
             keyFile: keyPath);
@@ -132,7 +132,7 @@ void main() {
       for (int i = 0; i < 5; i++) {
         clients.add(Future(() async {
           final socket =
-              await SecureSocketOpenSSLAsync.connect('127.0.0.1', port);
+              await SecureSocketOpenSslAsync.connect('127.0.0.1', port);
           final msg = 'Msg$i';
           await socket.send(Uint8List.fromList(msg.codeUnits));
           final echo = await socket.recv(100);

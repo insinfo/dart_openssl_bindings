@@ -8,114 +8,125 @@ import '../openssl.dart';
 import '../../generated/ffi.dart';
 import '../../infra/ssl_exception.dart';
 import '../../cms/cms_content.dart';
+import '../../cms/cms_pkcs7_signer.dart';
+import '../../cms/cms_validation_result.dart'; // import validation result
 import '../../x509/x509_certificate.dart';
 import '../../x509/x509_store.dart';
 import '../../crypto/evp_pkey.dart';
 
 /// Mixin for CMS/PKCS#7 high-level operations.
 mixin CmsMixin on OpenSslContext {
+  /// Generates a detached CMS/PKCS#7 signature (DER) for [content].
+  Uint8List signDetached({
+    required Uint8List content,
+    required X509Certificate certificate,
+    required EvpPkey privateKey,
+    List<Uint8List> extraCertsDer = const [],
+    String? hashAlgorithm,
+  }) {
+    if (hashAlgorithm != null && hashAlgorithm.isNotEmpty) {
+      final digestBytes = (this as OpenSSL)
+          .digest(hashAlgorithm, Uint8List.fromList(content));
+      final signer = CmsPkcs7Signer(this as OpenSSL);
+      return signer.signDetachedDigestWithCert(
+        contentDigest: digestBytes,
+        certificate: certificate.handle,
+        privateKey: privateKey,
+        extraCertsDer: extraCertsDer,
+        hashAlgorithm: hashAlgorithm,
+      );
+    }
+
+    final dataBio = _bioFromBytes(bindings, content);
+    final cms = bindings.CMS_sign(
+      certificate.handle,
+      privateKey.handle,
+      nullptr,
+      dataBio,
+      CMS_DETACHED | CMS_BINARY,
+    );
+
+    bindings.BIO_free(dataBio);
+
+    if (cms == nullptr) {
+      throw OpenSslException('CMS_sign failed');
+    }
+
+    final extraCertPtrs = <Pointer<X509>>[];
+
+    try {
+      // Ensure signer certificate is included in CMS.
+      OpenSslException.clearError(bindings);
+      if (bindings.CMS_add1_cert(cms, certificate.handle) != 1) {
+        throw OpenSslException('CMS_add1_cert failed for signer');
+      }
+
+      if (extraCertsDer.isNotEmpty) {
+        for (final der in extraCertsDer) {
+          final extraPtr = _d2iX509(bindings, der);
+          extraCertPtrs.add(extraPtr);
+          OpenSslException.clearError(bindings);
+          if (bindings.CMS_add1_cert(cms, extraPtr) != 1) {
+            throw OpenSslException('CMS_add1_cert failed for extra cert');
+          }
+        }
+      }
+
+      return encodeCms(CmsContent(cms, this as OpenSSL));
+    } catch (e) {
+      bindings.CMS_ContentInfo_free(cms);
+      rethrow;
+    } finally {
+      for (final p in extraCertPtrs) {
+        bindings.X509_free(p);
+      }
+    }
+  }
+
+  /// Generates a detached CMS/PKCS#7 signature and returns CmsContent.
+  CmsContent signDetachedContentInfo({
+    required Uint8List content,
+    required X509Certificate certificate,
+    required EvpPkey privateKey,
+  }) {
+    final dataBio = _bioFromBytes(bindings, content);
+    final cms = bindings.CMS_sign(
+      certificate.handle,
+      privateKey.handle,
+      nullptr,
+      dataBio,
+      CMS_DETACHED | CMS_BINARY,
+    );
+
+    bindings.BIO_free(dataBio);
+
+    if (cms == nullptr) {
+      throw OpenSslException('CMS_sign failed');
+    }
+
+    // Ensure signer certificate is included in CMS.
+    OpenSslException.clearError(bindings);
+    bindings.CMS_add1_cert(cms, certificate.handle);
+
+    return CmsContent(cms, this as OpenSSL);
+  }
   /// Generates a CMS/PKCS#7 signature for a pre-calculated [digest].
   /// [digest] must be the SHA-256 hash of the content (32 bytes).
   Uint8List signDetachedDigest({
     required Uint8List digest,
     required X509Certificate certificate,
     required EvpPkey privateKey,
+    List<Uint8List> extraCertsDer = const [],
+    String hashAlgorithm = 'SHA256',
   }) {
-    if (digest.length != 32) {
-       throw ArgumentError('Digest must be 32 bytes (SHA-256)');
-    }
-
-    // 1. Create Partial CMS
-    final cms = bindings.CMS_sign(
-      nullptr, 
-      nullptr, 
-      nullptr, 
-      nullptr, 
-      CMS_PARTIAL | CMS_DETACHED | CMS_BINARY
+    final signer = CmsPkcs7Signer(this as OpenSSL);
+    return signer.signDetachedDigestWithCert(
+      contentDigest: digest,
+      certificate: certificate.handle,
+      privateKey: privateKey,
+      extraCertsDer: extraCertsDer,
+      hashAlgorithm: hashAlgorithm,
     );
-    if (cms == nullptr) throw OpenSslException('CMS_sign init failed');
-
-    try {
-      // 2. Add Signer
-      final signCert = certificate.handle;
-      final pkey = privateKey.handle;
-      final sha256 = bindings.EVP_sha256();
-
-      // flag CMS_KEYID? or CMS_ISSUER_AND_SERIAL (default).
-      final si = bindings.CMS_add1_signer(cms, signCert, pkey, sha256, 0);
-      if (si == nullptr) throw OpenSslException('CMS_add1_signer failed');
-
-      if (bindings.CMS_add1_cert(cms, signCert) != 1) {
-         throw OpenSslException('CMS_add1_cert failed');
-      }
-
-      // 3. Add Attributes: Content-Type
-      final ctCStr = '1.2.840.113549.1.9.3'.toNativeUtf8(allocator: calloc);
-      final oidContentType = bindings.OBJ_txt2obj(ctCStr.cast(), 1); 
-      calloc.free(ctCStr);
-      if (oidContentType == nullptr) throw OpenSslException('Failed to create OID Content-Type');
-      
-      // pkcs7-data = 1.2.840.113549.1.7.1
-      final dataCStr = '1.2.840.113549.1.7.1'.toNativeUtf8(allocator: calloc);
-      final oidData = bindings.OBJ_txt2obj(dataCStr.cast(), 1);
-      calloc.free(dataCStr);
-      if (oidData == nullptr) throw OpenSslException('Failed to create OID Data');
-
-      final resultCT = bindings.CMS_signed_add1_attr_by_OBJ(
-        si, 
-        oidContentType, 
-        V_ASN1_OBJECT, 
-        oidData.cast(), 
-        -1
-      );
-      if (resultCT != 1) throw OpenSslException('Failed to add Content-Type attribute');
-      bindings.ASN1_OBJECT_free(oidContentType);
-      // oidData owned by attribute now? No, add1 copies.
-      bindings.ASN1_OBJECT_free(oidData);
-
-      // 4. Add Attributes: Message-Digest
-      final mdCStr = '1.2.840.113549.1.9.4'.toNativeUtf8(allocator: calloc);
-      final oidMsgDigest = bindings.OBJ_txt2obj(mdCStr.cast(), 1);
-      calloc.free(mdCStr);
-      if (oidMsgDigest == nullptr) throw OpenSslException('Failed to create OID Message-Digest');
-      
-      // We pass the raw bytes for V_ASN1_OCTET_STRING. 
-      // The function will create the ASN1_OCTET_STRING internally.
-      final digestPtr = calloc<Uint8>(digest.length);
-      final digestList = digestPtr.asTypedList(digest.length);
-      digestList.setAll(0, digest);
-
-      final resultMD = bindings.CMS_signed_add1_attr_by_OBJ(
-        si,
-        oidMsgDigest,
-        V_ASN1_OCTET_STRING,
-        digestPtr.cast(),
-        digest.length
-      );
-      
-      calloc.free(digestPtr);
-
-      if (resultMD != 1) throw OpenSslException('Failed to add Message-Digest attribute');
-      
-      bindings.ASN1_OBJECT_free(oidMsgDigest);
-      // bindings.ASN1_OCTET_STRING_free(digestOctet); // No longer used
-
-      // 5. Finalize (Sign attributes)
-      // Since attributes are present, CMS_final will sign them without hashing data.
-      // We pass nullptr as data.
-      if (bindings.CMS_final(cms, nullptr, nullptr, CMS_DETACHED | CMS_BINARY) != 1) {
-         final err = bindings.ERR_get_error();
-         final strPtr = bindings.ERR_error_string(err, nullptr);
-         final errMsg = strPtr == nullptr ? 'Unknown error' : strPtr.cast<Utf8>().toDartString();
-         throw OpenSslException('CMS_final failed: $errMsg ($err)');
-      }
-
-      // 6. Encode
-      return encodeCms(CmsContent(cms, this as OpenSSL));
-    } catch (e) {
-      bindings.CMS_ContentInfo_free(cms);
-      rethrow;
-    }
   }
 
   /// Decodes a DER CMS/PKCS#7 into a managed [CmsContent] wrapper.
@@ -192,10 +203,10 @@ mixin CmsMixin on OpenSslContext {
 
       final result = bindings.CMS_verify(
         cms,
-        nullptr,
+        nullptr, // certs (if we want to pass extra certs explicitly, but usually they are in cms or store)
         storePtr,
         dataBio,
-        nullptr,
+        nullptr, // out (we don't need output content)
         CMS_BINARY | CMS_DETACHED,
       );
 
@@ -213,6 +224,189 @@ mixin CmsMixin on OpenSslContext {
       if (cms != nullptr) {
         bindings.CMS_ContentInfo_free(cms);
       }
+    }
+  }
+
+  /// Verifies a detached CMS signature using a provided CmsContent.
+  bool verifyCmsDetachedContentInfo({
+    required CmsContent cms,
+    required Uint8List content,
+    X509Store? store,
+    Uint8List? trustedCertDer,
+    bool skipSignerCertVerify = false,
+  }) {
+    if (!skipSignerCertVerify && store == null && trustedCertDer == null) {
+      throw ArgumentError('Either store or trustedCertDer must be provided.');
+    }
+
+    final bindings = this.bindings;
+
+    Pointer<X509_STORE> tempStore = nullptr;
+    Pointer<X509> cert = nullptr;
+    Pointer<BIO> dataBio = nullptr;
+
+    try {
+      Pointer<X509_STORE> storePtr;
+
+      if (store != null) {
+        storePtr = store.handle;
+      } else if (trustedCertDer != null) {
+        cert = _d2iX509(bindings, trustedCertDer);
+        tempStore = bindings.X509_STORE_new();
+        if (tempStore == nullptr) {
+          throw OpenSslException('X509_STORE_new failed');
+        }
+        if (bindings.X509_STORE_add_cert(tempStore, cert) != 1) {
+          throw OpenSslException('X509_STORE_add_cert failed');
+        }
+        storePtr = tempStore;
+      } else {
+        // Signature-only verification without chain validation.
+        tempStore = bindings.X509_STORE_new();
+        if (tempStore == nullptr) {
+          throw OpenSslException('X509_STORE_new failed');
+        }
+        storePtr = tempStore;
+      }
+
+      dataBio = _bioFromBytes(bindings, content);
+
+      var flags = CMS_BINARY | CMS_DETACHED;
+      if (skipSignerCertVerify) {
+        flags |= CMS_NO_SIGNER_CERT_VERIFY;
+      }
+
+      final result = bindings.CMS_verify(
+        cms.handle,
+        nullptr,
+        storePtr,
+        dataBio,
+        nullptr,
+        flags,
+      );
+
+      return result == 1;
+    } finally {
+      if (dataBio != nullptr) bindings.BIO_free(dataBio);
+      if (tempStore != nullptr) bindings.X509_STORE_free(tempStore);
+      if (cert != nullptr) bindings.X509_free(cert);
+    }
+  }
+
+  /// Verifies only the signature (skips signer cert chain validation).
+  bool verifyCmsDetachedSignatureOnly({
+    required CmsContent cms,
+    required Uint8List content,
+  }) {
+    return verifyCmsDetachedContentInfo(
+      cms: cms,
+      content: content,
+      skipSignerCertVerify: true,
+    );
+  }
+
+  /// Verifies signature and signer certificate chain using [store].
+  bool verifyCmsDetachedFullChain({
+    required CmsContent cms,
+    required Uint8List content,
+    required X509Store store,
+  }) {
+    return verifyCmsDetachedContentInfo(
+      cms: cms,
+      content: content,
+      store: store,
+      skipSignerCertVerify: false,
+    );
+  }
+
+  /// Verifies a detached CMS/PKCS#7 signature and returns detailed result.
+  CmsValidationResult verifyCmsDetachedWithResult({
+    required Uint8List cmsDer,
+    required Uint8List content,
+    X509Store? store,
+    Uint8List? trustedCertDer,
+  }) {
+    final bindings = this.bindings;
+    
+    // Clear error queue before starting
+    while (bindings.ERR_get_error() != 0) {}
+
+    if (store == null && trustedCertDer == null) {
+      return CmsValidationResult(
+        isValid: false, 
+        errorMessage: 'Either store or trustedCertDer must be provided.'
+      );
+    }
+
+    Pointer<CMS_ContentInfo> cms = nullptr;
+    Pointer<X509_STORE> tempStore = nullptr;
+    Pointer<X509> cert = nullptr;
+    Pointer<BIO> dataBio = nullptr;
+    
+    // We need to capture errors if any step fails
+    int lastError = 0;
+    String? lastErrorMsg;
+
+    try {
+      // 1. Parse CMS
+      try {
+         cms = _d2iCms(bindings, cmsDer);
+      } catch (e) {
+         return CmsValidationResult(isValid: false, errorMessage: 'Invalid CMS structure: $e');
+      }
+      
+      Pointer<X509_STORE> storePtr;
+
+      if (store != null) {
+        storePtr = store.handle;
+      } else {
+        // Create temporary store for single cert
+        cert = _d2iX509(bindings, trustedCertDer!);
+        tempStore = bindings.X509_STORE_new();
+        if (tempStore == nullptr) {
+           return CmsValidationResult(isValid: false, errorMessage: 'Internal Error: X509_STORE_new failed');
+        }
+        bindings.X509_STORE_add_cert(tempStore, cert);
+        storePtr = tempStore;
+      }
+
+      dataBio = _bioFromBytes(bindings, content);
+
+      // 2. Verify
+      final result = bindings.CMS_verify(
+        cms,
+        nullptr,
+        storePtr,
+        dataBio,
+        nullptr,
+        CMS_BINARY | CMS_DETACHED,
+      );
+
+      if (result == 1) {
+        return CmsValidationResult(isValid: true);
+      } else {
+        // Capture Error
+        lastError = bindings.ERR_get_error();
+        
+        final strPtr = bindings.ERR_error_string(lastError, nullptr);
+        lastErrorMsg = strPtr == nullptr 
+             ? 'Unknown OpenSSL error' 
+             : strPtr.cast<Utf8>().toDartString();
+        
+        return CmsValidationResult(
+          isValid: false,
+          errorCode: lastError,
+          errorMessage: lastErrorMsg
+        );
+      }
+
+    } catch (e) {
+      return CmsValidationResult(isValid: false, errorMessage: 'Exception: $e');
+    } finally {
+      if (dataBio != nullptr) bindings.BIO_free(dataBio);
+      if (tempStore != nullptr) bindings.X509_STORE_free(tempStore);
+      if (cert != nullptr) bindings.X509_free(cert);
+      if (cms != nullptr) bindings.CMS_ContentInfo_free(cms);
     }
   }
 
@@ -251,6 +445,7 @@ mixin CmsMixin on OpenSslContext {
     }
     return cert;
   }
+
 
   Pointer<BIO> _bioFromBytes(OpenSsl bindings, Uint8List data) {
     final bio = bindings.BIO_new(bindings.BIO_s_mem());

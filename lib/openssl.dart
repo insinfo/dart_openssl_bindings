@@ -11,6 +11,8 @@ export 'src/crypto/evp_pkey.dart';
 
 /// X.509 & PKI
 export 'src/x509/x509_certificate.dart';
+export 'src/x509/icp_brasil_info.dart';
+export 'src/x509/x509_extensions.dart';
 export 'src/x509/x509_builder.dart';
 export 'src/x509/x509_request.dart';
 export 'src/x509/x509_request_builder.dart';
@@ -20,9 +22,18 @@ export 'src/x509/x509_name.dart';
 export 'src/cms/cms_content.dart';
 export 'src/cms/cms_pkcs7_signer.dart';
 
+/// PKCS bundles
+export 'src/pkcs/pkcs12_bundle.dart';
+
 /// TLS (TCP)
 export 'src/ssl/secure_socket_openssl_async.dart';
 export 'src/ssl/secure_socket_openssl_sync.dart';
+
+/// HTTP/HTTPS client
+export 'src/http/openssl_http_client.dart';
+
+/// HTTP/HTTPS server
+export 'src/http/openssl_http_server.dart';
 
 /// DTLS (UDP)
 export 'src/dtls/dtls_client.dart';

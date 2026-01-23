@@ -41,6 +41,7 @@ preamble: |
   // ignore_for_file: unused_field, lines_longer_than_80_chars
 functions:
   include:
+    # NOTE: CMS verification API layers added (no new OpenSSL symbols required).
     - BIO_ctrl
     - BIO_new
     - BIO_read
@@ -62,6 +63,7 @@ functions:
     - RSA_generate_key_ex
     - EVP_PKEY_CTX_new_from_name
     - EVP_PKEY_CTX_new_id
+    - EVP_PKEY_CTX_new
     - EVP_PKEY_CTX_free
     - EVP_PKEY_fromdata
     - EVP_PKEY_fromdata_init
@@ -136,6 +138,38 @@ functions:
     - CMS_final
     - CMS_ContentInfo_free
     - i2d_CMS_ContentInfo
+    - CMS_get1_certs
+    - X509_get_ext_d2i
+    - X509_NAME_get_index_by_OBJ
+    - X509_NAME_get_entry
+    - X509_NAME_ENTRY_get_object
+    - X509_NAME_ENTRY_get_data
+    - OBJ_txt2nid
+    - OBJ_obj2txt
+    - ASN1_STRING_length
+    - ASN1_STRING_get0_data
+    - GENERAL_NAMES_free
+    - POLICYINFO_free
+    - X509V3_set_ctx
+    - X509V3_set_ctx_nodb
+    - X509V3_EXT_nconf
+    - X509V3_EXT_conf_nid
+    - X509_EXTENSION_free
+    - X509_EXTENSION_create_by_OBJ
+    - X509_add_ext
+    - d2i_PKCS12
+    - i2d_PKCS12
+    - PKCS12_parse
+    - PKCS12_free
+    - PKCS12_create
+    - OPENSSL_sk_new_null
+    - OPENSSL_sk_push
+    - OPENSSL_sk_num
+    - OPENSSL_sk_value
+    - OPENSSL_sk_free
+    - OPENSSL_sk_pop_free
+    - X509_dup
+    - X509_up_ref
     - CMS_signed_add1_attr_by_OBJ
     - CMS_SignerInfo_sign
     - CMS_verify
@@ -181,6 +215,14 @@ functions:
     - OPENSSL_version_patch
     - SSL_CTX_set_security_level
     - PEM_read_bio_X509
+    # EC and Keygen
+    - EVP_PKEY_keygen_init
+    - EVP_PKEY_keygen
+    - EVP_PKEY_CTX_set_params
+    - EVP_PKEY_derive_init
+    - EVP_PKEY_derive_set_peer
+    - EVP_PKEY_derive
+    - PEM_write_bio_PKCS8PrivateKey
     # EVP Cipher functions for crypto comparison tests
     - EVP_CIPHER_CTX_new
     - EVP_CIPHER_CTX_free
@@ -261,9 +303,17 @@ macros:
     - CMS_BINARY
     - CMS_DETACHED
     - CMS_PARTIAL
+    - CMS_NO_SIGNER_CERT_VERIFY
     - V_ASN1_OBJECT
     - V_ASN1_OCTET_STRING
     - CMS_NOSMIMECAP
+    - GEN_OTHERNAME
+    - V_ASN1_UTF8STRING
+    - V_ASN1_PRINTABLESTRING
+    - V_ASN1_IA5STRING
+    - V_ASN1_GENERALSTRING
+    - V_ASN1_BMPSTRING
+    - V_ASN1_OCTET_STRING
 structs:
   include:
     - timeval

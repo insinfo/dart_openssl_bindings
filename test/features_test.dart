@@ -25,7 +25,6 @@ void main() {
       // Usually "CN=Test Cert,O=OpenSSL Dart" or similar depending on configuration.
       // But we just check if it contains our values.
       final subject = cert.subject;
-      print('Subject: $subject');
       expect(subject, contains('Test Cert'));
       expect(subject, contains('OpenSSL Dart'));
 
@@ -34,7 +33,6 @@ void main() {
           issuer, equals(subject)); // Since self-signed and setIssuerAsSubject
 
       final serial = cert.serialNumber;
-      print('Serial: $serial');
       expect(serial, equals('1')); // Default builder serial is 1
 
       expect(cert.version, equals(3));
