@@ -20,15 +20,12 @@ class X509Certificate extends SslObject<X509> {
   late final NativeFinalizer _finalizer;
 
   X509Certificate(Pointer<X509> ptr, this._context) : super(ptr) {
-    print(
-        'DEBUG: X509Certificate created wrapping ${ptr.address.toRadixString(16)}');
     final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
     _finalizer = NativeFinalizer(freePtr.cast());
     _finalizer.attach(this, ptr.cast(), detach: this);
   }
 
   void dispose() {
-    print('DEBUG: X509Certificate dispose ${handle.address.toRadixString(16)}');
     _finalizer.detach(this);
     _context.bindings.X509_free(handle);
   }

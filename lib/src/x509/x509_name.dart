@@ -20,12 +20,9 @@ class X509Name extends SslObject<X509_NAME> {
   X509Name(Pointer<X509_NAME> ptr, this._context, {bool isOwned = false}) 
       : _isOwned = isOwned, super(ptr) {
     if (_isOwned) {
-       print('DEBUG: X509Name created (OWNED) ${ptr.address.toRadixString(16)}');
       final freePtr = _context.lookup<Void Function(Pointer<X509_NAME>)>('X509_NAME_free');
       _finalizer = NativeFinalizer(freePtr.cast());
       _finalizer!.attach(this, ptr.cast(), detach: this);
-    } else {
-       print('DEBUG: X509Name created (BORROWED) ${ptr.address.toRadixString(16)}');
     }
   }
 
@@ -35,11 +32,8 @@ class X509Name extends SslObject<X509_NAME> {
     if (_isDisposed) return;
     _isDisposed = true;
     if (_isOwned) {
-      print('DEBUG: X509Name dispose (OWNED) ${handle.address.toRadixString(16)}');
       _finalizer?.detach(this);
       _context.bindings.X509_NAME_free(handle);
-    } else {
-       print('DEBUG: X509Name dispose (BORROWED) - Ignored');
     }
   }
 

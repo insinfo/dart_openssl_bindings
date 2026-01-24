@@ -44,17 +44,12 @@ void main() {
     final pem = userCert.toPem();
     expect(pem, startsWith('-----BEGIN CERTIFICATE-----'));
 
-    // Manual dispose to check for crash
-    print('DEBUG: Disposing userCert');
+    // Manual dispose
     userCert.dispose();
-    print('DEBUG: Disposing csr');
     csr.dispose();
-    print('DEBUG: Disposing caCert');
     caCert.dispose();
-    print('DEBUG: Disposing builders');
     caBuilder.dispose();
     csrBuilder.dispose();
     certBuilder.dispose();
-    print('DEBUG: Disposed all manually');
   });
 }
