@@ -8,10 +8,10 @@ import '../crypto/evp_pkey.dart';
 import '../infra/ssl_exception.dart';
 
 /// Builder for creating Certificate Signing Requests (CSR).
-class X509RequestBuilder implements Finalizable {
+class X509RequestBuilder /*implements Finalizable*/ {
   final OpenSSL _context;
   final Pointer<X509_REQ> _req;
-  late final NativeFinalizer _finalizer;
+  // late final NativeFinalizer _finalizer;
   bool _isDisposed = false;
   bool _isConsumed = false;
 
@@ -19,9 +19,9 @@ class X509RequestBuilder implements Finalizable {
     if (_req == nullptr) {
       throw OpenSslException('Failed to create X509_REQ');
     }
-    final freePtr = _context.lookup<Void Function(Pointer<X509_REQ>)>('X509_REQ_free');
-    _finalizer = NativeFinalizer(freePtr.cast());
-    _finalizer.attach(this, _req.cast(), detach: this);
+    // final freePtr = _context.lookup<Void Function(Pointer<X509_REQ>)>('X509_REQ_free');
+    // _finalizer = NativeFinalizer(freePtr.cast());
+    // _finalizer.attach(this, _req.cast(), detach: this);
     // Set Version (0 = v1, default)
     if (_context.bindings.X509_REQ_set_version(_req, 0) != 1) {
        // Should we throw here or just let it be?
@@ -92,7 +92,7 @@ class X509RequestBuilder implements Finalizable {
         // To be safe, let's just pass ownership and make the builder "invalid" or create a copy (X509_REQ_dup?).
         // Simple approach: Builder manages it until sign, then gives it to wrapper. Builder shouldn't be used after.
         
-        _finalizer.detach(this);
+        // _finalizer.detach(this);
         _isConsumed = true;
         return X509Request(_req, _context);
     } catch (e) {
@@ -106,7 +106,7 @@ class X509RequestBuilder implements Finalizable {
   /// Releases the underlying X509_REQ structure if the builder was not consumed.
   void dispose() {
     if (_isDisposed || _isConsumed) return;
-    _finalizer.detach(this);
+    // _finalizer.detach(this);
     _context.bindings.X509_REQ_free(_req);
     _isDisposed = true;
   }
