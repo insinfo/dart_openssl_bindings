@@ -19,7 +19,7 @@ class OpenSSL extends OpenSslContext
   ) : _loader = OpenSslBindings.load(cryptoPath: cryptoPath, sslPath: sslPath);
 
   @override
-  OpenSsl get bindings =>
+  OpenSslFfi get bindings =>
       _loader.crypto; // ou .ssl dependendo de onde está o simbolo
 
   @override

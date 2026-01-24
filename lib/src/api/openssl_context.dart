@@ -6,7 +6,7 @@ import '../openssl_loader.dart';
 /// Classes que usam os mixins devem implementar esta interface.
 abstract class OpenSslContext {
   /// Acesso aos bindings brutos gerados.
-  ffi.OpenSsl get bindings;
+  ffi.OpenSslFfi get bindings;
   
   /// Acesso ao loader/configuração (opcional, se precisarmos de caminhos).
   OpenSslBindings get loader;

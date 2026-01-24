@@ -410,7 +410,7 @@ mixin CmsMixin on OpenSslContext {
     }
   }
 
-  Pointer<CMS_ContentInfo> _d2iCms(OpenSsl bindings, Uint8List der) {
+  Pointer<CMS_ContentInfo> _d2iCms(OpenSslFfi bindings, Uint8List der) {
     final dataPtr = calloc<Uint8>(der.length);
     dataPtr.asTypedList(der.length).setAll(0, der);
 
@@ -428,7 +428,7 @@ mixin CmsMixin on OpenSslContext {
     return cms;
   }
 
-  Pointer<X509> _d2iX509(OpenSsl bindings, Uint8List der) {
+  Pointer<X509> _d2iX509(OpenSslFfi bindings, Uint8List der) {
     final dataPtr = calloc<Uint8>(der.length);
     dataPtr.asTypedList(der.length).setAll(0, der);
 
@@ -447,7 +447,7 @@ mixin CmsMixin on OpenSslContext {
   }
 
 
-  Pointer<BIO> _bioFromBytes(OpenSsl bindings, Uint8List data) {
+  Pointer<BIO> _bioFromBytes(OpenSslFfi bindings, Uint8List data) {
     final bio = bindings.BIO_new(bindings.BIO_s_mem());
     if (bio == nullptr) {
       throw OpenSslException('BIO_new failed');

@@ -16,8 +16,8 @@ class OpenSslBindings {
 
   final ffi.DynamicLibrary cryptoLibrary;
   final ffi.DynamicLibrary sslLibrary;
-  final OpenSsl crypto;
-  final OpenSsl ssl;
+  final OpenSslFfi crypto;
+  final OpenSslFfi ssl;
   final bool supportsFromDataKeygen;
 
   /// Attempts to load libssl/libcrypto using the provided overrides and
@@ -50,8 +50,8 @@ class OpenSslBindings {
     return OpenSslBindings._(
       cryptoLib,
       sslLib,
-      OpenSsl(cryptoLib),
-      OpenSsl(sslLib),
+      OpenSslFfi(cryptoLib),
+      OpenSslFfi(sslLib),
       supportsFromData,
     );
   }
@@ -74,13 +74,13 @@ class OpenSslBindings {
   }
 }
 
-final OpenSsl _defaultLibSsl = _createDefaultBinding(
+final OpenSslFfi _defaultLibSsl = _createDefaultBinding(
   description: 'libssl',
   envVar: 'OPENSSL_LIBSSL_PATH',
   candidates: _sslCandidates(),
 );
 
-final OpenSsl _defaultLibCrypto = _createDefaultBinding(
+final OpenSslFfi _defaultLibCrypto = _createDefaultBinding(
   description: 'libcrypto',
   envVar: 'OPENSSL_LIBCRYPTO_PATH',
   candidates: _cryptoCandidates(),
@@ -89,22 +89,22 @@ final OpenSsl _defaultLibCrypto = _createDefaultBinding(
 /// Tries to load libcrypto from a [dynamicLibrary].
 ///
 /// If that fails, the function tries to load libcrypto from a default location.
-OpenSsl loadLibCrypto(ffi.DynamicLibrary? dynamicLibrary, {String? path}) {
-  if (dynamicLibrary != null) return OpenSsl(dynamicLibrary);
-  if (path != null) return OpenSsl(ffi.DynamicLibrary.open(path));
+OpenSslFfi loadLibCrypto(ffi.DynamicLibrary? dynamicLibrary, {String? path}) {
+  if (dynamicLibrary != null) return OpenSslFfi(dynamicLibrary);
+  if (path != null) return OpenSslFfi(ffi.DynamicLibrary.open(path));
   return _defaultLibCrypto;
 }
 
 /// Tries to load libssl from a [dynamicLibrary].
 ///
 /// If that fails, the function tries to load libssl from a default location.
-OpenSsl loadLibSsl(ffi.DynamicLibrary? dynamicLibrary, {String? path}) {
-  if (dynamicLibrary != null) return OpenSsl(dynamicLibrary);
-  if (path != null) return OpenSsl(ffi.DynamicLibrary.open(path));
+OpenSslFfi loadLibSsl(ffi.DynamicLibrary? dynamicLibrary, {String? path}) {
+  if (dynamicLibrary != null) return OpenSslFfi(dynamicLibrary);
+  if (path != null) return OpenSslFfi(ffi.DynamicLibrary.open(path));
   return _defaultLibSsl;
 }
 
-OpenSsl _createDefaultBinding({
+OpenSslFfi _createDefaultBinding({
   required String description,
   required String envVar,
   required List<String> candidates,
@@ -114,7 +114,7 @@ OpenSsl _createDefaultBinding({
     explicitPath: Platform.environment[envVar],
     candidates: candidates,
   );
-  return OpenSsl(lib);
+  return OpenSslFfi(lib);
 }
 
 ffi.DynamicLibrary _loadDynamicLibrary({

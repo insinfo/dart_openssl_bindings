@@ -53,9 +53,9 @@ class DtlsServer extends Stream<DtlsConnection> {
 
   final Pointer<SSL_CTX> _sslContext;
 
-  final OpenSsl _libSsl;
+  final OpenSslFfi _libSsl;
 
-  final OpenSsl _libCrypto;
+  final OpenSslFfi _libCrypto;
 
   final _connectionStream = StreamController<_DtlsServerConnection>();
 
@@ -282,9 +282,9 @@ class _DtlsServerConnection extends Stream<Datagram> with DtlsConnection {
 
   Timer? _timer;
 
-  final OpenSsl _libSsl;
+  final OpenSslFfi _libSsl;
 
-  final OpenSsl _libCrypto;
+  final OpenSslFfi _libCrypto;
 
   Future<void> _performShutdown([Exception? exception]) async {
     await close();
@@ -498,8 +498,8 @@ class DtlsServerContext {
   void _addRoots(
     List<Certificate> certs,
     Pointer<SSL_CTX> ctx,
-    OpenSsl libSsl,
-    OpenSsl libCrypto,
+    OpenSslFfi libSsl,
+    OpenSslFfi libCrypto,
   ) {
     if (certs.isEmpty) return;
     final bufLen = certs.map((c) => c.bytes.length).reduce(max);
@@ -541,7 +541,7 @@ class DtlsServerContext {
     }
   }
 
-  Pointer<SSL_CTX> _generateSslContext(OpenSsl libSsl, OpenSsl libCrypto) {
+  Pointer<SSL_CTX> _generateSslContext(OpenSslFfi libSsl, OpenSslFfi libCrypto) {
     final ctx = libSsl.SSL_CTX_new(libSsl.DTLS_server_method());
 
     if (_withTrustedRoots) {

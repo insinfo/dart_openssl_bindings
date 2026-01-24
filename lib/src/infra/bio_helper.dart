@@ -16,14 +16,14 @@ class Bio extends SslObject<BIO> {
     OpenSslLib.lookup<Void Function(Pointer<BIO>)>('BIO_free').cast(),
   );
 
-  final OpenSsl _openSsl;
+  final OpenSslFfi _openSsl;
 
   Bio._(this._openSsl, Pointer<BIO> ptr) : super(ptr) {
     attachFinalizer(_finalizer, ptr.cast());
   }
 
   /// Creates a BIO from a memory buffer (Uint8List).
-  factory Bio.fromBytes(OpenSsl openSsl, Uint8List bytes) {
+  factory Bio.fromBytes(OpenSslFfi openSsl, Uint8List bytes) {
     // We need to copy bytes to C memory because BIO_new_mem_buf can take a read-only buffer,
     // but if we want it to be safe, we might allocate.
     // However, BIO_new_mem_buf(buf, len) doesn't copy if len is positive? 
@@ -52,11 +52,11 @@ class Bio extends SslObject<BIO> {
   }
 
   /// Creates a BIO from a String (utf8).
-  factory Bio.fromString(OpenSsl openSsl, String text) {
+  factory Bio.fromString(OpenSslFfi openSsl, String text) {
     return Bio.fromBytes(openSsl, Uint8List.fromList(text.codeUnits)); // Simple ASCII/UTF8
   }
   
-  factory Bio.empty(OpenSsl openSsl) {
+  factory Bio.empty(OpenSslFfi openSsl) {
      final bio = openSsl.BIO_new(openSsl.BIO_s_mem());
      if (bio == nullptr) throw OpenSslException('Failed to create BIO');
      return Bio._(openSsl, bio);

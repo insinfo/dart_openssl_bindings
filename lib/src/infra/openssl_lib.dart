@@ -4,11 +4,11 @@ import '../generated/ffi.dart';
 
 /// Singleton that manages loading the OpenSSL Dynamic Library.
 class OpenSslLib {
-  static OpenSsl? _instance;
+  static OpenSslFfi? _instance;
   static DynamicLibrary? _dylib;
 
   /// Access the generated OpenSSL bindings.
-  static OpenSsl get instance {
+  static OpenSslFfi get instance {
     if (_instance == null) {
       _load();
     }
@@ -18,7 +18,7 @@ class OpenSslLib {
   /// Explicitly initializes the library with a specific path if needed.
   static void init(String path) {
     _dylib = DynamicLibrary.open(path);
-    _instance = OpenSsl(_dylib!);
+    _instance = OpenSslFfi(_dylib!);
     _initCrypto();
   }
 
@@ -46,7 +46,7 @@ class OpenSslLib {
     for (final name in names) {
       try {
         _dylib = DynamicLibrary.open(name);
-        _instance = OpenSsl(_dylib!);
+        _instance = OpenSslFfi(_dylib!);
         return;
       } catch (e) {
         // Try next

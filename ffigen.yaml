@@ -2,7 +2,7 @@
 # https://slproweb.com/products/Win32OpenSSL.html
 # https://slproweb.com/download/Win64OpenSSL-3_6_0.msi
 # C:\Program Files\OpenSSL-Win64
-name: OpenSsl
+name: OpenSslFfi
 description: Bindings to OpenSSL for Dart.
 output: 'lib/src/generated/ffi.dart'
 llvm-path:

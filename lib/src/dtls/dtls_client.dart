@@ -33,7 +33,7 @@ class DtlsClient {
   /// Creates a new [DtlsClient] that uses a pre-existing [RawDatagramSocket].
   ///
   /// If you want to load [libSsl] or [libCrypto] yourself (e.g., from a custom
-  /// path), you can pass custom [OpenSsl] objects to this constructor.
+  /// path), you can pass custom [OpenSslFfi] objects to this constructor.
   DtlsClient(
     this._socket, {
     DynamicLibrary? libSsl,
@@ -51,7 +51,7 @@ class DtlsClient {
   /// [reusePort], [reuseAddress], and [ttl] arguments to it.
   ///
   /// If you want to load [libSsl] or [libCrypto] yourself (e.g., from a custom
-  /// path), you can pass custom [OpenSsl] objects to this constructor.
+  /// path), you can pass custom [OpenSslFfi] objects to this constructor.
   static Future<DtlsClient> bind(
     dynamic host,
     int port, {
@@ -111,9 +111,9 @@ class DtlsClient {
   /// Maps OpenSSL sessions to [_DtlsClientConnection]s.
   static final Map<int, _DtlsClientConnection> _connections = {};
 
-  final OpenSsl _libSsl;
+  final OpenSslFfi _libSsl;
 
-  final OpenSsl _libCrypto;
+  final OpenSslFfi _libCrypto;
 
   /// Closes this [DtlsClient].
   ///
@@ -256,8 +256,8 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
     int port,
     Pointer<SSL_CTX> sslContext,
     PskCredentialsCallback? pskCredentialsCallback,
-    OpenSsl libCrypto,
-    OpenSsl libSsl, {
+    OpenSslFfi libCrypto,
+    OpenSslFfi libSsl, {
     Duration? timeout,
   }) async {
     final connectCompleter = Completer<_DtlsClientConnection>();
@@ -313,9 +313,9 @@ class _DtlsClientConnection extends Stream<Datagram> with DtlsConnection {
 
   Timer? _timer;
 
-  final OpenSsl _libSsl;
+  final OpenSslFfi _libSsl;
 
-  final OpenSsl _libCrypto;
+  final OpenSslFfi _libCrypto;
 
   @override
   ConnectionState state = ConnectionState.uninitialized;
@@ -680,8 +680,8 @@ class DtlsClientContext {
   void _addRoots(
     List<Certificate> certs,
     Pointer<SSL_CTX> ctx,
-    OpenSsl libSsl,
-    OpenSsl libCrypto,
+    OpenSslFfi libSsl,
+    OpenSslFfi libCrypto,
   ) {
     if (certs.isEmpty) return;
     final bufLen = certs.map((c) => c.bytes.length).reduce(max);
@@ -724,8 +724,8 @@ class DtlsClientContext {
   }
 
   Pointer<SSL_CTX> _generateSslContext(
-    OpenSsl libSsl,
-    OpenSsl libCrypto,
+    OpenSslFfi libSsl,
+    OpenSslFfi libCrypto,
   ) {
     final ctx = libSsl.SSL_CTX_new(libSsl.DTLS_client_method());
 

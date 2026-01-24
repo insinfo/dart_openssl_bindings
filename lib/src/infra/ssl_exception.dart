@@ -21,7 +21,7 @@ class OpenSslException implements Exception {
 
   /// Checks the OpenSSL error queue. If there are errors, throws an SslException.
   /// Should be called after a C function returns a failure code.
-  static void checkError(OpenSsl lib,
+  static void checkError(OpenSslFfi lib,
       {String? function, bool throwIfError = true}) {
     // Get the most recent error
     final code = lib.ERR_get_error();
@@ -41,7 +41,7 @@ class OpenSslException implements Exception {
   }
 
   /// Clears the error queue.
-  static void clearError(OpenSsl lib) {
+  static void clearError(OpenSslFfi lib) {
     while (lib.ERR_get_error() != 0) {}
   }
 }

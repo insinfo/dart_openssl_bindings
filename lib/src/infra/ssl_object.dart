@@ -32,7 +32,7 @@ abstract class SslObject<T extends NativeType> implements Finalizable {
 
   /// Helper to check OpenSSL result codes.
   /// Standard OpenSSL convention: 1 is success, 0 is failure (e.g. signature verify), <0 is error.
-  static void checkCode(OpenSsl lib, int result, {String msg = 'Operation failed'}) {
+  static void checkCode(OpenSslFfi lib, int result, {String msg = 'Operation failed'}) {
     if (result <= 0) {
       // Retrieve the error from OpenSSL error queue
       final errorCode = lib.ERR_get_error();

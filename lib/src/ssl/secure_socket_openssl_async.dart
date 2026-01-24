@@ -120,8 +120,8 @@ class SecureSocketOpenSslAsync {
   final bool _useCallbacks;
   final bool _isServer;
   final Logger _logger;
-  late final OpenSsl _openSsl;
-  late final OpenSsl _openSslCrypto;
+  late final OpenSslFfi _openSsl;
+  late final OpenSslFfi _openSslCrypto;
   ffi.Pointer<ssl_ctx_st>? _ctx;
   ffi.Pointer<ssl_st>? _ssl;
   ffi.Pointer<BIO>? _networkReadBio;
