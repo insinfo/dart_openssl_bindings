@@ -36,4 +36,15 @@
   - Refactored native buffer utilities.
   - Updated FFI bindings.
   
-## 0.2.1 
+## 0.3.0 
+
+- **Breaking change**: Renamed the generated FFI bindings class from `OpenSsl` to `OpenSslFfi` for clarity.
+- **Critical fix**: Resolved heap corruption on Linux caused by the `struct tm` size mismatch between Windows and Linux when calling `ASN1_TIME_to_tm`.
+  - Windows `struct tm` is 36 bytes; Linux/glibc is larger due to `tm_gmtoff` and `tm_zone`.
+  - Added platform-specific `tm` sizing and safe allocation to prevent buffer overflows.
+- **Memory safety**:
+  - Re-enabled and audited `NativeFinalizer` usage across key wrappers.
+  - Fixed missing finalizer attachment in the base `SslObject` helper.
+- **CI/Testing**:
+  - Added memory-safety regression test for repeated `ASN1_TIME_to_tm` parsing.
+  - Linux CI now uses `MALLOC_CHECK_` and `MALLOC_PERTURB_` for earlier detection of heap corruption.
