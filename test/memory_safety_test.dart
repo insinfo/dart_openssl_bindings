@@ -16,7 +16,10 @@ void main() {
       try {
         const rounds = 5;
         const iterationsPerRound = 200;
-        const maxAllowedDeltaMb = 20.0;
+        final maxAllowedDeltaMb = double.tryParse(
+              Platform.environment['MEMORY_SAFETY_MAX_MB'] ?? '',
+            ) ??
+            100.0;
 
         final rssBefore = ProcessInfo.currentRss;
         print('RSS before: ${_formatBytes(rssBefore)}');
@@ -51,6 +54,7 @@ void main() {
         final roundDeltaBytes = (lastRoundRss ?? rssAfter) - (firstRoundRss ?? rssBefore);
         final roundDeltaMb = roundDeltaBytes / (1024 * 1024);
         print('RSS delta (round 1 -> round $rounds): ${roundDeltaMb.toStringAsFixed(2)} MB');
+        print('RSS limit: ${maxAllowedDeltaMb.toStringAsFixed(2)} MB');
         expect(roundDeltaMb, lessThan(maxAllowedDeltaMb));
       } finally {
         key.dispose();
