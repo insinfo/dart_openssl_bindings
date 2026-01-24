@@ -27,7 +27,7 @@ abstract class SslObject<T extends NativeType> implements Finalizable {
   /// calls [freeFunc] on [_ptr] when this object is GC'd.
   @protected
   void attachFinalizer(NativeFinalizer finalizer, Pointer<Void> token, {int? externalSize}) {
-    finalizer.attach(this, token, detach: this, externalSize: externalSize);
+    // finalizer.attach(this, token, detach: this, externalSize: externalSize);
   }
 
   /// Helper to check OpenSSL result codes.

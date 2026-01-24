@@ -13,18 +13,18 @@ const int BIO_CTRL_PENDING = 10;
 /// Wrapper around OpenSSL X509 (Certificate).
 class X509Certificate extends SslObject<X509> {
   final OpenSSL _context;
-  late final NativeFinalizer _finalizer;
+  // late final NativeFinalizer _finalizer;
 
   X509Certificate(Pointer<X509> ptr, this._context) : super(ptr) {
     print('DEBUG: X509Certificate created wrapping ${ptr.address.toRadixString(16)}');
-    final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
-    _finalizer = NativeFinalizer(freePtr.cast());
-    attachFinalizer(_finalizer, ptr.cast());
+    // final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
+    // _finalizer = NativeFinalizer(freePtr.cast());
+    // attachFinalizer(_finalizer, ptr.cast());
   }
 
   void dispose() {
     print('DEBUG: X509Certificate dispose ${handle.address.toRadixString(16)}');
-    _finalizer.detach(this);
+    // _finalizer.detach(this);
     _context.bindings.X509_free(handle);
   }
 
