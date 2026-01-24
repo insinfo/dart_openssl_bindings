@@ -9,7 +9,7 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
 ### Infraestrutura e Segurança
 *   **Carregamento Flexível**: Carrega `libcrypto` e `libssl` do sistema (PATH), de variáveis de ambiente, ou de **caminhos explícitos** definidos em tempo de execução.
 *   **Memory Safety**: Gerenciamento automático de memória para estruturas nativas (BIOs, X509, EVP_PKEY, Strings), prevenindo leaks.
-*   **GitHub Actions**: Testes automatizados em Windows.
+*   **GitHub Actions**: Testes automatizados em Windows e Linux.
 
 ### X.509 e PKI
 *   **Parsing Completo**: Leitura de versão, serial, validade (`notBefore`, `notAfter` com parsing robusto via `tm` struct), Subject, Issuer.
@@ -27,8 +27,8 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
     *   Assinatura de Digests pré-calculados (para fluxos de "Network Restocking").
 
 ### Networking Seguro (TLS & DTLS)
-*   **TLS Assíncrono**: `SecureSocketOpenSSLAsync` (API similar a `dart:io`).
-*   **TLS Síncrono**: `SecureSocketOpenSSLSync` (blocado, útil para tunnels/proxies).
+*   **TLS Assíncrono**: `SecureSocketOpenSslAsync` (API similar a `dart:io`).
+*   **TLS Síncrono**: `SecureSocketOpenSslSync` (blocado, útil para tunnels/proxies).
 *   **DTLS 1.2+**: `DtlsClient` e `DtlsServer` sobre UDP.
 *   **Path Injection**: Todos os sockets aceitam caminhos customizados para `libcrypto` e `libssl`, facilitando o deploy embarcado.
 
@@ -54,7 +54,7 @@ Requer **OpenSSL 3.0+**. No Windows, instale via [Win64OpenSSL](https://slproweb
 A classe `OpenSSL` é o ponto de entrada. Você pode especificar onde as DLLs estão localizadas:
 
 ```dart
-import 'package:openssl_bindings/src/api/openssl.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 // Uso padrão (busca no PATH ou variáveis de ambiente)
 final openssl = OpenSSL();
@@ -71,36 +71,34 @@ final opensslCustom = OpenSSL(
 Parsing robusto de datas e versão:
 
 ```dart
-final cert = openssl.x509FromPem(pemString);
+final cert = openssl.loadCertificatePem(pemString);
 
 print("Versão: ${cert.version}"); // Ex: 3
 print("Serial: ${cert.serialNumber}");
 print("Válido de: ${cert.notBefore} até ${cert.notAfter}");
 
 // Acesso ao Subject/Issuer como Strings formatadas
-print("Subject: ${cert.subject.debugString()}"); 
+print("Subject: ${cert.subject}"); 
 ```
 
 ### 3. Gerando Certificados (Builder)
 
 ```dart
-import 'package:openssl_bindings/src/x509/x509_builder.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 // 1. Gerar Chave
-final key = openssl.generateRsaKey(2048);
+final key = openssl.generateRsa(2048);
 
 // 2. Configurar Builder
 final builder = X509CertificateBuilder(openssl)
   ..setSerialNumber(123456)
-  ..setVersion(3)
-  ..setValidity(days: 365)
+  ..setValidity(notBeforeOffset: 0, notAfterOffset: 31536000)
   ..setSubject(commonName: 'MyApp Root CA', country: 'BR')
   ..setIssuerAsSubject() // Self-Signed
   ..setPublicKey(key);
 
 // 3. Assinar e Exportar
-builder.sign(key, digest: 'sha256');
-final cert = builder.build();
+final cert = builder.sign(key, hashAlgorithm: 'SHA256');
 
 print(cert.toPem());
 ```
@@ -110,7 +108,7 @@ print(cert.toPem());
 Para assinar documentos (PDF/PAdES) ou dados genéricos:
 
 ```dart
-import 'package:openssl_bindings/src/cms/cms_pkcs7_signer.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 final signer = CmsPkcs7Signer(openssl);
 
@@ -135,7 +133,7 @@ final sigFromHash = signer.signDetachedDigest(
 Exemplo de Cliente DTLS injetando caminhos das bibliotecas:
 
 ```dart
-import 'package:openssl_bindings/src/dtls/dtls_client.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 void main() async {
   final client = DtlsClient(
@@ -161,10 +159,10 @@ void main() async {
 ### 6. TLS TCP Assíncrono
 
 ```dart
-import 'package:openssl_bindings/src/ssl/secure_socket_openssl_async.dart';
+import 'package:openssl_bindings/openssl.dart';
 
 // Factory aceita caminhos opcionais também
-final socket = await SecureSocketOpenSSLAsync.connect(
+final socket = await SecureSocketOpenSslAsync.connect(
   'google.com', 443,
   // cryptoPath: ..., sslPath: ...
 );
@@ -265,11 +263,11 @@ O FFI gerado pelo ffigen (baseado nos headers do Windows) declarava apenas os 9 
 
 **Por que o crash acontecia "depois":** A corrupção de heap é silenciosa no momento da escrita. O erro só aparece quando o allocator tenta liberar ou usar um bloco adjacente mais tarde, causando o típico `free(): invalid next size`.
 
-**Correção:** Criamos structs `PlatformTm` específicas para cada plataforma em [lib/src/utils/](lib/src/utils/):
+**Correção:** Criamos structs específicas por plataforma e usamos o tamanho delas apenas para alocação segura.
 
 ```dart
-// lib/src/utils/tm_unix.dart - struct com campos extras do glibc
-final class PlatformTm extends Struct {
+// lib/src/utils/tm_unix.dart
+final class TmUnix extends Struct {
   @Int32() external int tm_sec;
   @Int32() external int tm_min;
   @Int32() external int tm_hour;
@@ -279,32 +277,41 @@ final class PlatformTm extends Struct {
   @Int32() external int tm_wday;
   @Int32() external int tm_yday;
   @Int32() external int tm_isdst;
-  @Int64() external int tm_gmtoff;      // extensão glibc/BSD
-  external Pointer<Void> tm_zone;        // extensão glibc/BSD
+  @IntPtr() external int tm_gmtoff; // long
+  external Pointer<Utf8> tm_zone;  // char*
+}
+
+// lib/src/utils/tm_windows.dart
+final class TmWindows extends Struct {
+  @Int32() external int tm_sec;
+  @Int32() external int tm_min;
+  @Int32() external int tm_hour;
+  @Int32() external int tm_mday;
+  @Int32() external int tm_mon;
+  @Int32() external int tm_year;
+  @Int32() external int tm_wday;
+  @Int32() external int tm_yday;
+  @Int32() external int tm_isdst;
 }
 ```
 
-Uso no código:
+Uso no código (alocação baseada no `sizeOf` da struct correta):
 ```dart
-import '../utils/platform_tm.dart';
+int _tmNativeBytes() {
+  if (Platform.isWindows) return sizeOf<TmWindows>();
+  return sizeOf<TmUnix>();
+}
 
-// Aloca com tamanho correto para a plataforma (~56 bytes no Linux)
-final tmPtr = calloc<PlatformTm>();
-
-// Cast para Pointer<tm> ao chamar OpenSSL (layout dos 9 primeiros campos é idêntico)
-bindings.ASN1_TIME_to_tm(timePtr, tmPtr.cast<tm>());
-
-// Lê os campos normalmente
-final year = tmPtr.ref.tm_year + 1900;
-
-calloc.free(tmPtr);
+Pointer<tm> _allocTmCompat() {
+  final raw = calloc<Uint8>(_tmNativeBytes());
+  return raw.cast<tm>();
+}
 ```
 
 **Arquivos:**
-- [lib/src/utils/platform_tm.dart](lib/src/utils/platform_tm.dart) - export condicional
-- [lib/src/utils/tm_unix.dart](lib/src/utils/tm_unix.dart) - struct Unix/Linux (56 bytes)
-- [lib/src/utils/tm_windows.dart](lib/src/utils/tm_windows.dart) - struct Windows (36 bytes)
-- [lib/src/x509/x509_certificate.dart](lib/src/x509/x509_certificate.dart) - uso em `_parseAsn1Time`
+- [lib/src/utils/tm_unix.dart](lib/src/utils/tm_unix.dart) - struct Unix/Linux
+- [lib/src/utils/tm_windows.dart](lib/src/utils/tm_windows.dart) - struct Windows
+- [lib/src/x509/x509_certificate.dart](lib/src/x509/x509_certificate.dart) - uso em `_allocTmCompat` e `_tmNativeBytes`
 
 **Script de demonstração:** [script/demonstrate_tm_bug.dart](script/demonstrate_tm_bug.dart)
 

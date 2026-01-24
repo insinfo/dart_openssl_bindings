@@ -28,8 +28,8 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
     *   **Verification**: Verify CMS signatures against Trusted Root stores.
 
 ### Secure Networking (TLS & DTLS)
-*   **Async TLS**: `SecureSocketOpenSSLAsync` (API compatible with `dart:io` Socket).
-*   **Sync TLS**: `SecureSocketOpenSSLSync` (Blocking API, useful for tunnels/proxies).
+*   **Async TLS**: `SecureSocketOpenSslAsync` (API compatible with `dart:io` Socket).
+*   **Sync TLS**: `SecureSocketOpenSslSync` (Blocking API, useful for tunnels/proxies).
 *   **DTLS 1.2+**: Full support for `DtlsClient` and `DtlsServer` over UDP.
 
 ---
@@ -78,20 +78,18 @@ Easily create RSA keys and self-signed certificates.
 import 'package:openssl_bindings/openssl.dart';
 
 // Generate RSA Key
-final key = openssl.generateRsaKey(2048);
+final key = openssl.generateRsa(2048);
 
 // Configure the Certificate
 final builder = X509CertificateBuilder(openssl)
   ..setSerialNumber(1001)
-  ..setVersion(3)
-  ..setValidity(days: 365) // Valid for 1 year
+  ..setValidity(notBeforeOffset: 0, notAfterOffset: 31536000) // 1 year
   ..setSubject(commonName: 'My App Root CA', country: 'US')
   ..setIssuerAsSubject()   // Self-signed
   ..setPublicKey(key);
 
 // Sign and export
-builder.sign(key, digest: 'sha256');
-final cert = builder.build();
+final cert = builder.sign(key, hashAlgorithm: 'SHA256');
 
 print(cert.toPem());
 print(key.toPrivateKeyPem());
@@ -157,7 +155,7 @@ void main() async {
 ```dart
 import 'package:openssl_bindings/openssl.dart';
 
-final socket = await SecureSocketOpenSSLAsync.connect('example.com', 443);
+final socket = await SecureSocketOpenSslAsync.connect('example.com', 443);
 
 await socket.send(utf8.encode('GET / HTTP/1.1\r\nHost: example.com\r\n\r\n'));
 
