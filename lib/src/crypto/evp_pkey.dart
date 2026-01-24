@@ -19,16 +19,12 @@ Pointer<Uint8> _allocUtf8z(String s) {
 /// Wrapper around OpenSSL EVP_PKEY (Private/Public Key).
 class EvpPkey extends SslObject<EVP_PKEY> {
   final OpenSSL _context;
-  
-  // O finalizer precisa ser construído com o endereço da função free DAQUELA instância/dll.
-  // No caso de múltiplas DLLs carregadas, cada uma tem seu endereço.
-  // late final NativeFinalizer _finalizer;
+  late final NativeFinalizer _finalizer;
 
   EvpPkey(Pointer<EVP_PKEY> ptr, this._context) : super(ptr) {
-    // Buscamos o endereço de free no contexto
-    // final freePtr = _context.lookup<Void Function(Pointer<EVP_PKEY>)>('EVP_PKEY_free');
-    // _finalizer = NativeFinalizer(freePtr.cast());
-    //  _finalizer.attach(this, ptr.cast(), detach: this);
+    final freePtr = _context.lookup<Void Function(Pointer<EVP_PKEY>)>('EVP_PKEY_free');
+    _finalizer = NativeFinalizer(freePtr.cast());
+    _finalizer.attach(this, ptr.cast(), detach: this);
   }
 
   /// Exports Private Key to PEM format.
@@ -96,6 +92,7 @@ class EvpPkey extends SslObject<EVP_PKEY> {
 
   /// Releases the underlying EVP_PKEY structure.
   void dispose() {
+    _finalizer.detach(this);
     _context.bindings.EVP_PKEY_free(handle);
   }
 }
