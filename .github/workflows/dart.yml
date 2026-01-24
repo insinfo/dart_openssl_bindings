@@ -84,6 +84,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          dart test 
           dart test test/builder_dispose_test.dart
           dart test test/certificate_format_test.dart
           dart test test/cipher_test.dart
