@@ -24,6 +24,7 @@ class X509CertificateBuilder implements Finalizable {
     if (_cert == nullptr) {
       throw OpenSslException('Failed to create X509 structure');
     }
+    print('DEBUG: X509CertificateBuilder created cert ${_cert.address.toRadixString(16)}');
     final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
     _finalizer = NativeFinalizer(freePtr.cast());
     _finalizer.attach(this, _cert.cast(), detach: this);
@@ -45,8 +46,13 @@ class X509CertificateBuilder implements Finalizable {
   void _setSerial(int serial) {
     final asn1Int = _context.bindings.ASN1_INTEGER_new();
     _context.bindings.ASN1_INTEGER_set(asn1Int, serial);
-    if (_context.bindings.X509_set_serialNumber(_cert, asn1Int) != 1) {
-      _context.bindings.ASN1_INTEGER_free(asn1Int);
+     print('DEBUG: X509CertificateBuilder setting serial $serial');
+    final res = _context.bindings.X509_set_serialNumber(_cert, asn1Int);
+    
+    // Always free the temporary ASN1_INTEGER, as X509_set_serialNumber duplicates it.
+    _context.bindings.ASN1_INTEGER_free(asn1Int);
+
+    if (res != 1) {
       throw OpenSslException('Failed to set serial number');
     }
   }
@@ -495,6 +501,7 @@ class X509CertificateBuilder implements Finalizable {
   /// Releases the underlying X509 structure if the builder was not consumed.
   void dispose() {
     if (_isDisposed || _isConsumed) return;
+    print('DEBUG: X509CertificateBuilder dispose freeing cert ${_cert.address.toRadixString(16)}');
     _finalizer.detach(this);
     _context.bindings.X509_free(_cert);
     _isDisposed = true;
