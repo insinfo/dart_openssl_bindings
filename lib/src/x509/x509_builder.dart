@@ -472,7 +472,7 @@ class X509CertificateBuilder /*implements Finalizable*/ {
   X509Certificate sign(EvpPkey privateKey, {String hashAlgorithm = 'SHA256'}) {
     _ensureUsable();
     // We need EVP_MD* for the algorithm
-     final digestName = hashAlgorithm.toNativeUtf8();
+     final digestName = hashAlgorithm.toNativeUtf8(allocator: calloc);
      final md = _context.bindings.EVP_get_digestbyname(digestName.cast());
      calloc.free(digestName);
 

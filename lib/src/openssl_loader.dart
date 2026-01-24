@@ -181,7 +181,7 @@ List<String> _sslCandidates() {
       'libssl.1.1.dylib',
     ];
   }
-  return const ['libssl.so', 'libssl.so.3'];
+  return const ['libssl.so.3', 'libssl.so'];
 }
 
 List<String> _cryptoCandidates() {
@@ -197,5 +197,5 @@ List<String> _cryptoCandidates() {
       'libcrypto.1.1.dylib',
     ];
   }
-  return const ['libcrypto.so', 'libcrypto.so.3'];
+  return const ['libcrypto.so.3', 'libcrypto.so'];
 }

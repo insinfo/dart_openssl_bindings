@@ -530,8 +530,8 @@ class SecureSocketOpenSslAsync {
             'Certificate and private key are required in server mode.',
           );
         }
-        final certFilePtr = certFile.toNativeUtf8();
-        final keyFilePtr = keyFile.toNativeUtf8();
+        final certFilePtr = certFile.toNativeUtf8(allocator: calloc);
+        final keyFilePtr = keyFile.toNativeUtf8(allocator: calloc);
         final ctxPtr = _ctxPtr;
         final certResult = _openSsl.SSL_CTX_use_certificate_file(
           ctxPtr,
