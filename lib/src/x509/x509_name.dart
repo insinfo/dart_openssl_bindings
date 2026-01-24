@@ -14,17 +14,16 @@ import '../api/openssl.dart';
 class X509Name extends SslObject<X509_NAME> {
   final OpenSSL _context;
   final bool _isOwned;
-  // NativeFinalizer? _finalizer;
+  NativeFinalizer? _finalizer;
   bool _isDisposed = false;
 
   X509Name(Pointer<X509_NAME> ptr, this._context, {bool isOwned = false}) 
       : _isOwned = isOwned, super(ptr) {
     if (_isOwned) {
        print('DEBUG: X509Name created (OWNED) ${ptr.address.toRadixString(16)}');
-      // final freePtr = _context.lookup<Void Function(Pointer<X509_NAME>)>('X509_NAME_free');
-      // _finalizer = NativeFinalizer(freePtr.cast());
-      // We attach the finalizer to 'this'.
-      // _finalizer!.attach(this, ptr.cast(), detach: this);
+      final freePtr = _context.lookup<Void Function(Pointer<X509_NAME>)>('X509_NAME_free');
+      _finalizer = NativeFinalizer(freePtr.cast());
+      _finalizer!.attach(this, ptr.cast(), detach: this);
     } else {
        print('DEBUG: X509Name created (BORROWED) ${ptr.address.toRadixString(16)}');
     }
@@ -37,7 +36,7 @@ class X509Name extends SslObject<X509_NAME> {
     _isDisposed = true;
     if (_isOwned) {
       print('DEBUG: X509Name dispose (OWNED) ${handle.address.toRadixString(16)}');
-      // _finalizer?.detach(this);
+      _finalizer?.detach(this);
       _context.bindings.X509_NAME_free(handle);
     } else {
        print('DEBUG: X509Name dispose (BORROWED) - Ignored');
@@ -59,26 +58,26 @@ class X509Name extends SslObject<X509_NAME> {
     if (_isDisposed) {
       throw StateError('Cannot add entry to disposed X509Name');
     }
-    final fieldPtr = field.toNativeUtf8(allocator: calloc);
-    final valuePtr = value.toNativeUtf8(allocator: calloc);
+    // Use Arena to ensure proper memory management
+    final arena = Arena();
     try {
+      final fieldPtr = field.toNativeUtf8(allocator: arena);
+      final valuePtr = value.toNativeUtf8(allocator: arena);
       // MBSTRING_UTF8 = 0x1000
-      // 0x1000 = MBSTRING_UTF8.
       final result = _context.bindings.X509_NAME_add_entry_by_txt(
         handle,
         fieldPtr.cast(),
         0x1000, 
         valuePtr.cast(),
+        -1, // use strlen
         -1, // append
-        -1, // loc
         0   // set
       );
       if (result != 1) {
          throw OpenSslException('Failed to add entry $field=$value to X509_NAME');
       }
     } finally {
-      calloc.free(fieldPtr);
-      calloc.free(valuePtr);
+      arena.releaseAll();
     }
   }
 }

@@ -4057,6 +4057,16 @@ typedef Dart__time32_t = int;
 typedef __time64_t = ffi.LongLong;
 typedef Dart__time64_t = int;
 
+final class __crt_locale_data_public extends ffi.Struct {
+  external ffi.Pointer<ffi.UnsignedShort> _locale_pctype;
+
+  @ffi.Int()
+  external int _locale_mb_cur_max;
+
+  @ffi.UnsignedInt()
+  external int _locale_lc_codepage;
+}
+
 final class __crt_locale_data extends ffi.Opaque {}
 
 final class __crt_multibyte_data extends ffi.Opaque {}
@@ -4944,6 +4954,14 @@ final class _OBJECTID extends ffi.Struct {
 }
 
 typedef OBJECTID = _OBJECTID;
+
+final class UnnamedStruct6 extends ffi.Struct {
+  @ffi.Char()
+  external int x;
+
+  external LARGE_INTEGER test;
+}
+
 typedef KSPIN_LOCK = ULONG_PTR;
 typedef PKSPIN_LOCK = ffi.Pointer<KSPIN_LOCK>;
 typedef PM128A = ffi.Pointer<_M128A>;
@@ -8047,6 +8065,95 @@ typedef JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION
 typedef PJOBOBJECT_NOTIFICATION_LIMIT_INFORMATION
     = ffi.Pointer<_JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION>;
 
+final class UnnamedUnion38 extends ffi.Union {
+  @DWORD64()
+  external int JobHighMemoryLimit;
+
+  @DWORD64()
+  external int JobMemoryLimit;
+}
+
+final class UnnamedUnion39 extends ffi.Union {
+  @ffi.UnsignedInt()
+  external int RateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get RateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(RateControlToleranceAsInt);
+
+  @ffi.UnsignedInt()
+  external int CpuRateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get CpuRateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(CpuRateControlToleranceAsInt);
+}
+
+final class UnnamedUnion40 extends ffi.Union {
+  @ffi.UnsignedInt()
+  external int RateControlToleranceIntervalAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL get RateControlToleranceInterval =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+          .fromValue(RateControlToleranceIntervalAsInt);
+
+  @ffi.UnsignedInt()
+  external int CpuRateControlToleranceIntervalAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+      get CpuRateControlToleranceInterval =>
+          _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+              .fromValue(CpuRateControlToleranceIntervalAsInt);
+}
+
+final class JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2 extends ffi.Struct {
+  @DWORD64()
+  external int IoReadBytesLimit;
+
+  @DWORD64()
+  external int IoWriteBytesLimit;
+
+  external LARGE_INTEGER PerJobUserTimeLimit;
+
+  external UnnamedUnion38 unnamed;
+
+  external UnnamedUnion39 unnamed$1;
+
+  external UnnamedUnion40 unnamed$2;
+
+  @DWORD()
+  external int LimitFlags;
+
+  @ffi.UnsignedInt()
+  external int IoRateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get IoRateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(IoRateControlToleranceAsInt);
+
+  @DWORD64()
+  external int JobLowMemoryLimit;
+
+  @ffi.UnsignedInt()
+  external int IoRateControlToleranceIntervalAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+      get IoRateControlToleranceInterval =>
+          _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+              .fromValue(IoRateControlToleranceIntervalAsInt);
+
+  @ffi.UnsignedInt()
+  external int NetRateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get NetRateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(NetRateControlToleranceAsInt);
+
+  @ffi.UnsignedInt()
+  external int NetRateControlToleranceIntervalAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+      get NetRateControlToleranceInterval =>
+          _JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL
+              .fromValue(NetRateControlToleranceIntervalAsInt);
+}
+
 final class _JOBOBJECT_LIMIT_VIOLATION_INFORMATION extends ffi.Struct {
   @DWORD()
   external int LimitFlags;
@@ -8095,6 +8202,106 @@ typedef JOBOBJECT_LIMIT_VIOLATION_INFORMATION
 typedef PJOBOBJECT_LIMIT_VIOLATION_INFORMATION
     = ffi.Pointer<_JOBOBJECT_LIMIT_VIOLATION_INFORMATION>;
 
+final class UnnamedUnion41 extends ffi.Union {
+  @DWORD64()
+  external int JobHighMemoryLimit;
+
+  @DWORD64()
+  external int JobMemoryLimit;
+}
+
+final class UnnamedUnion42 extends ffi.Union {
+  @ffi.UnsignedInt()
+  external int RateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get RateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(RateControlToleranceAsInt);
+
+  @ffi.UnsignedInt()
+  external int CpuRateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get CpuRateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(CpuRateControlToleranceAsInt);
+}
+
+final class UnnamedUnion43 extends ffi.Union {
+  @ffi.UnsignedInt()
+  external int RateControlToleranceLimitAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get RateControlToleranceLimit =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE
+          .fromValue(RateControlToleranceLimitAsInt);
+
+  @ffi.UnsignedInt()
+  external int CpuRateControlToleranceLimitAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get CpuRateControlToleranceLimit =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE
+          .fromValue(CpuRateControlToleranceLimitAsInt);
+}
+
+final class JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 extends ffi.Struct {
+  @DWORD()
+  external int LimitFlags;
+
+  @DWORD()
+  external int ViolationLimitFlags;
+
+  @DWORD64()
+  external int IoReadBytes;
+
+  @DWORD64()
+  external int IoReadBytesLimit;
+
+  @DWORD64()
+  external int IoWriteBytes;
+
+  @DWORD64()
+  external int IoWriteBytesLimit;
+
+  external LARGE_INTEGER PerJobUserTime;
+
+  external LARGE_INTEGER PerJobUserTimeLimit;
+
+  @DWORD64()
+  external int JobMemory;
+
+  external UnnamedUnion41 unnamed;
+
+  external UnnamedUnion42 unnamed$1;
+
+  external UnnamedUnion43 unnamed$2;
+
+  @DWORD64()
+  external int JobLowMemoryLimit;
+
+  @ffi.UnsignedInt()
+  external int IoRateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get IoRateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(IoRateControlToleranceAsInt);
+
+  @ffi.UnsignedInt()
+  external int IoRateControlToleranceLimitAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get IoRateControlToleranceLimit =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE
+          .fromValue(IoRateControlToleranceLimitAsInt);
+
+  @ffi.UnsignedInt()
+  external int NetRateControlToleranceAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get NetRateControlTolerance =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE.fromValue(NetRateControlToleranceAsInt);
+
+  @ffi.UnsignedInt()
+  external int NetRateControlToleranceLimitAsInt;
+
+  _JOBOBJECT_RATE_CONTROL_TOLERANCE get NetRateControlToleranceLimit =>
+      _JOBOBJECT_RATE_CONTROL_TOLERANCE
+          .fromValue(NetRateControlToleranceLimitAsInt);
+}
+
 final class UnnamedStruct43 extends ffi.Struct {
   @WORD()
   external int MinRate;
@@ -8124,6 +8331,40 @@ typedef JOBOBJECT_CPU_RATE_CONTROL_INFORMATION
     = _JOBOBJECT_CPU_RATE_CONTROL_INFORMATION;
 typedef PJOBOBJECT_CPU_RATE_CONTROL_INFORMATION
     = ffi.Pointer<_JOBOBJECT_CPU_RATE_CONTROL_INFORMATION>;
+
+enum JOB_OBJECT_NET_RATE_CONTROL_FLAGS {
+  JOB_OBJECT_NET_RATE_CONTROL_ENABLE(1),
+  JOB_OBJECT_NET_RATE_CONTROL_MAX_BANDWIDTH(2),
+  JOB_OBJECT_NET_RATE_CONTROL_DSCP_TAG(4),
+  JOB_OBJECT_NET_RATE_CONTROL_VALID_FLAGS(7);
+
+  final int value;
+  const JOB_OBJECT_NET_RATE_CONTROL_FLAGS(this.value);
+
+  static JOB_OBJECT_NET_RATE_CONTROL_FLAGS fromValue(int value) =>
+      switch (value) {
+        1 => JOB_OBJECT_NET_RATE_CONTROL_ENABLE,
+        2 => JOB_OBJECT_NET_RATE_CONTROL_MAX_BANDWIDTH,
+        4 => JOB_OBJECT_NET_RATE_CONTROL_DSCP_TAG,
+        7 => JOB_OBJECT_NET_RATE_CONTROL_VALID_FLAGS,
+        _ => throw ArgumentError(
+            'Unknown value for JOB_OBJECT_NET_RATE_CONTROL_FLAGS: $value'),
+      };
+}
+
+final class JOBOBJECT_NET_RATE_CONTROL_INFORMATION extends ffi.Struct {
+  @DWORD64()
+  external int MaxBandwidth;
+
+  @ffi.UnsignedInt()
+  external int ControlFlagsAsInt;
+
+  JOB_OBJECT_NET_RATE_CONTROL_FLAGS get ControlFlags =>
+      JOB_OBJECT_NET_RATE_CONTROL_FLAGS.fromValue(ControlFlagsAsInt);
+
+  @BYTE()
+  external int DscpTag;
+}
 
 enum JOB_OBJECT_IO_RATE_CONTROL_FLAGS {
   JOB_OBJECT_IO_RATE_CONTROL_ENABLE(1),
@@ -8174,6 +8415,110 @@ final class JOBOBJECT_IO_RATE_CONTROL_INFORMATION_NATIVE extends ffi.Struct {
 
 typedef JOBOBJECT_IO_RATE_CONTROL_INFORMATION_NATIVE_V1
     = JOBOBJECT_IO_RATE_CONTROL_INFORMATION_NATIVE;
+
+final class JOBOBJECT_IO_RATE_CONTROL_INFORMATION_NATIVE_V2 extends ffi.Struct {
+  @LONG64()
+  external int MaxIops;
+
+  @LONG64()
+  external int MaxBandwidth;
+
+  @LONG64()
+  external int ReservationIops;
+
+  external PWSTR VolumeName;
+
+  @DWORD()
+  external int BaseIoSize;
+
+  @ffi.UnsignedInt()
+  external int ControlFlagsAsInt;
+
+  JOB_OBJECT_IO_RATE_CONTROL_FLAGS get ControlFlags =>
+      JOB_OBJECT_IO_RATE_CONTROL_FLAGS.fromValue(ControlFlagsAsInt);
+
+  @WORD()
+  external int VolumeNameLength;
+
+  @LONG64()
+  external int CriticalReservationIops;
+
+  @LONG64()
+  external int ReservationBandwidth;
+
+  @LONG64()
+  external int CriticalReservationBandwidth;
+
+  @LONG64()
+  external int MaxTimePercent;
+
+  @LONG64()
+  external int ReservationTimePercent;
+
+  @LONG64()
+  external int CriticalReservationTimePercent;
+}
+
+final class JOBOBJECT_IO_RATE_CONTROL_INFORMATION_NATIVE_V3 extends ffi.Struct {
+  @LONG64()
+  external int MaxIops;
+
+  @LONG64()
+  external int MaxBandwidth;
+
+  @LONG64()
+  external int ReservationIops;
+
+  external PWSTR VolumeName;
+
+  @DWORD()
+  external int BaseIoSize;
+
+  @ffi.UnsignedInt()
+  external int ControlFlagsAsInt;
+
+  JOB_OBJECT_IO_RATE_CONTROL_FLAGS get ControlFlags =>
+      JOB_OBJECT_IO_RATE_CONTROL_FLAGS.fromValue(ControlFlagsAsInt);
+
+  @WORD()
+  external int VolumeNameLength;
+
+  @LONG64()
+  external int CriticalReservationIops;
+
+  @LONG64()
+  external int ReservationBandwidth;
+
+  @LONG64()
+  external int CriticalReservationBandwidth;
+
+  @LONG64()
+  external int MaxTimePercent;
+
+  @LONG64()
+  external int ReservationTimePercent;
+
+  @LONG64()
+  external int CriticalReservationTimePercent;
+
+  @LONG64()
+  external int SoftMaxIops;
+
+  @LONG64()
+  external int SoftMaxBandwidth;
+
+  @LONG64()
+  external int SoftMaxTimePercent;
+
+  @LONG64()
+  external int LimitExcessNotifyIops;
+
+  @LONG64()
+  external int LimitExcessNotifyBandwidth;
+
+  @LONG64()
+  external int LimitExcessNotifyTimePercent;
+}
 
 final class _JOBOBJECT_IO_ATTRIBUTION_STATS extends ffi.Struct {
   @ULONG_PTR()
@@ -11396,6 +11741,99 @@ typedef PIMAGE_ROM_HEADERS = ffi.Pointer<_IMAGE_ROM_HEADERS>;
 typedef IMAGE_NT_HEADERS = IMAGE_NT_HEADERS64;
 typedef PIMAGE_NT_HEADERS = PIMAGE_NT_HEADERS64;
 
+final class ANON_OBJECT_HEADER extends ffi.Struct {
+  @WORD()
+  external int Sig1;
+
+  @WORD()
+  external int Sig2;
+
+  @WORD()
+  external int Version;
+
+  @WORD()
+  external int Machine;
+
+  @DWORD()
+  external int TimeDateStamp;
+
+  external CLSID ClassID;
+
+  @DWORD()
+  external int SizeOfData;
+}
+
+final class ANON_OBJECT_HEADER_V2 extends ffi.Struct {
+  @WORD()
+  external int Sig1;
+
+  @WORD()
+  external int Sig2;
+
+  @WORD()
+  external int Version;
+
+  @WORD()
+  external int Machine;
+
+  @DWORD()
+  external int TimeDateStamp;
+
+  external CLSID ClassID;
+
+  @DWORD()
+  external int SizeOfData;
+
+  @DWORD()
+  external int Flags;
+
+  @DWORD()
+  external int MetaDataSize;
+
+  @DWORD()
+  external int MetaDataOffset;
+}
+
+final class ANON_OBJECT_HEADER_BIGOBJ extends ffi.Struct {
+  @WORD()
+  external int Sig1;
+
+  @WORD()
+  external int Sig2;
+
+  @WORD()
+  external int Version;
+
+  @WORD()
+  external int Machine;
+
+  @DWORD()
+  external int TimeDateStamp;
+
+  external CLSID ClassID;
+
+  @DWORD()
+  external int SizeOfData;
+
+  @DWORD()
+  external int Flags;
+
+  @DWORD()
+  external int MetaDataSize;
+
+  @DWORD()
+  external int MetaDataOffset;
+
+  @DWORD()
+  external int NumberOfSections;
+
+  @DWORD()
+  external int PointerToSymbolTable;
+
+  @DWORD()
+  external int NumberOfSymbols;
+}
+
 final class UnnamedUnion60 extends ffi.Union {
   @DWORD()
   external int PhysicalAddress;
@@ -13026,6 +13464,8 @@ final class _ImageArchitectureEntry extends ffi.Struct {
 
 typedef IMAGE_ARCHITECTURE_ENTRY = _ImageArchitectureEntry;
 typedef PIMAGE_ARCHITECTURE_ENTRY = ffi.Pointer<_ImageArchitectureEntry>;
+
+final class IMPORT_OBJECT_HEADER extends ffi.Opaque {}
 
 final class UnnamedUnion78 extends ffi.Union {
   @DWORD()
@@ -14673,6 +15113,9 @@ final class _TP_IO extends ffi.Opaque {}
 
 typedef TP_IO = _TP_IO;
 typedef PTP_IO = ffi.Pointer<_TP_IO>;
+
+final class _TEB extends ffi.Opaque {}
+
 typedef WPARAM = UINT_PTR;
 typedef LPARAM = LONG_PTR;
 typedef LRESULT = LONG_PTR;
@@ -15005,6 +15448,11 @@ final class tagPOINTS extends ffi.Struct {
 typedef POINTS = tagPOINTS;
 typedef PPOINTS = ffi.Pointer<tagPOINTS>;
 typedef LPPOINTS = ffi.Pointer<tagPOINTS>;
+
+final class APP_LOCAL_DEVICE_ID extends ffi.Struct {
+  @ffi.Array.multi([32])
+  external ffi.Array<BYTE> value;
+}
 
 final class DPI_AWARENESS_CONTEXT__ extends ffi.Struct {
   @ffi.Int()
@@ -15516,6 +15964,47 @@ typedef DEBUG_EVENT = _DEBUG_EVENT;
 typedef LPDEBUG_EVENT = ffi.Pointer<_DEBUG_EVENT>;
 typedef LPCONTEXT = PCONTEXT;
 
+final class DISK_SPACE_INFORMATION extends ffi.Struct {
+  @ULONGLONG()
+  external int ActualTotalAllocationUnits;
+
+  @ULONGLONG()
+  external int ActualAvailableAllocationUnits;
+
+  @ULONGLONG()
+  external int ActualPoolUnavailableAllocationUnits;
+
+  @ULONGLONG()
+  external int CallerTotalAllocationUnits;
+
+  @ULONGLONG()
+  external int CallerAvailableAllocationUnits;
+
+  @ULONGLONG()
+  external int CallerPoolUnavailableAllocationUnits;
+
+  @ULONGLONG()
+  external int UsedAllocationUnits;
+
+  @ULONGLONG()
+  external int TotalReservedAllocationUnits;
+
+  @ULONGLONG()
+  external int VolumeStorageReserveAllocationUnits;
+
+  @ULONGLONG()
+  external int AvailableCommittedAllocationUnits;
+
+  @ULONGLONG()
+  external int PoolAvailableAllocationUnits;
+
+  @DWORD()
+  external int SectorsPerAllocationUnit;
+
+  @DWORD()
+  external int BytesPerSector;
+}
+
 final class _WIN32_FILE_ATTRIBUTE_DATA extends ffi.Struct {
   @DWORD()
   external int dwFileAttributes;
@@ -15871,6 +16360,11 @@ final class _PROCESS_MACHINE_INFORMATION extends ffi.Struct {
 
 typedef PROCESS_MACHINE_INFORMATION = _PROCESS_MACHINE_INFORMATION;
 
+final class OVERRIDE_PREFETCH_PARAMETER extends ffi.Struct {
+  @UINT32()
+  external int Value;
+}
+
 enum _PROCESS_MEMORY_EXHAUSTION_TYPE {
   PMETypeFailFastOnCommitFailure(0),
   PMETypeMax(1);
@@ -15924,6 +16418,11 @@ final class _PROCESS_POWER_THROTTLING_STATE extends ffi.Struct {
 typedef PROCESS_POWER_THROTTLING_STATE = _PROCESS_POWER_THROTTLING_STATE;
 typedef PPROCESS_POWER_THROTTLING_STATE
     = ffi.Pointer<_PROCESS_POWER_THROTTLING_STATE>;
+
+final class PROCESS_PROTECTION_LEVEL_INFORMATION extends ffi.Struct {
+  @DWORD()
+  external int ProtectionLevel;
+}
 
 final class _PROCESS_LEAP_SECOND_INFO extends ffi.Struct {
   @ULONG()
@@ -16026,6 +16525,62 @@ typedef WIN32_MEMORY_RANGE_ENTRY = _WIN32_MEMORY_RANGE_ENTRY;
 typedef PWIN32_MEMORY_RANGE_ENTRY = ffi.Pointer<_WIN32_MEMORY_RANGE_ENTRY>;
 typedef BAD_MEMORY_CALLBACK_ROUTINE = ffi.NativeFunction<ffi.Void Function()>;
 typedef PBAD_MEMORY_CALLBACK_ROUTINE = ffi.Pointer<BAD_MEMORY_CALLBACK_ROUTINE>;
+
+final class WIN32_MEMORY_REGION_INFORMATION extends ffi.Opaque {}
+
+final class WIN32_MEMORY_PARTITION_INFORMATION extends ffi.Struct {
+  @ULONG()
+  external int Flags;
+
+  @ULONG()
+  external int NumaNode;
+
+  @ULONG()
+  external int Channel;
+
+  @ULONG()
+  external int NumberOfNumaNodes;
+
+  @ULONG64()
+  external int ResidentAvailablePages;
+
+  @ULONG64()
+  external int CommittedPages;
+
+  @ULONG64()
+  external int CommitLimit;
+
+  @ULONG64()
+  external int PeakCommitment;
+
+  @ULONG64()
+  external int TotalNumberOfPages;
+
+  @ULONG64()
+  external int AvailablePages;
+
+  @ULONG64()
+  external int ZeroPages;
+
+  @ULONG64()
+  external int FreePages;
+
+  @ULONG64()
+  external int StandbyPages;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ULONG64> Reserved;
+
+  @ULONG64()
+  external int MaximumCommitLimit;
+
+  @ULONG64()
+  external int Reserved2;
+
+  @ULONG()
+  external int PartitionId;
+}
+
 typedef PTP_WIN32_IO_CALLBACKFunction = ffi.Void Function(
     PTP_CALLBACK_INSTANCE Instance,
     PVOID Context,
@@ -16042,6 +16597,25 @@ typedef DartPTP_WIN32_IO_CALLBACKFunction = void Function(
     PTP_IO Io);
 typedef PTP_WIN32_IO_CALLBACK
     = ffi.Pointer<ffi.NativeFunction<PTP_WIN32_IO_CALLBACKFunction>>;
+
+final class JOBOBJECT_IO_RATE_CONTROL_INFORMATION extends ffi.Struct {
+  @LONG64()
+  external int MaxIops;
+
+  @LONG64()
+  external int MaxBandwidth;
+
+  @LONG64()
+  external int ReservationIops;
+
+  external PCWSTR VolumeName;
+
+  @ULONG()
+  external int BaseIoSize;
+
+  @ULONG()
+  external int ControlFlags;
+}
 
 final class tagENUMUILANG extends ffi.Struct {
   @ULONG()
@@ -16656,6 +17230,46 @@ typedef DartPCOPYFILE2_PROGRESS_ROUTINEFunction = _COPYFILE2_MESSAGE_ACTION
     Function(ffi.Pointer<COPYFILE2_MESSAGE> pMessage, PVOID pvCallbackContext);
 typedef PCOPYFILE2_PROGRESS_ROUTINE
     = ffi.Pointer<ffi.NativeFunction<PCOPYFILE2_PROGRESS_ROUTINEFunction>>;
+
+final class COPYFILE2_EXTENDED_PARAMETERS extends ffi.Struct {
+  @DWORD()
+  external int dwSize;
+
+  @DWORD()
+  external int dwCopyFlags;
+
+  external ffi.Pointer<BOOL> pfCancel;
+
+  external PCOPYFILE2_PROGRESS_ROUTINE pProgressRoutine;
+
+  external PVOID pvCallbackContext;
+}
+
+final class COPYFILE2_EXTENDED_PARAMETERS_V2 extends ffi.Struct {
+  @DWORD()
+  external int dwSize;
+
+  @DWORD()
+  external int dwCopyFlags;
+
+  external ffi.Pointer<BOOL> pfCancel;
+
+  external PCOPYFILE2_PROGRESS_ROUTINE pProgressRoutine;
+
+  external PVOID pvCallbackContext;
+
+  @DWORD()
+  external int dwCopyFlagsV2;
+
+  @ULONG()
+  external int ioDesiredSize;
+
+  @ULONG()
+  external int ioDesiredRate;
+
+  @ffi.Array.multi([8])
+  external ffi.Array<PVOID> reserved;
+}
 
 final class _EVENTLOG_FULL_INFORMATION extends ffi.Struct {
   @DWORD()
@@ -19201,6 +19815,143 @@ typedef DISPLAY_DEVICE = DISPLAY_DEVICEA;
 typedef PDISPLAY_DEVICE = PDISPLAY_DEVICEA;
 typedef LPDISPLAY_DEVICE = LPDISPLAY_DEVICEA;
 
+final class DISPLAYCONFIG_RATIONAL extends ffi.Struct {
+  @UINT32()
+  external int Numerator;
+
+  @UINT32()
+  external int Denominator;
+}
+
+enum DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY {
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER(-1),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15(0),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO(1),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO(2),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO(3),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI(4),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI(5),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS(6),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN(8),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI(9),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EXTERNAL(10),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED(11),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL(12),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED(13),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE(14),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST(15),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_WIRED(16),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_VIRTUAL(17),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_USB_TUNNEL(18),
+  DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL(-2147483648);
+
+  static const DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32 =
+      DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER;
+
+  final int value;
+  const DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY(this.value);
+
+  static DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY fromValue(int value) =>
+      switch (value) {
+        -1 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER,
+        0 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15,
+        1 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO,
+        2 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO,
+        3 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO,
+        4 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI,
+        5 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI,
+        6 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS,
+        8 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN,
+        9 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI,
+        10 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EXTERNAL,
+        11 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED,
+        12 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL,
+        13 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED,
+        14 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE,
+        15 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST,
+        16 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_WIRED,
+        17 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_VIRTUAL,
+        18 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_USB_TUNNEL,
+        -2147483648 => DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL,
+        _ => throw ArgumentError(
+            'Unknown value for DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY: $value'),
+      };
+
+  @override
+  String toString() {
+    if (this == DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER)
+      return "DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER, DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32";
+    return super.toString();
+  }
+}
+
+final class DISPLAYCONFIG_2DREGION extends ffi.Struct {
+  @UINT32()
+  external int cx;
+
+  @UINT32()
+  external int cy;
+}
+
+final class DISPLAYCONFIG_VIDEO_SIGNAL_INFO extends ffi.Opaque {}
+
+enum DISPLAYCONFIG_PIXELFORMAT {
+  DISPLAYCONFIG_PIXELFORMAT_8BPP(1),
+  DISPLAYCONFIG_PIXELFORMAT_16BPP(2),
+  DISPLAYCONFIG_PIXELFORMAT_24BPP(3),
+  DISPLAYCONFIG_PIXELFORMAT_32BPP(4),
+  DISPLAYCONFIG_PIXELFORMAT_NONGDI(5),
+  DISPLAYCONFIG_PIXELFORMAT_FORCE_UINT32(-1);
+
+  final int value;
+  const DISPLAYCONFIG_PIXELFORMAT(this.value);
+
+  static DISPLAYCONFIG_PIXELFORMAT fromValue(int value) => switch (value) {
+        1 => DISPLAYCONFIG_PIXELFORMAT_8BPP,
+        2 => DISPLAYCONFIG_PIXELFORMAT_16BPP,
+        3 => DISPLAYCONFIG_PIXELFORMAT_24BPP,
+        4 => DISPLAYCONFIG_PIXELFORMAT_32BPP,
+        5 => DISPLAYCONFIG_PIXELFORMAT_NONGDI,
+        -1 => DISPLAYCONFIG_PIXELFORMAT_FORCE_UINT32,
+        _ => throw ArgumentError(
+            'Unknown value for DISPLAYCONFIG_PIXELFORMAT: $value'),
+      };
+}
+
+final class DISPLAYCONFIG_SOURCE_MODE extends ffi.Struct {
+  @UINT32()
+  external int width;
+
+  @UINT32()
+  external int height;
+
+  @ffi.Int()
+  external int pixelFormatAsInt;
+
+  DISPLAYCONFIG_PIXELFORMAT get pixelFormat =>
+      DISPLAYCONFIG_PIXELFORMAT.fromValue(pixelFormatAsInt);
+
+  external POINTL position;
+}
+
+final class DISPLAYCONFIG_TARGET_MODE extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_DESKTOP_IMAGE_INFO extends ffi.Struct {
+  external POINTL PathSourceSize;
+
+  external RECTL DesktopImageRegion;
+
+  external RECTL DesktopImageClip;
+}
+
+final class DISPLAYCONFIG_MODE_INFO extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_PATH_SOURCE_INFO extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_PATH_TARGET_INFO extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_PATH_INFO extends ffi.Opaque {}
+
 enum DISPLAYCONFIG_DEVICE_INFO_TYPE {
   DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME(1),
   DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME(2),
@@ -19255,6 +20006,41 @@ final class DISPLAYCONFIG_DEVICE_INFO_HEADER extends ffi.Struct {
   @UINT32()
   external int id;
 }
+
+final class DISPLAYCONFIG_SOURCE_DEVICE_NAME extends ffi.Struct {
+  external DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+  @ffi.Array.multi([32])
+  external ffi.Array<WCHAR> viewGdiDeviceName;
+}
+
+final class DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_TARGET_DEVICE_NAME extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_TARGET_PREFERRED_MODE extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_ADAPTER_NAME extends ffi.Struct {
+  external DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+  @ffi.Array.multi([128])
+  external ffi.Array<WCHAR> adapterDevicePath;
+}
+
+final class DISPLAYCONFIG_TARGET_BASE_TYPE extends ffi.Struct {
+  external DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+  @ffi.Int()
+  external int baseOutputTechnologyAsInt;
+
+  DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY get baseOutputTechnology =>
+      DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY
+          .fromValue(baseOutputTechnologyAsInt);
+}
+
+final class DISPLAYCONFIG_SET_TARGET_PERSISTENCE extends ffi.Opaque {}
+
+final class DISPLAYCONFIG_SUPPORT_VIRTUAL_RESOLUTION extends ffi.Opaque {}
 
 final class _DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO extends ffi.Opaque {}
 
@@ -26131,6 +26917,18 @@ final class _NETCONNECTINFOSTRUCT extends ffi.Struct {
 typedef NETCONNECTINFOSTRUCT = _NETCONNECTINFOSTRUCT;
 typedef LPNETCONNECTINFOSTRUCT = ffi.Pointer<_NETCONNECTINFOSTRUCT>;
 
+final class DDEACK extends ffi.Opaque {}
+
+final class DDEADVISE extends ffi.Opaque {}
+
+final class DDEDATA extends ffi.Opaque {}
+
+final class DDEPOKE extends ffi.Opaque {}
+
+final class DDELN extends ffi.Opaque {}
+
+final class DDEUP extends ffi.Opaque {}
+
 final class HCONVLIST__ extends ffi.Struct {
   @ffi.Int()
   external int unused;
@@ -29780,6 +30578,23 @@ typedef RPC_IF_CALLBACK_FN = ffi.NativeFunction<
         RPC_IF_HANDLE InterfaceUuid, ffi.Pointer<ffi.Void> Context)>;
 typedef RPC_SECURITY_CALLBACK_FN
     = ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void> Context)>;
+
+final class RPC_STATS_VECTOR extends ffi.Struct {
+  @ffi.UnsignedInt()
+  external int Count;
+
+  @ffi.Array.multi([1])
+  external ffi.Array<ffi.UnsignedLong> Stats;
+}
+
+final class RPC_IF_ID_VECTOR extends ffi.Struct {
+  @ffi.UnsignedLong()
+  external int Count;
+
+  @ffi.Array.multi([1])
+  external ffi.Array<ffi.Pointer<RPC_IF_ID>> IfId;
+}
+
 typedef RPC_AUTH_IDENTITY_HANDLE = ffi.Pointer<ffi.Void>;
 typedef RPC_AUTHZ_HANDLE = ffi.Pointer<ffi.Void>;
 
@@ -31811,6 +32626,51 @@ final class _SHCREATEPROCESSINFOW extends ffi.Struct {
 typedef SHCREATEPROCESSINFOW = _SHCREATEPROCESSINFOW;
 typedef PSHCREATEPROCESSINFOW = ffi.Pointer<_SHCREATEPROCESSINFOW>;
 
+enum ASSOCCLASS {
+  ASSOCCLASS_SHELL_KEY(0),
+  ASSOCCLASS_PROGID_KEY(1),
+  ASSOCCLASS_PROGID_STR(2),
+  ASSOCCLASS_CLSID_KEY(3),
+  ASSOCCLASS_CLSID_STR(4),
+  ASSOCCLASS_APP_KEY(5),
+  ASSOCCLASS_APP_STR(6),
+  ASSOCCLASS_SYSTEM_STR(7),
+  ASSOCCLASS_FOLDER(8),
+  ASSOCCLASS_STAR(9),
+  ASSOCCLASS_FIXED_PROGID_STR(10),
+  ASSOCCLASS_PROTOCOL_STR(11);
+
+  final int value;
+  const ASSOCCLASS(this.value);
+
+  static ASSOCCLASS fromValue(int value) => switch (value) {
+        0 => ASSOCCLASS_SHELL_KEY,
+        1 => ASSOCCLASS_PROGID_KEY,
+        2 => ASSOCCLASS_PROGID_STR,
+        3 => ASSOCCLASS_CLSID_KEY,
+        4 => ASSOCCLASS_CLSID_STR,
+        5 => ASSOCCLASS_APP_KEY,
+        6 => ASSOCCLASS_APP_STR,
+        7 => ASSOCCLASS_SYSTEM_STR,
+        8 => ASSOCCLASS_FOLDER,
+        9 => ASSOCCLASS_STAR,
+        10 => ASSOCCLASS_FIXED_PROGID_STR,
+        11 => ASSOCCLASS_PROTOCOL_STR,
+        _ => throw ArgumentError('Unknown value for ASSOCCLASS: $value'),
+      };
+}
+
+final class ASSOCIATIONELEMENT extends ffi.Struct {
+  @ffi.UnsignedInt()
+  external int acAsInt;
+
+  ASSOCCLASS get ac => ASSOCCLASS.fromValue(acAsInt);
+
+  external HKEY hkClass;
+
+  external PCWSTR pszClass;
+}
+
 final class _SHQUERYRBINFO extends ffi.Struct {
   @DWORD()
   external int cbSize;
@@ -33264,6 +34124,16 @@ typedef PFN_NCRYPT_FREEFunction = ffi.Void Function(LPVOID pv);
 typedef DartPFN_NCRYPT_FREEFunction = void Function(LPVOID pv);
 typedef PFN_NCRYPT_FREE
     = ffi.Pointer<ffi.NativeFunction<PFN_NCRYPT_FREEFunction>>;
+
+final class NCRYPT_ALLOC_PARA extends ffi.Struct {
+  @DWORD()
+  external int cbSize;
+
+  external PFN_NCRYPT_ALLOC pfnAlloc;
+
+  external PFN_NCRYPT_FREE pfnFree;
+}
+
 typedef NCryptBuffer = BCryptBuffer;
 typedef PNCryptBuffer = ffi.Pointer<BCryptBuffer>;
 typedef NCryptBufferDesc = BCryptBufferDesc;
@@ -33447,6 +34317,24 @@ final class _NCryptAlgorithmName extends ffi.Struct {
 }
 
 typedef NCryptAlgorithmName = _NCryptAlgorithmName;
+
+final class NCryptKeyName extends ffi.Struct {
+  external LPWSTR pszName;
+
+  external LPWSTR pszAlgid;
+
+  @DWORD()
+  external int dwLegacyKeySpec;
+
+  @DWORD()
+  external int dwFlags;
+}
+
+final class NCryptProviderName extends ffi.Struct {
+  external LPWSTR pszName;
+
+  external LPWSTR pszComment;
+}
 
 final class __NCRYPT_UI_POLICY extends ffi.Struct {
   @DWORD()
@@ -39248,6 +40136,13 @@ final class _MIDL_SYNTAX_INFO extends ffi.Struct {
 
 typedef MIDL_SYNTAX_INFO = _MIDL_SYNTAX_INFO;
 typedef PMIDL_SYNTAX_INFO = ffi.Pointer<_MIDL_SYNTAX_INFO>;
+
+final class NDR_ALLOC_ALL_NODES_CONTEXT extends ffi.Opaque {}
+
+final class NDR_POINTER_QUEUE_STATE extends ffi.Opaque {}
+
+final class _NDR_PROC_CONTEXT extends ffi.Opaque {}
+
 typedef MIDL_STUB_MESSAGE = _MIDL_STUB_MESSAGE;
 typedef PGENERIC_BINDING_ROUTINE_PAIR
     = ffi.Pointer<_GENERIC_BINDING_ROUTINE_PAIR>;
@@ -39402,11 +40297,26 @@ typedef MIDL_WINRT_TYPE_SERIALIZATION_INFO
     = _MIDL_WINRT_TYPE_SERIALIZATION_INFO;
 typedef PMIDL_WINRT_TYPE_SERIALIZATION_INFO
     = ffi.Pointer<_MIDL_WINRT_TYPE_SERIALIZATION_INFO>;
-typedef RPC_SS_THREAD_HANDLE = ffi.Pointer<ffi.Void>;
-typedef RPC_CLIENT_ALLOC
-    = ffi.NativeFunction<ffi.Pointer<ffi.Void> Function(ffi.Size Size)>;
-typedef RPC_CLIENT_FREE
-    = ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void> Ptr)>;
+
+final class IUnknownVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUnknown> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUnknown> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUnknown> This)>>
+      Release;
+}
+
+final class IUnknown extends ffi.Struct {
+  external ffi.Pointer<IUnknownVtbl> lpVtbl;
+}
+
 typedef RPCOLEDATAREP = ULONG;
 
 final class tagRPCOLEMESSAGE extends ffi.Struct {
@@ -39484,6 +40394,72 @@ final class IRpcChannelBufferVtbl extends ffi.Struct {
 final class IRpcChannelBuffer extends ffi.Struct {
   external ffi.Pointer<IRpcChannelBufferVtbl> lpVtbl;
 }
+
+final class IRpcStubBufferVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcStubBuffer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcStubBuffer> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcStubBuffer> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcStubBuffer> This,
+              ffi.Pointer<IUnknown> pUnkServer)>> Connect;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ffi.Void Function(ffi.Pointer<IRpcStubBuffer> This)>>
+      Disconnect;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcStubBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> _prpcmsg,
+              ffi.Pointer<IRpcChannelBuffer> _pRpcChannelBuffer)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Pointer<IRpcStubBuffer> Function(
+                  ffi.Pointer<IRpcStubBuffer> This, ffi.Pointer<IID> riid)>>
+      IsIIDSupported;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcStubBuffer> This)>>
+      CountRefs;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IRpcStubBuffer> This,
+                  ffi.Pointer<ffi.Pointer<ffi.Void>> ppv)>>
+      DebugServerQueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(
+                  ffi.Pointer<IRpcStubBuffer> This, ffi.Pointer<ffi.Void> pv)>>
+      DebugServerRelease;
+}
+
+final class IRpcStubBuffer extends ffi.Struct {
+  external ffi.Pointer<IRpcStubBufferVtbl> lpVtbl;
+}
+
+typedef RPC_SS_THREAD_HANDLE = ffi.Pointer<ffi.Void>;
+typedef RPC_CLIENT_ALLOC
+    = ffi.NativeFunction<ffi.Pointer<ffi.Void> Function(ffi.Size Size)>;
+typedef RPC_CLIENT_FREE
+    = ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void> Ptr)>;
 
 final class _NDR_USER_MARSHAL_INFO_LEVEL1 extends ffi.Struct {
   external ffi.Pointer<ffi.Void> Buffer;
@@ -54537,6 +55513,115 @@ typedef CORE_PRINTER_DRIVERW = _CORE_PRINTER_DRIVERW;
 typedef PCORE_PRINTER_DRIVERW = ffi.Pointer<_CORE_PRINTER_DRIVERW>;
 typedef CORE_PRINTER_DRIVER = CORE_PRINTER_DRIVERA;
 typedef PCORE_PRINTER_DRIVER = PCORE_PRINTER_DRIVERA;
+
+enum EPrintPropertyType {
+  kPropertyTypeString(1),
+  kPropertyTypeInt32(2),
+  kPropertyTypeInt64(3),
+  kPropertyTypeByte(4),
+  kPropertyTypeTime(5),
+  kPropertyTypeDevMode(6),
+  kPropertyTypeSD(7),
+  kPropertyTypeNotificationReply(8),
+  kPropertyTypeNotificationOptions(9),
+  kPropertyTypeBuffer(10);
+
+  final int value;
+  const EPrintPropertyType(this.value);
+
+  static EPrintPropertyType fromValue(int value) => switch (value) {
+        1 => kPropertyTypeString,
+        2 => kPropertyTypeInt32,
+        3 => kPropertyTypeInt64,
+        4 => kPropertyTypeByte,
+        5 => kPropertyTypeTime,
+        6 => kPropertyTypeDevMode,
+        7 => kPropertyTypeSD,
+        8 => kPropertyTypeNotificationReply,
+        9 => kPropertyTypeNotificationOptions,
+        10 => kPropertyTypeBuffer,
+        _ =>
+          throw ArgumentError('Unknown value for EPrintPropertyType: $value'),
+      };
+}
+
+final class UnnamedStruct177 extends ffi.Struct {
+  @DWORD()
+  external int cbBuf;
+
+  external LPVOID pBuf;
+}
+
+final class UnnamedUnion225 extends ffi.Union {
+  @BYTE()
+  external int propertyByte;
+
+  external PWSTR propertyString;
+
+  @LONG()
+  external int propertyInt32;
+
+  @LONGLONG()
+  external int propertyInt64;
+
+  external UnnamedStruct177 propertyBlob;
+}
+
+final class PrintPropertyValue extends ffi.Struct {
+  @ffi.UnsignedInt()
+  external int ePropertyTypeAsInt;
+
+  EPrintPropertyType get ePropertyType =>
+      EPrintPropertyType.fromValue(ePropertyTypeAsInt);
+
+  external UnnamedUnion225 value;
+}
+
+final class PrintNamedProperty extends ffi.Struct {
+  external ffi.Pointer<WCHAR> propertyName;
+
+  external PrintPropertyValue propertyValue;
+}
+
+final class PrintPropertiesCollection extends ffi.Struct {
+  @ULONG()
+  external int numberOfProperties;
+
+  external ffi.Pointer<PrintNamedProperty> propertiesCollection;
+}
+
+enum PRINT_EXECUTION_CONTEXT {
+  PRINT_EXECUTION_CONTEXT_APPLICATION(0),
+  PRINT_EXECUTION_CONTEXT_SPOOLER_SERVICE(1),
+  PRINT_EXECUTION_CONTEXT_SPOOLER_ISOLATION_HOST(2),
+  PRINT_EXECUTION_CONTEXT_FILTER_PIPELINE(3),
+  PRINT_EXECUTION_CONTEXT_WOW64(4);
+
+  final int value;
+  const PRINT_EXECUTION_CONTEXT(this.value);
+
+  static PRINT_EXECUTION_CONTEXT fromValue(int value) => switch (value) {
+        0 => PRINT_EXECUTION_CONTEXT_APPLICATION,
+        1 => PRINT_EXECUTION_CONTEXT_SPOOLER_SERVICE,
+        2 => PRINT_EXECUTION_CONTEXT_SPOOLER_ISOLATION_HOST,
+        3 => PRINT_EXECUTION_CONTEXT_FILTER_PIPELINE,
+        4 => PRINT_EXECUTION_CONTEXT_WOW64,
+        _ => throw ArgumentError(
+            'Unknown value for PRINT_EXECUTION_CONTEXT: $value'),
+      };
+}
+
+final class PRINT_EXECUTION_DATA extends ffi.Struct {
+  @ffi.UnsignedInt()
+  external int contextAsInt;
+
+  PRINT_EXECUTION_CONTEXT get context =>
+      PRINT_EXECUTION_CONTEXT.fromValue(contextAsInt);
+
+  @DWORD()
+  external int clientAppPID;
+}
+
 typedef _CoreCrtSecureSearchSortCompareFunctionFunction = ffi.Int Function(
     ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>);
 typedef Dart_CoreCrtSecureSearchSortCompareFunctionFunction = int Function(
@@ -54601,23 +55686,75 @@ final class _lldiv_t extends ffi.Struct {
 
 typedef lldiv_t = _lldiv_t;
 
-final class IUnknownVtbl extends ffi.Struct {
-  external ffi.Pointer<
-      ffi.NativeFunction<
-          HRESULT Function(ffi.Pointer<IUnknown> This, ffi.Pointer<IID> riid,
-              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
-
-  external ffi
-      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUnknown> This)>>
-      AddRef;
-
-  external ffi
-      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUnknown> This)>>
-      Release;
+final class _LDOUBLE extends ffi.Struct {
+  @ffi.Array.multi([10])
+  external ffi.Array<ffi.UnsignedChar> ld;
 }
 
-final class IUnknown extends ffi.Struct {
-  external ffi.Pointer<IUnknownVtbl> lpVtbl;
+final class _CRT_DOUBLE extends ffi.Struct {
+  @ffi.Double()
+  external double x;
+}
+
+final class _CRT_FLOAT extends ffi.Struct {
+  @ffi.Float()
+  external double f;
+}
+
+final class _LONGDOUBLE extends ffi.Opaque {}
+
+final class _LDBL12 extends ffi.Struct {
+  @ffi.Array.multi([12])
+  external ffi.Array<ffi.UnsignedChar> ld12;
+}
+
+final class AsyncIUnknownVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIUnknown> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIUnknown> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIUnknown> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<AsyncIUnknown> This, ffi.Pointer<IID> riid)>>
+      Begin_QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<AsyncIUnknown> This,
+                  ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>>
+      Finish_QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<HRESULT Function(ffi.Pointer<AsyncIUnknown> This)>>
+      Begin_AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIUnknown> This)>>
+      Finish_AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<HRESULT Function(ffi.Pointer<AsyncIUnknown> This)>>
+      Begin_Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIUnknown> This)>>
+      Finish_Release;
+}
+
+final class AsyncIUnknown extends ffi.Struct {
+  external ffi.Pointer<AsyncIUnknownVtbl> lpVtbl;
 }
 
 final class IClassFactoryVtbl extends ffi.Struct {
@@ -54839,6 +55976,77 @@ final class IMarshal extends ffi.Struct {
   external ffi.Pointer<IMarshalVtbl> lpVtbl;
 }
 
+final class INoMarshalVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<INoMarshal> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<INoMarshal> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<INoMarshal> This)>>
+      Release;
+}
+
+final class INoMarshal extends ffi.Struct {
+  external ffi.Pointer<INoMarshalVtbl> lpVtbl;
+}
+
+final class IAgileObjectVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAgileObject> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IAgileObject> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IAgileObject> This)>>
+      Release;
+}
+
+final class IAgileObject extends ffi.Struct {
+  external ffi.Pointer<IAgileObjectVtbl> lpVtbl;
+}
+
+final class IActivationFilterVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IActivationFilter> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IActivationFilter> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IActivationFilter> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IActivationFilter> This,
+              DWORD dwActivationType,
+              ffi.Pointer<IID> rclsid,
+              ffi.Pointer<CLSID> pReplacementClsId)>> HandleActivation;
+}
+
+final class IActivationFilter extends ffi.Struct {
+  external ffi.Pointer<IActivationFilterVtbl> lpVtbl;
+}
+
 final class IMarshal2Vtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -55053,6 +56261,67 @@ final class IMultiQI extends ffi.Struct {
   external ffi.Pointer<IMultiQIVtbl> lpVtbl;
 }
 
+final class AsyncIMultiQIVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIMultiQI> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIMultiQI> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIMultiQI> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<AsyncIMultiQI> This, ULONG cMQIs,
+              ffi.Pointer<MULTI_QI> pMQIs)>> Begin_QueryMultipleInterfaces;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<AsyncIMultiQI> This,
+              ffi.Pointer<MULTI_QI> pMQIs)>> Finish_QueryMultipleInterfaces;
+}
+
+final class AsyncIMultiQI extends ffi.Struct {
+  external ffi.Pointer<AsyncIMultiQIVtbl> lpVtbl;
+}
+
+final class IInternalUnknownVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternalUnknown> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IInternalUnknown> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IInternalUnknown> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternalUnknown> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppv)>> QueryInternalInterface;
+}
+
+final class IInternalUnknown extends ffi.Struct {
+  external ffi.Pointer<IInternalUnknownVtbl> lpVtbl;
+}
+
 final class IEnumUnknownVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -55134,6 +56403,756 @@ final class IEnumString extends ffi.Struct {
   external ffi.Pointer<IEnumStringVtbl> lpVtbl;
 }
 
+final class ISequentialStreamVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISequentialStream> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISequentialStream> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISequentialStream> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISequentialStream> This,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbRead)>> Read;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISequentialStream> This,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbWritten)>> Write;
+}
+
+final class ISequentialStream extends ffi.Struct {
+  external ffi.Pointer<ISequentialStreamVtbl> lpVtbl;
+}
+
+final class IRpcChannelBuffer2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IRpcChannelBuffer2> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IRpcChannelBuffer2> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer2> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage,
+              ffi.Pointer<IID> riid)>> GetBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer2> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage,
+              ffi.Pointer<ULONG> pStatus)>> SendReceive;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer2> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage)>> FreeBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer2> This,
+              ffi.Pointer<DWORD> pdwDestContext,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvDestContext)>> GetDestCtx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer2> This)>> IsConnected;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer2> This,
+              ffi.Pointer<DWORD> pdwVersion)>> GetProtocolVersion;
+}
+
+final class IRpcChannelBuffer2 extends ffi.Struct {
+  external ffi.Pointer<IRpcChannelBuffer2Vtbl> lpVtbl;
+}
+
+final class ISynchronizeVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISynchronize> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ISynchronize> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ISynchronize> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronize> This, DWORD dwFlags,
+              DWORD dwMilliseconds)>> Wait;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<HRESULT Function(ffi.Pointer<ISynchronize> This)>>
+      Signal;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<HRESULT Function(ffi.Pointer<ISynchronize> This)>>
+      Reset;
+}
+
+final class ISynchronize extends ffi.Struct {
+  external ffi.Pointer<ISynchronizeVtbl> lpVtbl;
+}
+
+final class IAsyncRpcChannelBufferVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IAsyncRpcChannelBuffer> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IAsyncRpcChannelBuffer> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage,
+              ffi.Pointer<IID> riid)>> GetBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage,
+              ffi.Pointer<ULONG> pStatus)>> SendReceive;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage)>> FreeBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<DWORD> pdwDestContext,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvDestContext)>> GetDestCtx;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IAsyncRpcChannelBuffer> This)>>
+      IsConnected;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<DWORD> pdwVersion)>> GetProtocolVersion;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<ISynchronize> pSync,
+              ffi.Pointer<ULONG> pulStatus)>> Send;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<ULONG> pulStatus)>> Receive;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncRpcChannelBuffer> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<DWORD> pdwDestContext,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvDestContext)>> GetDestCtxEx;
+}
+
+final class IAsyncRpcChannelBuffer extends ffi.Struct {
+  external ffi.Pointer<IAsyncRpcChannelBufferVtbl> lpVtbl;
+}
+
+final class IAsyncManagerVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncManager> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IAsyncManager> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IAsyncManager> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncManager> This, HRESULT Result)>> CompleteCall;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAsyncManager> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> pInterface)>> GetCallContext;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IAsyncManager> This,
+              ffi.Pointer<ULONG> pulStateFlags)>> GetState;
+}
+
+final class IAsyncManager extends ffi.Struct {
+  external ffi.Pointer<IAsyncManagerVtbl> lpVtbl;
+}
+
+final class IRpcChannelBuffer3Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IRpcChannelBuffer3> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IRpcChannelBuffer3> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage,
+              ffi.Pointer<IID> riid)>> GetBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage,
+              ffi.Pointer<ULONG> pStatus)>> SendReceive;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMessage)>> FreeBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<DWORD> pdwDestContext,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvDestContext)>> GetDestCtx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer3> This)>> IsConnected;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<DWORD> pdwVersion)>> GetProtocolVersion;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<ULONG> pulStatus)>> Send;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ULONG ulSize,
+              ffi.Pointer<ULONG> pulStatus)>> Receive;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg)>> Cancel;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> pInterface)>> GetCallContext;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<DWORD> pdwDestContext,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvDestContext)>> GetDestCtxEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<DWORD> pState)>> GetState;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcChannelBuffer3> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              ffi.Pointer<IAsyncManager> pAsyncMgr)>> RegisterAsync;
+}
+
+final class IRpcChannelBuffer3 extends ffi.Struct {
+  external ffi.Pointer<IRpcChannelBuffer3Vtbl> lpVtbl;
+}
+
+final class IRpcSyntaxNegotiateVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcSyntaxNegotiate> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IRpcSyntaxNegotiate> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IRpcSyntaxNegotiate> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcSyntaxNegotiate> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg)>> NegotiateSyntax;
+}
+
+final class IRpcSyntaxNegotiate extends ffi.Struct {
+  external ffi.Pointer<IRpcSyntaxNegotiateVtbl> lpVtbl;
+}
+
+final class IRpcProxyBufferVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcProxyBuffer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcProxyBuffer> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcProxyBuffer> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcProxyBuffer> This,
+              ffi.Pointer<IRpcChannelBuffer> pRpcChannelBuffer)>> Connect;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ffi.Void Function(ffi.Pointer<IRpcProxyBuffer> This)>>
+      Disconnect;
+}
+
+final class IRpcProxyBuffer extends ffi.Struct {
+  external ffi.Pointer<IRpcProxyBufferVtbl> lpVtbl;
+}
+
+final class IPSFactoryBufferVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPSFactoryBuffer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IPSFactoryBuffer> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IPSFactoryBuffer> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPSFactoryBuffer> This,
+              ffi.Pointer<IUnknown> pUnkOuter,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<IRpcProxyBuffer>> ppProxy,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppv)>> CreateProxy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPSFactoryBuffer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<IUnknown> pUnkServer,
+              ffi.Pointer<ffi.Pointer<IRpcStubBuffer>> ppStub)>> CreateStub;
+}
+
+final class IPSFactoryBuffer extends ffi.Struct {
+  external ffi.Pointer<IPSFactoryBufferVtbl> lpVtbl;
+}
+
+final class IChannelHookVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IChannelHook> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IChannelHook> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<GUID> uExtent,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ULONG> pDataSize)>> ClientGetSize;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<GUID> uExtent,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ULONG> pDataSize,
+              ffi.Pointer<ffi.Void> pDataBuffer)>> ClientFillBuffer;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<GUID> uExtent,
+              ffi.Pointer<IID> riid,
+              ULONG cbDataSize,
+              ffi.Pointer<ffi.Void> pDataBuffer,
+              DWORD lDataRep,
+              HRESULT hrFault)>> ClientNotify;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<GUID> uExtent,
+              ffi.Pointer<IID> riid,
+              ULONG cbDataSize,
+              ffi.Pointer<ffi.Void> pDataBuffer,
+              DWORD lDataRep)>> ServerNotify;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<GUID> uExtent,
+              ffi.Pointer<IID> riid,
+              HRESULT hrFault,
+              ffi.Pointer<ULONG> pDataSize)>> ServerGetSize;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<IChannelHook> This,
+              ffi.Pointer<GUID> uExtent,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ULONG> pDataSize,
+              ffi.Pointer<ffi.Void> pDataBuffer,
+              HRESULT hrFault)>> ServerFillBuffer;
+}
+
+final class IChannelHook extends ffi.Struct {
+  external ffi.Pointer<IChannelHookVtbl> lpVtbl;
+}
+
+final class IClientSecurityVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IClientSecurity> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IClientSecurity> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IClientSecurity> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IClientSecurity> This,
+              ffi.Pointer<IUnknown> pProxy,
+              ffi.Pointer<DWORD> pAuthnSvc,
+              ffi.Pointer<DWORD> pAuthzSvc,
+              ffi.Pointer<ffi.Pointer<OLECHAR>> pServerPrincName,
+              ffi.Pointer<DWORD> pAuthnLevel,
+              ffi.Pointer<DWORD> pImpLevel,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> pAuthInfo,
+              ffi.Pointer<DWORD> pCapabilites)>> QueryBlanket;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IClientSecurity> This,
+              ffi.Pointer<IUnknown> pProxy,
+              DWORD dwAuthnSvc,
+              DWORD dwAuthzSvc,
+              ffi.Pointer<OLECHAR> pServerPrincName,
+              DWORD dwAuthnLevel,
+              DWORD dwImpLevel,
+              ffi.Pointer<ffi.Void> pAuthInfo,
+              DWORD dwCapabilities)>> SetBlanket;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IClientSecurity> This,
+              ffi.Pointer<IUnknown> pProxy,
+              ffi.Pointer<ffi.Pointer<IUnknown>> ppCopy)>> CopyProxy;
+}
+
+final class IClientSecurity extends ffi.Struct {
+  external ffi.Pointer<IClientSecurityVtbl> lpVtbl;
+}
+
+final class IServerSecurityVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IServerSecurity> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IServerSecurity> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IServerSecurity> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IServerSecurity> This,
+              ffi.Pointer<DWORD> pAuthnSvc,
+              ffi.Pointer<DWORD> pAuthzSvc,
+              ffi.Pointer<ffi.Pointer<OLECHAR>> pServerPrincName,
+              ffi.Pointer<DWORD> pAuthnLevel,
+              ffi.Pointer<DWORD> pImpLevel,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> pPrivs,
+              ffi.Pointer<DWORD> pCapabilities)>> QueryBlanket;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IServerSecurity> This)>>
+      ImpersonateClient;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IServerSecurity> This)>>
+      RevertToSelf;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<BOOL Function(ffi.Pointer<IServerSecurity> This)>>
+      IsImpersonating;
+}
+
+final class IServerSecurity extends ffi.Struct {
+  external ffi.Pointer<IServerSecurityVtbl> lpVtbl;
+}
+
+enum tagRPCOPT_PROPERTIES {
+  COMBND_RPCTIMEOUT(1),
+  COMBND_SERVER_LOCALITY(2),
+  COMBND_RESERVED1(4),
+  COMBND_RESERVED2(5),
+  COMBND_RESERVED3(8),
+  COMBND_RESERVED4(16);
+
+  final int value;
+  const tagRPCOPT_PROPERTIES(this.value);
+
+  static tagRPCOPT_PROPERTIES fromValue(int value) => switch (value) {
+        1 => COMBND_RPCTIMEOUT,
+        2 => COMBND_SERVER_LOCALITY,
+        4 => COMBND_RESERVED1,
+        5 => COMBND_RESERVED2,
+        8 => COMBND_RESERVED3,
+        16 => COMBND_RESERVED4,
+        _ =>
+          throw ArgumentError('Unknown value for tagRPCOPT_PROPERTIES: $value'),
+      };
+}
+
+final class IRpcOptionsVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcOptions> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcOptions> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcOptions> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcOptions> This,
+              ffi.Pointer<IUnknown> pPrx,
+              ffi.UnsignedInt dwProperty,
+              ULONG_PTR dwValue)>> Set;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcOptions> This,
+              ffi.Pointer<IUnknown> pPrx,
+              ffi.UnsignedInt dwProperty,
+              ffi.Pointer<ULONG_PTR> pdwValue)>> Query;
+}
+
+final class IRpcOptions extends ffi.Struct {
+  external ffi.Pointer<IRpcOptionsVtbl> lpVtbl;
+}
+
+enum tagGLOBALOPT_PROPERTIES {
+  COMGLB_EXCEPTION_HANDLING(1),
+  COMGLB_APPID(2),
+  COMGLB_RPC_THREADPOOL_SETTING(3),
+  COMGLB_RO_SETTINGS(4),
+  COMGLB_UNMARSHALING_POLICY(5),
+  COMGLB_PROPERTIES_RESERVED1(6),
+  COMGLB_PROPERTIES_RESERVED2(7),
+  COMGLB_PROPERTIES_RESERVED3(8);
+
+  final int value;
+  const tagGLOBALOPT_PROPERTIES(this.value);
+
+  static tagGLOBALOPT_PROPERTIES fromValue(int value) => switch (value) {
+        1 => COMGLB_EXCEPTION_HANDLING,
+        2 => COMGLB_APPID,
+        3 => COMGLB_RPC_THREADPOOL_SETTING,
+        4 => COMGLB_RO_SETTINGS,
+        5 => COMGLB_UNMARSHALING_POLICY,
+        6 => COMGLB_PROPERTIES_RESERVED1,
+        7 => COMGLB_PROPERTIES_RESERVED2,
+        8 => COMGLB_PROPERTIES_RESERVED3,
+        _ => throw ArgumentError(
+            'Unknown value for tagGLOBALOPT_PROPERTIES: $value'),
+      };
+}
+
+final class IGlobalOptionsVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IGlobalOptions> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IGlobalOptions> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IGlobalOptions> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IGlobalOptions> This,
+              ffi.UnsignedInt dwProperty, ULONG_PTR dwValue)>> Set;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IGlobalOptions> This,
+              ffi.UnsignedInt dwProperty,
+              ffi.Pointer<ULONG_PTR> pdwValue)>> Query;
+}
+
+final class IGlobalOptions extends ffi.Struct {
+  external ffi.Pointer<IGlobalOptionsVtbl> lpVtbl;
+}
+
 final class ISurrogateVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -55206,6 +57225,143 @@ final class IGlobalInterfaceTable extends ffi.Struct {
   external ffi.Pointer<IGlobalInterfaceTableVtbl> lpVtbl;
 }
 
+final class ISynchronizeHandleVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISynchronizeHandle> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISynchronizeHandle> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISynchronizeHandle> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronizeHandle> This,
+              ffi.Pointer<HANDLE> ph)>> GetHandle;
+}
+
+final class ISynchronizeHandle extends ffi.Struct {
+  external ffi.Pointer<ISynchronizeHandleVtbl> lpVtbl;
+}
+
+final class ISynchronizeEventVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISynchronizeEvent> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISynchronizeEvent> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISynchronizeEvent> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<ISynchronizeEvent> This, ffi.Pointer<HANDLE> ph)>>
+      GetHandle;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<ISynchronizeEvent> This, ffi.Pointer<HANDLE> ph)>>
+      SetEventHandle;
+}
+
+final class ISynchronizeEvent extends ffi.Struct {
+  external ffi.Pointer<ISynchronizeEventVtbl> lpVtbl;
+}
+
+final class ISynchronizeContainerVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISynchronizeContainer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ISynchronizeContainer> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ISynchronizeContainer> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronizeContainer> This,
+              ffi.Pointer<ISynchronize> pSync)>> AddSynchronize;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISynchronizeContainer> This,
+              DWORD dwFlags,
+              DWORD dwTimeOut,
+              ffi.Pointer<ffi.Pointer<ISynchronize>> ppSync)>> WaitMultiple;
+}
+
+final class ISynchronizeContainer extends ffi.Struct {
+  external ffi.Pointer<ISynchronizeContainerVtbl> lpVtbl;
+}
+
+final class ISynchronizeMutexVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISynchronizeMutex> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISynchronizeMutex> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISynchronizeMutex> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronizeMutex> This, DWORD dwFlags,
+              DWORD dwMilliseconds)>> Wait;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronizeMutex> This)>> Signal;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronizeMutex> This)>> Reset;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISynchronizeMutex> This)>> ReleaseMutex;
+}
+
+final class ISynchronizeMutex extends ffi.Struct {
+  external ffi.Pointer<ISynchronizeMutexVtbl> lpVtbl;
+}
+
 final class ICancelMethodCallsVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -55236,6 +57392,127 @@ final class ICancelMethodCallsVtbl extends ffi.Struct {
 
 final class ICancelMethodCalls extends ffi.Struct {
   external ffi.Pointer<ICancelMethodCallsVtbl> lpVtbl;
+}
+
+final class ICallFactoryVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ICallFactory> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ICallFactory> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ICallFactory> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ICallFactory> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<IUnknown> pCtrlUnk,
+              ffi.Pointer<IID> riid2,
+              ffi.Pointer<ffi.Pointer<IUnknown>> ppv)>> CreateCall;
+}
+
+final class ICallFactory extends ffi.Struct {
+  external ffi.Pointer<ICallFactoryVtbl> lpVtbl;
+}
+
+final class IRpcHelperVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcHelper> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcHelper> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IRpcHelper> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IRpcHelper> This,
+              ffi.Pointer<DWORD> pComVersion)>> GetDCOMProtocolVersion;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IRpcHelper> This,
+              ffi.Pointer<ffi.Void> pObjRef,
+              ffi.Pointer<ffi.Pointer<IID>> piid)>> GetIIDFromOBJREF;
+}
+
+final class IRpcHelper extends ffi.Struct {
+  external ffi.Pointer<IRpcHelperVtbl> lpVtbl;
+}
+
+final class IReleaseMarshalBuffersVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IReleaseMarshalBuffers> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IReleaseMarshalBuffers> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IReleaseMarshalBuffers> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IReleaseMarshalBuffers> This,
+              ffi.Pointer<RPCOLEMESSAGE> pMsg,
+              DWORD dwFlags,
+              ffi.Pointer<IUnknown> pChnl)>> ReleaseMarshalBuffer;
+}
+
+final class IReleaseMarshalBuffers extends ffi.Struct {
+  external ffi.Pointer<IReleaseMarshalBuffersVtbl> lpVtbl;
+}
+
+final class IWaitMultipleVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IWaitMultiple> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IWaitMultiple> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IWaitMultiple> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IWaitMultiple> This, DWORD timeout,
+              ffi.Pointer<ffi.Pointer<ISynchronize>> pSync)>> WaitMultiple;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IWaitMultiple> This,
+              ffi.Pointer<ISynchronize> pSync)>> AddSynchronize;
+}
+
+final class IWaitMultiple extends ffi.Struct {
+  external ffi.Pointer<IWaitMultipleVtbl> lpVtbl;
 }
 
 final class IAddrTrackingControlVtbl extends ffi.Struct {
@@ -55303,6 +57580,614 @@ final class IAddrExclusionControl extends ffi.Struct {
   external ffi.Pointer<IAddrExclusionControlVtbl> lpVtbl;
 }
 
+final class IPipeByteVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeByte> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IPipeByte> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IPipeByte> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeByte> This, ffi.Pointer<BYTE> buf,
+              ULONG cRequest, ffi.Pointer<ULONG> pcReturned)>> Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeByte> This, ffi.Pointer<BYTE> buf,
+              ULONG cSent)>> Push;
+}
+
+final class IPipeByte extends ffi.Struct {
+  external ffi.Pointer<IPipeByteVtbl> lpVtbl;
+}
+
+final class AsyncIPipeByteVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeByte> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIPipeByte> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIPipeByte> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeByte> This, ULONG cRequest)>> Begin_Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeByte> This,
+              ffi.Pointer<BYTE> buf,
+              ffi.Pointer<ULONG> pcReturned)>> Finish_Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<AsyncIPipeByte> This,
+              ffi.Pointer<BYTE> buf, ULONG cSent)>> Begin_Push;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<AsyncIPipeByte> This)>>
+      Finish_Push;
+}
+
+final class AsyncIPipeByte extends ffi.Struct {
+  external ffi.Pointer<AsyncIPipeByteVtbl> lpVtbl;
+}
+
+final class IPipeLongVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeLong> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IPipeLong> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IPipeLong> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeLong> This, ffi.Pointer<LONG> buf,
+              ULONG cRequest, ffi.Pointer<ULONG> pcReturned)>> Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeLong> This, ffi.Pointer<LONG> buf,
+              ULONG cSent)>> Push;
+}
+
+final class IPipeLong extends ffi.Struct {
+  external ffi.Pointer<IPipeLongVtbl> lpVtbl;
+}
+
+final class AsyncIPipeLongVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeLong> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIPipeLong> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<AsyncIPipeLong> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeLong> This, ULONG cRequest)>> Begin_Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeLong> This,
+              ffi.Pointer<LONG> buf,
+              ffi.Pointer<ULONG> pcReturned)>> Finish_Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<AsyncIPipeLong> This,
+              ffi.Pointer<LONG> buf, ULONG cSent)>> Begin_Push;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<AsyncIPipeLong> This)>>
+      Finish_Push;
+}
+
+final class AsyncIPipeLong extends ffi.Struct {
+  external ffi.Pointer<AsyncIPipeLongVtbl> lpVtbl;
+}
+
+final class IPipeDoubleVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeDouble> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IPipeDouble> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IPipeDouble> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPipeDouble> This,
+              ffi.Pointer<DOUBLE> buf,
+              ULONG cRequest,
+              ffi.Pointer<ULONG> pcReturned)>> Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPipeDouble> This,
+              ffi.Pointer<DOUBLE> buf, ULONG cSent)>> Push;
+}
+
+final class IPipeDouble extends ffi.Struct {
+  external ffi.Pointer<IPipeDoubleVtbl> lpVtbl;
+}
+
+final class AsyncIPipeDoubleVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeDouble> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<AsyncIPipeDouble> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<AsyncIPipeDouble> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeDouble> This, ULONG cRequest)>> Begin_Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIPipeDouble> This,
+              ffi.Pointer<DOUBLE> buf,
+              ffi.Pointer<ULONG> pcReturned)>> Finish_Pull;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<AsyncIPipeDouble> This,
+              ffi.Pointer<DOUBLE> buf, ULONG cSent)>> Begin_Push;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<AsyncIPipeDouble> This)>>
+      Finish_Push;
+}
+
+final class AsyncIPipeDouble extends ffi.Struct {
+  external ffi.Pointer<AsyncIPipeDoubleVtbl> lpVtbl;
+}
+
+final class IEnumContextProps extends ffi.Opaque {}
+
+final class IContext extends ffi.Opaque {}
+
+final class IObjContext extends ffi.Opaque {}
+
+enum _APTTYPE {
+  APTTYPE_CURRENT(-1),
+  APTTYPE_STA(0),
+  APTTYPE_MTA(1),
+  APTTYPE_NA(2),
+  APTTYPE_MAINSTA(3);
+
+  final int value;
+  const _APTTYPE(this.value);
+
+  static _APTTYPE fromValue(int value) => switch (value) {
+        -1 => APTTYPE_CURRENT,
+        0 => APTTYPE_STA,
+        1 => APTTYPE_MTA,
+        2 => APTTYPE_NA,
+        3 => APTTYPE_MAINSTA,
+        _ => throw ArgumentError('Unknown value for _APTTYPE: $value'),
+      };
+}
+
+enum _THDTYPE {
+  THDTYPE_BLOCKMESSAGES(0),
+  THDTYPE_PROCESSMESSAGES(1);
+
+  final int value;
+  const _THDTYPE(this.value);
+
+  static _THDTYPE fromValue(int value) => switch (value) {
+        0 => THDTYPE_BLOCKMESSAGES,
+        1 => THDTYPE_PROCESSMESSAGES,
+        _ => throw ArgumentError('Unknown value for _THDTYPE: $value'),
+      };
+}
+
+final class IComThreadingInfoVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IComThreadingInfo> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IComThreadingInfo> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IComThreadingInfo> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IComThreadingInfo> This,
+              ffi.Pointer<ffi.Int> pAptType)>> GetCurrentApartmentType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IComThreadingInfo> This,
+              ffi.Pointer<ffi.UnsignedInt> pThreadType)>> GetCurrentThreadType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IComThreadingInfo> This,
+                  ffi.Pointer<GUID> pguidLogicalThreadId)>>
+      GetCurrentLogicalThreadId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IComThreadingInfo> This,
+              ffi.Pointer<GUID> rguid)>> SetCurrentLogicalThreadId;
+}
+
+final class IComThreadingInfo extends ffi.Struct {
+  external ffi.Pointer<IComThreadingInfoVtbl> lpVtbl;
+}
+
+final class IProcessInitControlVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IProcessInitControl> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IProcessInitControl> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IProcessInitControl> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IProcessInitControl> This,
+              DWORD dwSecondsRemaining)>> ResetInitializerTimeout;
+}
+
+final class IProcessInitControl extends ffi.Struct {
+  external ffi.Pointer<IProcessInitControlVtbl> lpVtbl;
+}
+
+final class IFastRundownVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IFastRundown> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IFastRundown> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IFastRundown> This)>>
+      Release;
+}
+
+final class IFastRundown extends ffi.Struct {
+  external ffi.Pointer<IFastRundownVtbl> lpVtbl;
+}
+
+enum CO_MARSHALING_CONTEXT_ATTRIBUTES {
+  CO_MARSHALING_SOURCE_IS_APP_CONTAINER(0),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_1(-2147483648),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_2(-2147483647),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_3(-2147483646),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_4(-2147483645),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_5(-2147483644),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_6(-2147483643),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_7(-2147483642),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_8(-2147483641),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_9(-2147483640),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_10(-2147483639),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_11(-2147483638),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_12(-2147483637),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_13(-2147483636),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_14(-2147483635),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_15(-2147483634),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_16(-2147483633),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_17(-2147483632),
+  CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_18(-2147483631);
+
+  final int value;
+  const CO_MARSHALING_CONTEXT_ATTRIBUTES(this.value);
+
+  static CO_MARSHALING_CONTEXT_ATTRIBUTES fromValue(int value) =>
+      switch (value) {
+        0 => CO_MARSHALING_SOURCE_IS_APP_CONTAINER,
+        -2147483648 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_1,
+        -2147483647 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_2,
+        -2147483646 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_3,
+        -2147483645 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_4,
+        -2147483644 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_5,
+        -2147483643 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_6,
+        -2147483642 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_7,
+        -2147483641 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_8,
+        -2147483640 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_9,
+        -2147483639 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_10,
+        -2147483638 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_11,
+        -2147483637 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_12,
+        -2147483636 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_13,
+        -2147483635 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_14,
+        -2147483634 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_15,
+        -2147483633 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_16,
+        -2147483632 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_17,
+        -2147483631 => CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_18,
+        _ => throw ArgumentError(
+            'Unknown value for CO_MARSHALING_CONTEXT_ATTRIBUTES: $value'),
+      };
+}
+
+final class IMarshalingStreamVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IMarshalingStream> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IMarshalingStream> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbRead)>> Read;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbWritten)>> Write;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              LARGE_INTEGER dlibMove,
+              DWORD dwOrigin,
+              ffi.Pointer<ULARGE_INTEGER> plibNewPosition)>> Seek;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IMarshalingStream> This,
+              ULARGE_INTEGER libNewSize)>> SetSize;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              ffi.Pointer<IStream> pstm,
+              ULARGE_INTEGER cb,
+              ffi.Pointer<ULARGE_INTEGER> pcbRead,
+              ffi.Pointer<ULARGE_INTEGER> pcbWritten)>> CopyTo;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IMarshalingStream> This, DWORD grfCommitFlags)>>
+      Commit;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IMarshalingStream> This)>> Revert;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              ULARGE_INTEGER libOffset,
+              ULARGE_INTEGER cb,
+              DWORD dwLockType)>> LockRegion;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMarshalingStream> This,
+              ULARGE_INTEGER libOffset,
+              ULARGE_INTEGER cb,
+              DWORD dwLockType)>> UnlockRegion;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IMarshalingStream> This,
+              ffi.Pointer<STATSTG> pstatstg, DWORD grfStatFlag)>> Stat;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IMarshalingStream> This,
+              ffi.Pointer<ffi.Pointer<IStream>> ppstm)>> Clone;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IMarshalingStream> This,
+                  ffi.Int attribute, ffi.Pointer<ULONG_PTR> pAttributeValue)>>
+      GetMarshalingContextAttribute;
+}
+
+final class IMarshalingStream extends ffi.Struct {
+  external ffi.Pointer<IMarshalingStreamVtbl> lpVtbl;
+}
+
+final class IAgileReferenceVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAgileReference> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IAgileReference> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IAgileReference> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IAgileReference> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObjectReference)>> Resolve;
+}
+
+final class IAgileReference extends ffi.Struct {
+  external ffi.Pointer<IAgileReferenceVtbl> lpVtbl;
+}
+
+final class MachineGlobalObjectTableRegistrationToken__ extends ffi.Struct {
+  @ffi.Int()
+  external int unused;
+}
+
+typedef MachineGlobalObjectTableRegistrationToken
+    = ffi.Pointer<MachineGlobalObjectTableRegistrationToken__>;
+
+final class IMachineGlobalObjectTableVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMachineGlobalObjectTable> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IMachineGlobalObjectTable> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IMachineGlobalObjectTable> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMachineGlobalObjectTable> This,
+              ffi.Pointer<IID> clsid,
+              LPCWSTR identifier,
+              ffi.Pointer<IUnknown> object,
+              ffi.Pointer<MachineGlobalObjectTableRegistrationToken>
+                  token)>> RegisterObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IMachineGlobalObjectTable> This,
+              ffi.Pointer<IID> clsid,
+              LPCWSTR identifier,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppv)>> GetObjectA;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IMachineGlobalObjectTable> This,
+              MachineGlobalObjectTableRegistrationToken token)>> RevokeObject;
+}
+
+final class IMachineGlobalObjectTable extends ffi.Struct {
+  external ffi.Pointer<IMachineGlobalObjectTableVtbl> lpVtbl;
+}
+
+final class ISupportAllowLowerTrustActivationVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISupportAllowLowerTrustActivation> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(
+              ffi.Pointer<ISupportAllowLowerTrustActivation> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(
+              ffi.Pointer<ISupportAllowLowerTrustActivation> This)>> Release;
+}
+
+final class ISupportAllowLowerTrustActivation extends ffi.Struct {
+  external ffi.Pointer<ISupportAllowLowerTrustActivationVtbl> lpVtbl;
+}
+
 final class _COSERVERINFO extends ffi.Struct {
   @DWORD()
   external int dwReserved1;
@@ -55326,6 +58211,23 @@ typedef LPENUMUNKNOWN = ffi.Pointer<IEnumUnknown>;
 typedef LPENUMSTRING = ffi.Pointer<IEnumString>;
 typedef LPSTREAM = ffi.Pointer<IStream>;
 typedef PRPCOLEMESSAGE = ffi.Pointer<RPCOLEMESSAGE>;
+
+final class SChannelHookCallInfo extends ffi.Struct {
+  external IID iid;
+
+  @DWORD()
+  external int cbSize;
+
+  external GUID uCausality;
+
+  @DWORD()
+  external int dwServerPid;
+
+  @DWORD()
+  external int iMethod;
+
+  external ffi.Pointer<ffi.Void> pObject;
+}
 
 final class tagSOLE_AUTHENTICATION_SERVICE extends ffi.Struct {
   @DWORD()
@@ -55371,14 +58273,6 @@ typedef LPCANCELMETHODCALLS = ffi.Pointer<ICancelMethodCalls>;
 typedef LPADDRTRACKINGCONTROL = ffi.Pointer<IAddrTrackingControl>;
 typedef LPADDREXCLUSIONCONTROL = ffi.Pointer<IAddrExclusionControl>;
 typedef APARTMENTID = DWORD;
-
-final class MachineGlobalObjectTableRegistrationToken__ extends ffi.Struct {
-  @ffi.Int()
-  external int unused;
-}
-
-typedef MachineGlobalObjectTableRegistrationToken
-    = ffi.Pointer<MachineGlobalObjectTableRegistrationToken__>;
 
 final class tagServerInformation extends ffi.Struct {
   @DWORD()
@@ -57600,6 +60494,30 @@ final class IPersistStream extends ffi.Struct {
   external ffi.Pointer<IPersistStreamVtbl> lpVtbl;
 }
 
+final class IROTDataVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IROTData> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IROTData> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IROTData> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IROTData> This, ffi.Pointer<byte> pbData,
+              ULONG cbMax, ffi.Pointer<ULONG> pcbData)>> GetComparisonData;
+}
+
+final class IROTData extends ffi.Struct {
+  external ffi.Pointer<IROTDataVtbl> lpVtbl;
+}
+
 final class IPersistFileVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -58012,6 +60930,78 @@ final class IRootStorage extends ffi.Struct {
   external ffi.Pointer<IRootStorageVtbl> lpVtbl;
 }
 
+final class AsyncIAdviseSinkVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIAdviseSink> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<AsyncIAdviseSink> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<AsyncIAdviseSink> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<AsyncIAdviseSink> This,
+              ffi.Pointer<FORMATETC> pFormatetc,
+              ffi.Pointer<STGMEDIUM> pStgmed)>> Begin_OnDataChange;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>>
+      Finish_OnDataChange;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This, DWORD dwAspect,
+              LONG lindex)>> Begin_OnViewChange;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>>
+      Finish_OnViewChange;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This,
+              ffi.Pointer<IMoniker> pmk)>> Begin_OnRename;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>>
+      Finish_OnRename;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>> Begin_OnSave;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>> Finish_OnSave;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>> Begin_OnClose;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink> This)>>
+      Finish_OnClose;
+}
+
+final class AsyncIAdviseSink extends ffi.Struct {
+  external ffi.Pointer<AsyncIAdviseSinkVtbl> lpVtbl;
+}
+
 final class IAdviseSink2Vtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -58064,6 +61054,90 @@ final class IAdviseSink2Vtbl extends ffi.Struct {
 
 final class IAdviseSink2 extends ffi.Struct {
   external ffi.Pointer<IAdviseSink2Vtbl> lpVtbl;
+}
+
+final class AsyncIAdviseSink2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<AsyncIAdviseSink2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<AsyncIAdviseSink2> This,
+              ffi.Pointer<FORMATETC> pFormatetc,
+              ffi.Pointer<STGMEDIUM> pStgmed)>> Begin_OnDataChange;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Finish_OnDataChange;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This, DWORD dwAspect,
+              LONG lindex)>> Begin_OnViewChange;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Finish_OnViewChange;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This,
+              ffi.Pointer<IMoniker> pmk)>> Begin_OnRename;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Finish_OnRename;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>> Begin_OnSave;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Finish_OnSave;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Begin_OnClose;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Finish_OnClose;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This,
+              ffi.Pointer<IMoniker> pmk)>> Begin_OnLinkSrcChange;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<AsyncIAdviseSink2> This)>>
+      Finish_OnLinkSrcChange;
+}
+
+final class AsyncIAdviseSink2 extends ffi.Struct {
+  external ffi.Pointer<AsyncIAdviseSink2Vtbl> lpVtbl;
 }
 
 final class IDataObjectVtbl extends ffi.Struct {
@@ -58248,6 +61322,552 @@ final class IMessageFilter extends ffi.Struct {
   external ffi.Pointer<IMessageFilterVtbl> lpVtbl;
 }
 
+final class IClassActivatorVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IClassActivator> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IClassActivator> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IClassActivator> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IClassActivator> This,
+              ffi.Pointer<IID> rclsid,
+              DWORD dwClassContext,
+              LCID locale,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppv)>> GetClassObject;
+}
+
+final class IClassActivator extends ffi.Struct {
+  external ffi.Pointer<IClassActivatorVtbl> lpVtbl;
+}
+
+final class IFillLockBytesVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IFillLockBytes> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IFillLockBytes> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IFillLockBytes> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IFillLockBytes> This,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbWritten)>> FillAppend;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IFillLockBytes> This,
+              ULARGE_INTEGER ulOffset,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbWritten)>> FillAt;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IFillLockBytes> This, ULARGE_INTEGER ulSize)>>
+      SetFillSize;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IFillLockBytes> This, BOOL bCanceled)>> Terminate;
+}
+
+final class IFillLockBytes extends ffi.Struct {
+  external ffi.Pointer<IFillLockBytesVtbl> lpVtbl;
+}
+
+final class IProgressNotifyVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IProgressNotify> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IProgressNotify> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IProgressNotify> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IProgressNotify> This,
+              DWORD dwProgressCurrent,
+              DWORD dwProgressMaximum,
+              BOOL fAccurate,
+              BOOL fOwner)>> OnProgress;
+}
+
+final class IProgressNotify extends ffi.Struct {
+  external ffi.Pointer<IProgressNotifyVtbl> lpVtbl;
+}
+
+final class tagStorageLayout extends ffi.Struct {
+  @DWORD()
+  external int LayoutType;
+
+  external ffi.Pointer<OLECHAR> pwcsElementName;
+
+  external LARGE_INTEGER cOffset;
+
+  external LARGE_INTEGER cBytes;
+}
+
+typedef StorageLayout = tagStorageLayout;
+
+final class ILayoutStorageVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ILayoutStorage> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ILayoutStorage> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ILayoutStorage> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ILayoutStorage> This,
+              ffi.Pointer<StorageLayout> pStorageLayout,
+              DWORD nEntries,
+              DWORD glfInterleavedFlag)>> LayoutScript;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<ILayoutStorage> This)>>
+      BeginMonitor;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<ILayoutStorage> This)>>
+      EndMonitor;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ILayoutStorage> This,
+              ffi.Pointer<OLECHAR> pwcsNewDfName)>> ReLayoutDocfile;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<ILayoutStorage> This,
+                  ffi.Pointer<ILockBytes> pILockBytes)>>
+      ReLayoutDocfileOnILockBytes;
+}
+
+final class ILayoutStorage extends ffi.Struct {
+  external ffi.Pointer<ILayoutStorageVtbl> lpVtbl;
+}
+
+final class IBlockingLockVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IBlockingLock> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IBlockingLock> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IBlockingLock> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IBlockingLock> This, DWORD dwTimeout)>> Lock;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<HRESULT Function(ffi.Pointer<IBlockingLock> This)>>
+      Unlock;
+}
+
+final class IBlockingLock extends ffi.Struct {
+  external ffi.Pointer<IBlockingLockVtbl> lpVtbl;
+}
+
+final class ITimeAndNoticeControlVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITimeAndNoticeControl> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ITimeAndNoticeControl> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ITimeAndNoticeControl> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITimeAndNoticeControl> This, DWORD res1,
+              DWORD res2)>> SuppressChanges;
+}
+
+final class ITimeAndNoticeControl extends ffi.Struct {
+  external ffi.Pointer<ITimeAndNoticeControlVtbl> lpVtbl;
+}
+
+final class IOplockStorageVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IOplockStorage> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IOplockStorage> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IOplockStorage> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IOplockStorage> This,
+              LPCWSTR pwcsName,
+              DWORD grfMode,
+              DWORD stgfmt,
+              DWORD grfAttrs,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppstgOpen)>> CreateStorageEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IOplockStorage> This,
+              LPCWSTR pwcsName,
+              DWORD grfMode,
+              DWORD stgfmt,
+              DWORD grfAttrs,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppstgOpen)>> OpenStorageEx;
+}
+
+final class IOplockStorage extends ffi.Struct {
+  external ffi.Pointer<IOplockStorageVtbl> lpVtbl;
+}
+
+final class IDirectWriterLockVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IDirectWriterLock> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IDirectWriterLock> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IDirectWriterLock> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IDirectWriterLock> This, DWORD dwTimeout)>>
+      WaitForWriteAccess;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IDirectWriterLock> This)>>
+      ReleaseWriteAccess;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IDirectWriterLock> This)>>
+      HaveWriteAccess;
+}
+
+final class IDirectWriterLock extends ffi.Struct {
+  external ffi.Pointer<IDirectWriterLockVtbl> lpVtbl;
+}
+
+final class IUrlMonVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUrlMon> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUrlMon> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUrlMon> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUrlMon> This,
+              ffi.Pointer<IID> rclsid,
+              LPCWSTR pszTYPE,
+              LPCWSTR pszExt,
+              DWORD dwFileVersionMS,
+              DWORD dwFileVersionLS,
+              LPCWSTR pszCodeBase,
+              ffi.Pointer<IBindCtx> pbc,
+              DWORD dwClassContext,
+              ffi.Pointer<IID> riid,
+              DWORD flags)>> AsyncGetClassBits;
+}
+
+final class IUrlMon extends ffi.Struct {
+  external ffi.Pointer<IUrlMonVtbl> lpVtbl;
+}
+
+final class IForegroundTransferVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IForegroundTransfer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IForegroundTransfer> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IForegroundTransfer> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IForegroundTransfer> This,
+              ffi.Pointer<ffi.Void> lpvReserved)>> AllowForegroundTransfer;
+}
+
+final class IForegroundTransfer extends ffi.Struct {
+  external ffi.Pointer<IForegroundTransferVtbl> lpVtbl;
+}
+
+final class IThumbnailExtractorVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IThumbnailExtractor> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IThumbnailExtractor> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IThumbnailExtractor> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IThumbnailExtractor> This,
+              ffi.Pointer<IStorage> pStg,
+              ULONG ulLength,
+              ULONG ulHeight,
+              ffi.Pointer<ULONG> pulOutputLength,
+              ffi.Pointer<ULONG> pulOutputHeight,
+              ffi.Pointer<HBITMAP> phOutputBitmap)>> ExtractThumbnail;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IThumbnailExtractor> This,
+              ffi.Pointer<IStorage> pStg)>> OnFileUpdated;
+}
+
+final class IThumbnailExtractor extends ffi.Struct {
+  external ffi.Pointer<IThumbnailExtractorVtbl> lpVtbl;
+}
+
+final class IDummyHICONIncluderVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IDummyHICONIncluder> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IDummyHICONIncluder> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IDummyHICONIncluder> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IDummyHICONIncluder> This, HICON h1, HDC h2)>> Dummy;
+}
+
+final class IDummyHICONIncluder extends ffi.Struct {
+  external ffi.Pointer<IDummyHICONIncluderVtbl> lpVtbl;
+}
+
+final class IProcessLockVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IProcessLock> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IProcessLock> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IProcessLock> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IProcessLock> This)>>
+      AddRefOnProcess;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IProcessLock> This)>>
+      ReleaseRefOnProcess;
+}
+
+final class IProcessLock extends ffi.Struct {
+  external ffi.Pointer<IProcessLockVtbl> lpVtbl;
+}
+
+enum tagApplicationType {
+  ServerApplication(0),
+  LibraryApplication(1);
+
+  final int value;
+  const tagApplicationType(this.value);
+
+  static tagApplicationType fromValue(int value) => switch (value) {
+        0 => ServerApplication,
+        1 => LibraryApplication,
+        _ =>
+          throw ArgumentError('Unknown value for tagApplicationType: $value'),
+      };
+}
+
+enum tagShutdownType {
+  IdleShutdown(0),
+  ForcedShutdown(1);
+
+  final int value;
+  const tagShutdownType(this.value);
+
+  static tagShutdownType fromValue(int value) => switch (value) {
+        0 => IdleShutdown,
+        1 => ForcedShutdown,
+        _ => throw ArgumentError('Unknown value for tagShutdownType: $value'),
+      };
+}
+
+final class ISurrogateServiceVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISurrogateService> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISurrogateService> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<ISurrogateService> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISurrogateService> This,
+              ffi.Pointer<GUID> rguidProcessID,
+              ffi.Pointer<IProcessLock> pProcessLock,
+              ffi.Pointer<BOOL> pfApplicationAware)>> Init;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISurrogateService> This,
+              ffi.Pointer<GUID> rguidApplID,
+              ffi.UnsignedInt appType)>> ApplicationLaunch;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISurrogateService> This,
+              ffi.Pointer<GUID> rguidApplID)>> ApplicationFree;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<ISurrogateService> This, ULONG ulReserved)>>
+      CatalogRefresh;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ISurrogateService> This,
+              ffi.UnsignedInt shutdownType)>> ProcessShutdown;
+}
+
+final class ISurrogateService extends ffi.Struct {
+  external ffi.Pointer<ISurrogateServiceVtbl> lpVtbl;
+}
+
 final class IInitializeSpyVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -58289,6 +61909,34 @@ final class IInitializeSpyVtbl extends ffi.Struct {
 
 final class IInitializeSpy extends ffi.Struct {
   external ffi.Pointer<IInitializeSpyVtbl> lpVtbl;
+}
+
+final class IApartmentShutdownVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IApartmentShutdown> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IApartmentShutdown> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IApartmentShutdown> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<IApartmentShutdown> This,
+              UINT64 ui64ApartmentIdentifier)>> OnUninitialize;
+}
+
+final class IApartmentShutdown extends ffi.Struct {
+  external ffi.Pointer<IApartmentShutdownVtbl> lpVtbl;
 }
 
 typedef LPMALLOCSPY = ffi.Pointer<IMallocSpy>;
@@ -58463,19 +62111,6 @@ typedef LPDATAOBJECT = ffi.Pointer<IDataObject>;
 typedef LPDATAADVISEHOLDER = ffi.Pointer<IDataAdviseHolder>;
 typedef LPMESSAGEFILTER = ffi.Pointer<IMessageFilter>;
 typedef INTERFACEINFO = tagINTERFACEINFO;
-
-final class tagStorageLayout extends ffi.Struct {
-  @DWORD()
-  external int LayoutType;
-
-  external ffi.Pointer<OLECHAR> pwcsElementName;
-
-  external LARGE_INTEGER cOffset;
-
-  external LARGE_INTEGER cBytes;
-}
-
-typedef StorageLayout = tagStorageLayout;
 typedef LPINITIALIZESPY = ffi.Pointer<IInitializeSpy>;
 
 final class UnnamedUnion234 extends ffi.Union {
@@ -59936,6 +63571,90 @@ final class ISupportErrorInfo extends ffi.Struct {
   external ffi.Pointer<ISupportErrorInfoVtbl> lpVtbl;
 }
 
+final class ITypeFactoryVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeFactory> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ITypeFactory> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ITypeFactory> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeFactory> This,
+              ffi.Pointer<ITypeInfo> pTypeInfo,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<IUnknown>> ppv)>> CreateFromTypeInfo;
+}
+
+final class ITypeFactory extends ffi.Struct {
+  external ffi.Pointer<ITypeFactoryVtbl> lpVtbl;
+}
+
+final class ITypeMarshalVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeMarshal> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ITypeMarshal> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ITypeMarshal> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeMarshal> This,
+              PVOID pvType,
+              DWORD dwDestContext,
+              PVOID pvDestContext,
+              ffi.Pointer<ULONG> pSize)>> Size;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeMarshal> This,
+              PVOID pvType,
+              DWORD dwDestContext,
+              PVOID pvDestContext,
+              ULONG cbBufferLength,
+              ffi.Pointer<BYTE> pBuffer,
+              ffi.Pointer<ULONG> pcbWritten)>> Marshal;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeMarshal> This,
+              PVOID pvType,
+              DWORD dwFlags,
+              ULONG cbBufferLength,
+              ffi.Pointer<BYTE> pBuffer,
+              ffi.Pointer<ULONG> pcbRead)>> Unmarshal;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeMarshal> This, PVOID pvType)>> Free;
+}
+
+final class ITypeMarshal extends ffi.Struct {
+  external ffi.Pointer<ITypeMarshalVtbl> lpVtbl;
+}
+
 final class IErrorLogVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -59992,6 +63711,95 @@ final class IPropertyBagVtbl extends ffi.Struct {
 
 final class IPropertyBag extends ffi.Struct {
   external ffi.Pointer<IPropertyBagVtbl> lpVtbl;
+}
+
+final class ITypeLibRegistrationReaderVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeLibRegistrationReader> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ITypeLibRegistrationReader> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<ITypeLibRegistrationReader> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<ITypeLibRegistrationReader> This,
+                  ffi.Pointer<ffi.Pointer<IEnumUnknown>> ppEnumUnknown)>>
+      EnumTypeLibRegistrations;
+}
+
+final class ITypeLibRegistrationReader extends ffi.Struct {
+  external ffi.Pointer<ITypeLibRegistrationReaderVtbl> lpVtbl;
+}
+
+final class ITypeLibRegistrationVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ITypeLibRegistration> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<ITypeLibRegistration> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<GUID> pGuid)>> GetGuid;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<BSTR> pVersion)>> GetVersion;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<LCID> pLcid)>> GetLcid;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<BSTR> pWin32Path)>> GetWin32Path;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<BSTR> pWin64Path)>> GetWin64Path;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<BSTR> pDisplayName)>> GetDisplayName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<DWORD> pFlags)>> GetFlags;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<ITypeLibRegistration> This,
+              ffi.Pointer<BSTR> pHelpDir)>> GetHelpDir;
+}
+
+final class ITypeLibRegistration extends ffi.Struct {
+  external ffi.Pointer<ITypeLibRegistrationVtbl> lpVtbl;
 }
 
 typedef CURRENCY = CY;
@@ -61012,6 +64820,462 @@ final class ICodeInstall extends ffi.Struct {
   external ffi.Pointer<ICodeInstallVtbl> lpVtbl;
 }
 
+enum __MIDL_IUri_0001 {
+  Uri_PROPERTY_ABSOLUTE_URI(0),
+  Uri_PROPERTY_AUTHORITY(1),
+  Uri_PROPERTY_DISPLAY_URI(2),
+  Uri_PROPERTY_DOMAIN(3),
+  Uri_PROPERTY_EXTENSION(4),
+  Uri_PROPERTY_FRAGMENT(5),
+  Uri_PROPERTY_HOST(6),
+  Uri_PROPERTY_PASSWORD(7),
+  Uri_PROPERTY_PATH(8),
+  Uri_PROPERTY_PATH_AND_QUERY(9),
+  Uri_PROPERTY_QUERY(10),
+  Uri_PROPERTY_RAW_URI(11),
+  Uri_PROPERTY_SCHEME_NAME(12),
+  Uri_PROPERTY_USER_INFO(13),
+  Uri_PROPERTY_USER_NAME(14),
+  Uri_PROPERTY_HOST_TYPE(15),
+  Uri_PROPERTY_PORT(16),
+  Uri_PROPERTY_SCHEME(17),
+  Uri_PROPERTY_ZONE(18);
+
+  static const Uri_PROPERTY_STRING_START = Uri_PROPERTY_ABSOLUTE_URI;
+  static const Uri_PROPERTY_STRING_LAST = Uri_PROPERTY_USER_NAME;
+  static const Uri_PROPERTY_DWORD_START = Uri_PROPERTY_HOST_TYPE;
+  static const Uri_PROPERTY_DWORD_LAST = Uri_PROPERTY_ZONE;
+
+  final int value;
+  const __MIDL_IUri_0001(this.value);
+
+  static __MIDL_IUri_0001 fromValue(int value) => switch (value) {
+        0 => Uri_PROPERTY_ABSOLUTE_URI,
+        1 => Uri_PROPERTY_AUTHORITY,
+        2 => Uri_PROPERTY_DISPLAY_URI,
+        3 => Uri_PROPERTY_DOMAIN,
+        4 => Uri_PROPERTY_EXTENSION,
+        5 => Uri_PROPERTY_FRAGMENT,
+        6 => Uri_PROPERTY_HOST,
+        7 => Uri_PROPERTY_PASSWORD,
+        8 => Uri_PROPERTY_PATH,
+        9 => Uri_PROPERTY_PATH_AND_QUERY,
+        10 => Uri_PROPERTY_QUERY,
+        11 => Uri_PROPERTY_RAW_URI,
+        12 => Uri_PROPERTY_SCHEME_NAME,
+        13 => Uri_PROPERTY_USER_INFO,
+        14 => Uri_PROPERTY_USER_NAME,
+        15 => Uri_PROPERTY_HOST_TYPE,
+        16 => Uri_PROPERTY_PORT,
+        17 => Uri_PROPERTY_SCHEME,
+        18 => Uri_PROPERTY_ZONE,
+        _ => throw ArgumentError('Unknown value for __MIDL_IUri_0001: $value'),
+      };
+
+  @override
+  String toString() {
+    if (this == Uri_PROPERTY_ABSOLUTE_URI)
+      return "__MIDL_IUri_0001.Uri_PROPERTY_ABSOLUTE_URI, __MIDL_IUri_0001.Uri_PROPERTY_STRING_START";
+    if (this == Uri_PROPERTY_USER_NAME)
+      return "__MIDL_IUri_0001.Uri_PROPERTY_USER_NAME, __MIDL_IUri_0001.Uri_PROPERTY_STRING_LAST";
+    if (this == Uri_PROPERTY_HOST_TYPE)
+      return "__MIDL_IUri_0001.Uri_PROPERTY_HOST_TYPE, __MIDL_IUri_0001.Uri_PROPERTY_DWORD_START";
+    if (this == Uri_PROPERTY_ZONE)
+      return "__MIDL_IUri_0001.Uri_PROPERTY_ZONE, __MIDL_IUri_0001.Uri_PROPERTY_DWORD_LAST";
+    return super.toString();
+  }
+}
+
+final class IUriVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUri> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUri> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IUri> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUri> This, ffi.UnsignedInt uriProp,
+              ffi.Pointer<BSTR> pbstrProperty, DWORD dwFlags)>> GetPropertyBSTR;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This,
+              ffi.UnsignedInt uriProp,
+              ffi.Pointer<DWORD> pcchProperty,
+              DWORD dwFlags)>> GetPropertyLength;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUri> This, ffi.UnsignedInt uriProp,
+              ffi.Pointer<DWORD> pdwProperty, DWORD dwFlags)>> GetPropertyDWORD;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUri> This, ffi.UnsignedInt uriProp,
+              ffi.Pointer<BOOL> pfHasProperty)>> HasProperty;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrAbsoluteUri)>>
+      GetAbsoluteUri;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrAuthority)>>
+      GetAuthority;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUri> This,
+              ffi.Pointer<BSTR> pbstrDisplayString)>> GetDisplayUri;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrDomain)>>
+      GetDomain;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrExtension)>>
+      GetExtension;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrFragment)>>
+      GetFragment;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrHost)>> GetHost;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrPassword)>>
+      GetPassword;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrPath)>> GetPath;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrPathAndQuery)>>
+      GetPathAndQuery;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrQuery)>> GetQuery;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrRawUri)>>
+      GetRawUri;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrSchemeName)>>
+      GetSchemeName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrUserInfo)>>
+      GetUserInfo;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<BSTR> pbstrUserName)>>
+      GetUserNameA;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUri> This, ffi.Pointer<DWORD> pdwHostType)>>
+      GetHostType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This, ffi.Pointer<DWORD> pdwPort)>> GetPort;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This, ffi.Pointer<DWORD> pdwScheme)>> GetScheme;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUri> This, ffi.Pointer<DWORD> pdwZone)>> GetZone;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IUri> This, LPDWORD pdwFlags)>>
+      GetProperties;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUri> This, ffi.Pointer<IUri> pUri,
+              ffi.Pointer<BOOL> pfEqual)>> IsEqual;
+}
+
+final class IUri extends ffi.Struct {
+  external ffi.Pointer<IUriVtbl> lpVtbl;
+}
+
+final class IUriContainerVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriContainer> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IUriContainer> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IUriContainer> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUriContainer> This,
+              ffi.Pointer<ffi.Pointer<IUri>> ppIUri)>> GetIUri;
+}
+
+final class IUriContainer extends ffi.Struct {
+  external ffi.Pointer<IUriContainerVtbl> lpVtbl;
+}
+
+final class IUriBuilderVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUriBuilder> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IUriBuilder> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IUriBuilder> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              DWORD dwAllowEncodingPropertyMask,
+              DWORD_PTR dwReserved,
+              ffi.Pointer<ffi.Pointer<IUri>> ppIUri)>> CreateUriSimple;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              DWORD dwCreateFlags,
+              DWORD dwAllowEncodingPropertyMask,
+              DWORD_PTR dwReserved,
+              ffi.Pointer<ffi.Pointer<IUri>> ppIUri)>> CreateUri;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              DWORD dwCreateFlags,
+              DWORD dwUriBuilderFlags,
+              DWORD dwAllowEncodingPropertyMask,
+              DWORD_PTR dwReserved,
+              ffi.Pointer<ffi.Pointer<IUri>> ppIUri)>> CreateUriWithFlags;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<ffi.Pointer<IUri>> ppIUri)>> GetIUri;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, ffi.Pointer<IUri> pIUri)>> SetIUri;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchFragment,
+              ffi.Pointer<LPCWSTR> ppwzFragment)>> GetFragment;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchHost,
+              ffi.Pointer<LPCWSTR> ppwzHost)>> GetHost;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchPassword,
+              ffi.Pointer<LPCWSTR> ppwzPassword)>> GetPassword;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchPath,
+              ffi.Pointer<LPCWSTR> ppwzPath)>> GetPath;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<BOOL> pfHasPort,
+              ffi.Pointer<DWORD> pdwPort)>> GetPort;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchQuery,
+              ffi.Pointer<LPCWSTR> ppwzQuery)>> GetQuery;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchSchemeName,
+              ffi.Pointer<LPCWSTR> ppwzSchemeName)>> GetSchemeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This,
+              ffi.Pointer<DWORD> pcchUserName,
+              ffi.Pointer<LPCWSTR> ppwzUserName)>> GetUserNameA;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>> SetFragment;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>> SetHost;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>> SetPassword;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>> SetPath;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IUriBuilder> This, BOOL fHasPort,
+              DWORD dwNewValue)>> SetPortA;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>> SetQuery;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>>
+      SetSchemeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilder> This, LPCWSTR pwzNewValue)>> SetUserName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUriBuilder> This, DWORD dwPropertyMask)>>
+      RemoveProperties;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUriBuilder> This, ffi.Pointer<BOOL> pfModified)>>
+      HasBeenModified;
+}
+
+final class IUriBuilder extends ffi.Struct {
+  external ffi.Pointer<IUriBuilderVtbl> lpVtbl;
+}
+
+final class IUriBuilderFactoryVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IUriBuilderFactory> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IUriBuilderFactory> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IUriBuilderFactory> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUriBuilderFactory> This,
+                  DWORD dwFlags,
+                  DWORD_PTR dwReserved,
+                  ffi.Pointer<ffi.Pointer<IUriBuilder>> ppIUriBuilder)>>
+      CreateIUriBuilder;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IUriBuilderFactory> This,
+                  DWORD dwFlags,
+                  DWORD_PTR dwReserved,
+                  ffi.Pointer<ffi.Pointer<IUriBuilder>> ppIUriBuilder)>>
+      CreateInitializedIUriBuilder;
+}
+
+final class IUriBuilderFactory extends ffi.Struct {
+  external ffi.Pointer<IUriBuilderFactoryVtbl> lpVtbl;
+}
+
 final class IWinInetInfoVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -61108,6 +65372,35 @@ final class IWinInetHttpInfoVtbl extends ffi.Struct {
 
 final class IWinInetHttpInfo extends ffi.Struct {
   external ffi.Pointer<IWinInetHttpInfoVtbl> lpVtbl;
+}
+
+final class IWinInetHttpTimeoutsVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IWinInetHttpTimeouts> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IWinInetHttpTimeouts> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IWinInetHttpTimeouts> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IWinInetHttpTimeouts> This,
+              ffi.Pointer<DWORD> pdwConnectTimeout,
+              ffi.Pointer<DWORD> pdwSendTimeout,
+              ffi.Pointer<DWORD> pdwReceiveTimeout)>> GetRequestTimeouts;
+}
+
+final class IWinInetHttpTimeouts extends ffi.Struct {
+  external ffi.Pointer<IWinInetHttpTimeoutsVtbl> lpVtbl;
 }
 
 final class IWinInetCacheHintsVtbl extends ffi.Struct {
@@ -61532,6 +65825,98 @@ final class IInternetProtocol extends ffi.Struct {
   external ffi.Pointer<IInternetProtocolVtbl> lpVtbl;
 }
 
+final class IInternetProtocolExVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetProtocolEx> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetProtocolEx> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetProtocolEx> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetProtocolEx> This,
+              LPCWSTR szUrl,
+              ffi.Pointer<IInternetProtocolSink> pOIProtSink,
+              ffi.Pointer<IInternetBindInfo> pOIBindInfo,
+              DWORD grfPI,
+              HANDLE_PTR dwReserved)>> Start;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetProtocolEx> This,
+              ffi.Pointer<PROTOCOLDATA> pProtocolData)>> Continue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetProtocolEx> This,
+              HRESULT hrReason, DWORD dwOptions)>> Abort;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IInternetProtocolEx> This, DWORD dwOptions)>>
+      Terminate;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetProtocolEx> This)>> Suspend;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetProtocolEx> This)>> Resume;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetProtocolEx> This,
+              ffi.Pointer<ffi.Void> pv,
+              ULONG cb,
+              ffi.Pointer<ULONG> pcbRead)>> Read;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetProtocolEx> This,
+              LARGE_INTEGER dlibMove,
+              DWORD dwOrigin,
+              ffi.Pointer<ULARGE_INTEGER> plibNewPosition)>> Seek;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IInternetProtocolEx> This, DWORD dwOptions)>>
+      LockRequest;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IInternetProtocolEx> This)>>
+      UnlockRequest;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetProtocolEx> This,
+              ffi.Pointer<IUri> pUri,
+              ffi.Pointer<IInternetProtocolSink> pOIProtSink,
+              ffi.Pointer<IInternetBindInfo> pOIBindInfo,
+              DWORD grfPI,
+              HANDLE_PTR dwReserved)>> StartEx;
+}
+
+final class IInternetProtocolEx extends ffi.Struct {
+  external ffi.Pointer<IInternetProtocolExVtbl> lpVtbl;
+}
+
 final class IInternetProtocolSinkStackableVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -61874,6 +66259,544 @@ final class IInternetProtocolInfo extends ffi.Struct {
   external ffi.Pointer<IInternetProtocolInfoVtbl> lpVtbl;
 }
 
+final class IInternetSecurityMgrSiteVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityMgrSite> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetSecurityMgrSite> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetSecurityMgrSite> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetSecurityMgrSite> This,
+              ffi.Pointer<HWND> phwnd)>> GetWindow;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IInternetSecurityMgrSite> This, BOOL fEnable)>>
+      EnableModeless;
+}
+
+final class IInternetSecurityMgrSite extends ffi.Struct {
+  external ffi.Pointer<IInternetSecurityMgrSiteVtbl> lpVtbl;
+}
+
+final class IInternetSecurityManagerVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetSecurityManager> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetSecurityManager> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetSecurityManager> This,
+              ffi.Pointer<IInternetSecurityMgrSite> pSite)>> SetSecuritySite;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IInternetSecurityManager> This,
+                  ffi.Pointer<ffi.Pointer<IInternetSecurityMgrSite>> ppSite)>>
+      GetSecuritySite;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<DWORD> pdwZone,
+              DWORD dwFlags)>> MapUrlToZone;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<BYTE> pbSecurityId,
+              ffi.Pointer<DWORD> pcbSecurityId,
+              DWORD_PTR dwReserved)>> GetSecurityId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              LPCWSTR pwszUrl,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD dwReserved)>> ProcessUrlAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwReserved)>> QueryCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              DWORD dwZone,
+              LPCWSTR lpszPattern,
+              DWORD dwFlags)>> SetZoneMapping;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManager> This,
+              DWORD dwZone,
+              ffi.Pointer<ffi.Pointer<IEnumString>> ppenumString,
+              DWORD dwFlags)>> GetZoneMappings;
+}
+
+final class IInternetSecurityManager extends ffi.Struct {
+  external ffi.Pointer<IInternetSecurityManagerVtbl> lpVtbl;
+}
+
+final class IInternetSecurityManagerExVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetSecurityManagerEx> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IInternetSecurityManagerEx> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetSecurityManagerEx> This,
+              ffi.Pointer<IInternetSecurityMgrSite> pSite)>> SetSecuritySite;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IInternetSecurityManagerEx> This,
+                  ffi.Pointer<ffi.Pointer<IInternetSecurityMgrSite>> ppSite)>>
+      GetSecuritySite;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<DWORD> pdwZone,
+              DWORD dwFlags)>> MapUrlToZone;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<BYTE> pbSecurityId,
+              ffi.Pointer<DWORD> pcbSecurityId,
+              DWORD_PTR dwReserved)>> GetSecurityId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              LPCWSTR pwszUrl,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD dwReserved)>> ProcessUrlAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwReserved)>> QueryCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              DWORD dwZone,
+              LPCWSTR lpszPattern,
+              DWORD dwFlags)>> SetZoneMapping;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              DWORD dwZone,
+              ffi.Pointer<ffi.Pointer<IEnumString>> ppenumString,
+              DWORD dwFlags)>> GetZoneMappings;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx> This,
+              LPCWSTR pwszUrl,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD dwReserved,
+              ffi.Pointer<DWORD> pdwOutFlags)>> ProcessUrlActionEx;
+}
+
+final class IInternetSecurityManagerEx extends ffi.Struct {
+  external ffi.Pointer<IInternetSecurityManagerExVtbl> lpVtbl;
+}
+
+final class IInternetSecurityManagerEx2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IInternetSecurityManagerEx2> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IInternetSecurityManagerEx2> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IInternetSecurityManagerEx2> This,
+              ffi.Pointer<IInternetSecurityMgrSite> pSite)>> SetSecuritySite;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IInternetSecurityManagerEx2> This,
+                  ffi.Pointer<ffi.Pointer<IInternetSecurityMgrSite>> ppSite)>>
+      GetSecuritySite;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<DWORD> pdwZone,
+              DWORD dwFlags)>> MapUrlToZone;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<BYTE> pbSecurityId,
+              ffi.Pointer<DWORD> pcbSecurityId,
+              DWORD_PTR dwReserved)>> GetSecurityId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              LPCWSTR pwszUrl,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD dwReserved)>> ProcessUrlAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              LPCWSTR pwszUrl,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwReserved)>> QueryCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              DWORD dwZone,
+              LPCWSTR lpszPattern,
+              DWORD dwFlags)>> SetZoneMapping;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              DWORD dwZone,
+              ffi.Pointer<ffi.Pointer<IEnumString>> ppenumString,
+              DWORD dwFlags)>> GetZoneMappings;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              LPCWSTR pwszUrl,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD dwReserved,
+              ffi.Pointer<DWORD> pdwOutFlags)>> ProcessUrlActionEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              ffi.Pointer<IUri> pUri,
+              ffi.Pointer<DWORD> pdwZone,
+              DWORD dwFlags,
+              ffi.Pointer<LPWSTR> ppwszMappedUrl,
+              ffi.Pointer<DWORD> pdwOutFlags)>> MapUrlToZoneEx2;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              ffi.Pointer<IUri> pUri,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD_PTR dwReserved,
+              ffi.Pointer<DWORD> pdwOutFlags)>> ProcessUrlActionEx2;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              ffi.Pointer<IUri> pUri,
+              ffi.Pointer<BYTE> pbSecurityId,
+              ffi.Pointer<DWORD> pcbSecurityId,
+              DWORD_PTR dwReserved)>> GetSecurityIdEx2;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetSecurityManagerEx2> This,
+              ffi.Pointer<IUri> pUri,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD_PTR dwReserved)>> QueryCustomPolicyEx2;
+}
+
+final class IInternetSecurityManagerEx2 extends ffi.Struct {
+  external ffi.Pointer<IInternetSecurityManagerEx2Vtbl> lpVtbl;
+}
+
+final class IZoneIdentifierVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IZoneIdentifier> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IZoneIdentifier> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IZoneIdentifier> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IZoneIdentifier> This,
+              ffi.Pointer<DWORD> pdwZone)>> GetId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IZoneIdentifier> This, DWORD dwZone)>> SetId;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IZoneIdentifier> This)>>
+      Remove;
+}
+
+final class IZoneIdentifier extends ffi.Struct {
+  external ffi.Pointer<IZoneIdentifierVtbl> lpVtbl;
+}
+
+final class IZoneIdentifier2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IZoneIdentifier2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IZoneIdentifier2> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IZoneIdentifier2> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IZoneIdentifier2> This,
+              ffi.Pointer<DWORD> pdwZone)>> GetId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IZoneIdentifier2> This, DWORD dwZone)>> SetId;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IZoneIdentifier2> This)>>
+      Remove;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IZoneIdentifier2> This,
+                  ffi.Pointer<LPWSTR> packageFamilyName)>>
+      GetLastWriterPackageFamilyName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IZoneIdentifier2> This,
+              LPCWSTR packageFamilyName)>> SetLastWriterPackageFamilyName;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IZoneIdentifier2> This)>>
+      RemoveLastWriterPackageFamilyName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IZoneIdentifier2> This, ffi.Pointer<DWORD> zone)>>
+      GetAppZoneId;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IZoneIdentifier2> This, DWORD zone)>>
+      SetAppZoneId;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IZoneIdentifier2> This)>>
+      RemoveAppZoneId;
+}
+
+final class IZoneIdentifier2 extends ffi.Struct {
+  external ffi.Pointer<IZoneIdentifier2Vtbl> lpVtbl;
+}
+
+final class IInternetHostSecurityManagerVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetHostSecurityManager> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IInternetHostSecurityManager> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IInternetHostSecurityManager> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetHostSecurityManager> This,
+              ffi.Pointer<BYTE> pbSecurityId,
+              ffi.Pointer<DWORD> pcbSecurityId,
+              DWORD_PTR dwReserved)>> GetSecurityId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetHostSecurityManager> This,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwFlags,
+              DWORD dwReserved)>> ProcessUrlAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetHostSecurityManager> This,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.Pointer<BYTE> pContext,
+              DWORD cbContext,
+              DWORD dwReserved)>> QueryCustomPolicy;
+}
+
+final class IInternetHostSecurityManager extends ffi.Struct {
+  external ffi.Pointer<IInternetHostSecurityManagerVtbl> lpVtbl;
+}
+
 final class _ZONEATTRIBUTES extends ffi.Struct {
   @ULONG()
   external int cbSize;
@@ -62033,6 +66956,640 @@ final class IInternetZoneManagerVtbl extends ffi.Struct {
 
 final class IInternetZoneManager extends ffi.Struct {
   external ffi.Pointer<IInternetZoneManagerVtbl> lpVtbl;
+}
+
+final class IInternetZoneManagerExVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetZoneManagerEx> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetZoneManagerEx> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              ffi.Pointer<ZONEATTRIBUTES> pZoneAttributes)>> GetZoneAttributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              ffi.Pointer<ZONEATTRIBUTES> pZoneAttributes)>> SetZoneAttributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> GetZoneCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> SetZoneCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> GetZoneActionPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> SetZoneActionPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwAction,
+              HWND hwndParent,
+              LPCWSTR pwszUrl,
+              LPCWSTR pwszText,
+              DWORD dwPromptFlags)>> PromptAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwAction,
+              LPCWSTR pwszUrl,
+              LPCWSTR pwszText,
+              DWORD dwLogFlags)>> LogAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              ffi.Pointer<DWORD> pdwEnum,
+              ffi.Pointer<DWORD> pdwCount,
+              DWORD dwFlags)>> CreateZoneEnumerator;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwEnum,
+              DWORD dwIndex,
+              ffi.Pointer<DWORD> pdwZone)>> GetZoneAt;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IInternetZoneManagerEx> This, DWORD dwEnum)>>
+      DestroyZoneEnumerator;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwTemplate,
+              DWORD dwZone,
+              DWORD dwReserved)>> CopyTemplatePoliciesToZone;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg,
+              DWORD dwFlags)>> GetZoneActionPolicyEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg,
+              DWORD dwFlags)>> SetZoneActionPolicyEx;
+}
+
+final class IInternetZoneManagerEx extends ffi.Struct {
+  external ffi.Pointer<IInternetZoneManagerExVtbl> lpVtbl;
+}
+
+final class IInternetZoneManagerEx2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetZoneManagerEx2> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IInternetZoneManagerEx2> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              ffi.Pointer<ZONEATTRIBUTES> pZoneAttributes)>> GetZoneAttributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              ffi.Pointer<ZONEATTRIBUTES> pZoneAttributes)>> SetZoneAttributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<ffi.Pointer<BYTE>> ppPolicy,
+              ffi.Pointer<DWORD> pcbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> GetZoneCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              ffi.Pointer<GUID> guidKey,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> SetZoneCustomPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> GetZoneActionPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg)>> SetZoneActionPolicy;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwAction,
+              HWND hwndParent,
+              LPCWSTR pwszUrl,
+              LPCWSTR pwszText,
+              DWORD dwPromptFlags)>> PromptAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwAction,
+              LPCWSTR pwszUrl,
+              LPCWSTR pwszText,
+              DWORD dwLogFlags)>> LogAction;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              ffi.Pointer<DWORD> pdwEnum,
+              ffi.Pointer<DWORD> pdwCount,
+              DWORD dwFlags)>> CreateZoneEnumerator;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwEnum,
+              DWORD dwIndex,
+              ffi.Pointer<DWORD> pdwZone)>> GetZoneAt;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IInternetZoneManagerEx2> This, DWORD dwEnum)>>
+      DestroyZoneEnumerator;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwTemplate,
+              DWORD dwZone,
+              DWORD dwReserved)>> CopyTemplatePoliciesToZone;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg,
+              DWORD dwFlags)>> GetZoneActionPolicyEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              DWORD dwAction,
+              ffi.Pointer<BYTE> pPolicy,
+              DWORD cbPolicy,
+              ffi.UnsignedInt urlZoneReg,
+              DWORD dwFlags)>> SetZoneActionPolicyEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZone,
+              ffi.Pointer<ZONEATTRIBUTES> pZoneAttributes,
+              DWORD dwFlags)>> GetZoneAttributesEx;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              DWORD dwZoneIndex,
+              BOOL fRespectPolicy,
+              LPDWORD pdwState,
+              ffi.Pointer<BOOL> pfPolicyEncountered)>> GetZoneSecurityState;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IInternetZoneManagerEx2> This,
+              BOOL fRespectPolicy,
+              LPDWORD pdwState,
+              ffi.Pointer<BOOL> pfPolicyEncountered,
+              BOOL fNoCache)>> GetIESecurityState;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IInternetZoneManagerEx2> This)>>
+      FixUnsecureSettings;
+}
+
+final class IInternetZoneManagerEx2 extends ffi.Struct {
+  external ffi.Pointer<IInternetZoneManagerEx2Vtbl> lpVtbl;
+}
+
+final class IXMLElementCollectionVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElementCollection> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLElementCollection> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLElementCollection> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElementCollection> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElementCollection> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElementCollection> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElementCollection> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElementCollection> This, ffi.Long v)>> put_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElementCollection> This,
+              ffi.Pointer<ffi.Long> p)>> get_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElementCollection> This,
+              ffi.Pointer<ffi.Pointer<IUnknown>> ppUnk)>> get__newEnum;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElementCollection> This,
+              VARIANT$1 var1,
+              VARIANT$1 var2,
+              ffi.Pointer<ffi.Pointer<IDispatch>> ppDisp)>> item;
+}
+
+final class IXMLElementCollection extends ffi.Struct {
+  external ffi.Pointer<IXMLElementCollectionVtbl> lpVtbl;
+}
+
+final class IXMLElementVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLElement> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLElement> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLElement> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement> This, ffi.Pointer<BSTR> p)>> get_tagName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This, BSTR p)>> put_tagName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This,
+              ffi.Pointer<ffi.Pointer<IXMLElement>> ppParent)>> get_parent;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This, BSTR strPropertyName,
+              VARIANT$1 PropertyValue)>> setAttribute;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This, BSTR strPropertyName,
+              ffi.Pointer<VARIANT$1> PropertyValue)>> getAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLElement> This, BSTR strPropertyName)>>
+      removeAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLElementCollection>> pp)>>
+      get_children;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLElement> This, ffi.Pointer<ffi.Long> plType)>>
+      get_type;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement> This, ffi.Pointer<BSTR> p)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This, BSTR p)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement> This,
+              ffi.Pointer<IXMLElement> pChildElem,
+              ffi.Long lIndex,
+              ffi.Long lReserved)>> addChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement> This,
+              ffi.Pointer<IXMLElement> pChildElem)>> removeChild;
+}
+
+final class IXMLElement extends ffi.Struct {
+  external ffi.Pointer<IXMLElementVtbl> lpVtbl;
+}
+
+final class _tagSOFTDISTINFO extends ffi.Struct {
+  @ULONG()
+  external int cbSize;
+
+  @DWORD()
+  external int dwFlags;
+
+  @DWORD()
+  external int dwAdState;
+
+  external LPWSTR szTitle;
+
+  external LPWSTR szAbstract;
+
+  external LPWSTR szHREF;
+
+  @DWORD()
+  external int dwInstalledVersionMS;
+
+  @DWORD()
+  external int dwInstalledVersionLS;
+
+  @DWORD()
+  external int dwUpdateVersionMS;
+
+  @DWORD()
+  external int dwUpdateVersionLS;
+
+  @DWORD()
+  external int dwAdvertisedVersionMS;
+
+  @DWORD()
+  external int dwAdvertisedVersionLS;
+
+  @DWORD()
+  external int dwReserved;
+}
+
+typedef LPSOFTDISTINFO = ffi.Pointer<_tagSOFTDISTINFO>;
+
+final class _tagCODEBASEHOLD extends ffi.Struct {
+  @ULONG()
+  external int cbSize;
+
+  external LPWSTR szDistUnit;
+
+  external LPWSTR szCodeBase;
+
+  @DWORD()
+  external int dwVersionMS;
+
+  @DWORD()
+  external int dwVersionLS;
+
+  @DWORD()
+  external int dwStyle;
+}
+
+typedef LPCODEBASEHOLD = ffi.Pointer<_tagCODEBASEHOLD>;
+
+final class ISoftDistExtVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISoftDistExt> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ISoftDistExt> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<ISoftDistExt> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISoftDistExt> This,
+              LPCWSTR szCDFURL,
+              ffi.Pointer<IXMLElement> pSoftDistElement,
+              LPSOFTDISTINFO lpsdi)>> ProcessSoftDist;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISoftDistExt> This,
+              ffi.Pointer<LPWSTR> szCodeBase,
+              LPDWORD dwMaxSize)>> GetFirstCodeBase;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISoftDistExt> This,
+              ffi.Pointer<LPWSTR> szCodeBase,
+              LPDWORD dwMaxSize)>> GetNextCodeBase;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<ISoftDistExt> This,
+              ffi.Pointer<IBindCtx> pbc,
+              LPVOID pvReserved,
+              DWORD flags,
+              LPCODEBASEHOLD lpcbh)>> AsyncInstallDistributionUnit;
+}
+
+final class ISoftDistExt extends ffi.Struct {
+  external ffi.Pointer<ISoftDistExtVtbl> lpVtbl;
 }
 
 final class ICatalogFileInfoVtbl extends ffi.Struct {
@@ -62271,6 +67828,34 @@ final class IBindCallbackRedirectVtbl extends ffi.Struct {
 
 final class IBindCallbackRedirect extends ffi.Struct {
   external ffi.Pointer<IBindCallbackRedirectVtbl> lpVtbl;
+}
+
+final class IBindHttpSecurityVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IBindHttpSecurity> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IBindHttpSecurity> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IBindHttpSecurity> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IBindHttpSecurity> This,
+              ffi.Pointer<DWORD> pdwIgnoreCertMask)>> GetIgnoreCertMask;
+}
+
+final class IBindHttpSecurity extends ffi.Struct {
+  external ffi.Pointer<IBindHttpSecurityVtbl> lpVtbl;
 }
 
 final class IOleAdviseHolderVtbl extends ffi.Struct {
@@ -63361,6 +68946,29 @@ final class IOleInPlaceSite extends ffi.Struct {
   external ffi.Pointer<IOleInPlaceSiteVtbl> lpVtbl;
 }
 
+final class IContinueVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IContinue> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IContinue> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IContinue> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<HRESULT Function(ffi.Pointer<IContinue> This)>>
+      FContinue;
+}
+
+final class IContinue extends ffi.Struct {
+  external ffi.Pointer<IContinueVtbl> lpVtbl;
+}
+
 final class IViewObjectVtbl extends ffi.Struct {
   external ffi.Pointer<
       ffi.NativeFunction<
@@ -63592,6 +69200,72 @@ final class IDropTarget extends ffi.Struct {
   external ffi.Pointer<IDropTargetVtbl> lpVtbl;
 }
 
+final class IDropSourceNotifyVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IDropSourceNotify> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IDropSourceNotify> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IDropSourceNotify> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IDropSourceNotify> This, HWND hwndTarget)>>
+      DragEnterTarget;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IDropSourceNotify> This)>>
+      DragLeaveTarget;
+}
+
+final class IDropSourceNotify extends ffi.Struct {
+  external ffi.Pointer<IDropSourceNotifyVtbl> lpVtbl;
+}
+
+final class IEnterpriseDropTargetVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IEnterpriseDropTarget> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IEnterpriseDropTarget> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IEnterpriseDropTarget> This)>> Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IEnterpriseDropTarget> This, LPCWSTR identity)>>
+      SetDropSourceEnterpriseId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IEnterpriseDropTarget> This,
+              ffi.Pointer<BOOL> value)>> IsEvaluatingEdpPolicy;
+}
+
+final class IEnterpriseDropTarget extends ffi.Struct {
+  external ffi.Pointer<IEnterpriseDropTargetVtbl> lpVtbl;
+}
+
 typedef LPOLEADVISEHOLDER = ffi.Pointer<IOleAdviseHolder>;
 typedef LPOLECACHE = ffi.Pointer<IOleCache>;
 typedef LPOLECACHE2 = ffi.Pointer<IOleCache2>;
@@ -63719,6 +69393,5753 @@ final class IServiceProvider extends ffi.Struct {
 
 typedef LPSERVICEPROVIDER = ffi.Pointer<IServiceProvider>;
 
+final class IXMLDOMImplementationVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMImplementation> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMImplementation> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMImplementation> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMImplementation> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMImplementation> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMImplementation> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMImplementation> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMImplementation> This,
+              BSTR feature,
+              BSTR version,
+              ffi.Pointer<VARIANT_BOOL> hasFeature)>> hasFeature;
+}
+
+final class IXMLDOMImplementation extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMImplementationVtbl> lpVtbl;
+}
+
+enum tagDOMNodeType {
+  NODE_INVALID(0),
+  NODE_ELEMENT(1),
+  NODE_ATTRIBUTE(2),
+  NODE_TEXT(3),
+  NODE_CDATA_SECTION(4),
+  NODE_ENTITY_REFERENCE(5),
+  NODE_ENTITY(6),
+  NODE_PROCESSING_INSTRUCTION(7),
+  NODE_COMMENT(8),
+  NODE_DOCUMENT(9),
+  NODE_DOCUMENT_TYPE(10),
+  NODE_DOCUMENT_FRAGMENT(11),
+  NODE_NOTATION(12);
+
+  final int value;
+  const tagDOMNodeType(this.value);
+
+  static tagDOMNodeType fromValue(int value) => switch (value) {
+        0 => NODE_INVALID,
+        1 => NODE_ELEMENT,
+        2 => NODE_ATTRIBUTE,
+        3 => NODE_TEXT,
+        4 => NODE_CDATA_SECTION,
+        5 => NODE_ENTITY_REFERENCE,
+        6 => NODE_ENTITY,
+        7 => NODE_PROCESSING_INSTRUCTION,
+        8 => NODE_COMMENT,
+        9 => NODE_DOCUMENT,
+        10 => NODE_DOCUMENT_TYPE,
+        11 => NODE_DOCUMENT_FRAGMENT,
+        12 => NODE_NOTATION,
+        _ => throw ArgumentError('Unknown value for tagDOMNodeType: $value'),
+      };
+}
+
+final class IXMLDOMNodeListVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNodeList> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMNodeList> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMNodeList> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNodeList> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNodeList> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNodeList> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNodeList> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNodeList> This, ffi.Long index,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> listItem)>> get_item;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNodeList> This,
+              ffi.Pointer<ffi.Long> listLength)>> get_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNodeList> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextItem)>> nextNode;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IXMLDOMNodeList> This)>>
+      reset;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNodeList> This,
+              ffi.Pointer<ffi.Pointer<IUnknown>> ppUnk)>> get__newEnum;
+}
+
+final class IXMLDOMNodeList extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMNodeListVtbl> lpVtbl;
+}
+
+final class IXMLDOMNamedNodeMapVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMNamedNodeMap> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMNamedNodeMap> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This, BSTR name,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> namedItem)>> getNamedItem;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<IXMLDOMNode> newItem,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nameItem)>> setNamedItem;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This, BSTR name,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> namedItem)>>
+      removeNamedItem;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Long index,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> listItem)>> get_item;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<ffi.Long> listLength)>> get_length;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNamedNodeMap> This,
+                  BSTR baseName,
+                  BSTR namespaceURI,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> qualifiedItem)>>
+      getQualifiedItem;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNamedNodeMap> This,
+                  BSTR baseName,
+                  BSTR namespaceURI,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> qualifiedItem)>>
+      removeQualifiedItem;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextItem)>> nextNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This)>> reset;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNamedNodeMap> This,
+              ffi.Pointer<ffi.Pointer<IUnknown>> ppUnk)>> get__newEnum;
+}
+
+final class IXMLDOMNamedNodeMap extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMNamedNodeMapVtbl> lpVtbl;
+}
+
+final class IXMLDOMDocumentTypeVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMDocumentType> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMDocumentType> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> name)>> get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentType> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentType> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentType> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentType> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentType> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+              ffi.Pointer<BSTR> rootName)>> get_name;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> entityMap)>>
+      get_entities;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentType> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> notationMap)>>
+      get_notations;
+}
+
+final class IXMLDOMDocumentType extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMDocumentTypeVtbl> lpVtbl;
+}
+
+final class IXMLDOMAttributeVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMAttribute> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMAttribute> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This, ffi.Pointer<BSTR> text)>>
+      get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMAttribute> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<BSTR> attributeName)>> get_name;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              ffi.Pointer<VARIANT$1> attributeValue)>> get_value;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMAttribute> This,
+              VARIANT$1 attributeValue)>> put_value;
+}
+
+final class IXMLDOMAttribute extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMAttributeVtbl> lpVtbl;
+}
+
+final class IXMLDOMElementVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMElement> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMElement> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, ffi.Pointer<BSTR> text)>>
+      get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMElement> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This, ffi.Pointer<BSTR> tagName)>>
+      get_tagName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This, BSTR name,
+              ffi.Pointer<VARIANT$1> value)>> getAttribute;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMElement> This, BSTR name,
+              VARIANT$1 value)>> setAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This, BSTR name)>>
+      removeAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This, BSTR name,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMAttribute>> attributeNode)>>
+      getAttributeNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<IXMLDOMAttribute> DOMAttribute,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMAttribute>> attributeNode)>>
+      setAttributeNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMElement> This,
+                  ffi.Pointer<IXMLDOMAttribute> DOMAttribute,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMAttribute>> attributeNode)>>
+      removeAttributeNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMElement> This, BSTR tagName,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      getElementsByTagName;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IXMLDOMElement> This)>>
+      normalize;
+}
+
+final class IXMLDOMElement extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMElementVtbl> lpVtbl;
+}
+
+final class IXMLDOMDocumentFragmentVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMDocumentFragment> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMDocumentFragment> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> name)>> get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentFragment> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              VARIANT$1 typedValue)>> put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              BSTR dataTypeName)>> put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocumentFragment> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocumentFragment> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+}
+
+final class IXMLDOMDocumentFragment extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMDocumentFragmentVtbl> lpVtbl;
+}
+
+final class IXMLDOMTextVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMText> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMText> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Pointer<VARIANT$1> value)>>
+      get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Pointer<BSTR> nodeType)>>
+      get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This, ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This, BSTR dataTypeName)>> put_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Pointer<BSTR> xmlString)>>
+      get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This, BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This, BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Pointer<BSTR> nameString)>>
+      get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMText> This, ffi.Pointer<BSTR> data)>> get_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, BSTR data)>> put_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This,
+              ffi.Pointer<ffi.Long> dataLength)>> get_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, ffi.Long offset,
+              ffi.Long count, ffi.Pointer<BSTR> data)>> substringData;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This, BSTR data)>>
+      appendData;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMText> This, ffi.Long offset, BSTR data)>>
+      insertData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, ffi.Long offset,
+              ffi.Long count)>> deleteData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMText> This, ffi.Long offset,
+              ffi.Long count, BSTR data)>> replaceData;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMText> This, ffi.Long offset,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMText>> rightHandTextNode)>>
+      splitText;
+}
+
+final class IXMLDOMText extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMTextVtbl> lpVtbl;
+}
+
+final class IXMLDOMCommentVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMComment> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMComment> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, ffi.Pointer<BSTR> text)>>
+      get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMComment> This, ffi.Pointer<BSTR> data)>>
+      get_data;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This, BSTR data)>>
+      put_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This,
+              ffi.Pointer<ffi.Long> dataLength)>> get_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This, ffi.Long offset,
+              ffi.Long count, ffi.Pointer<BSTR> data)>> substringData;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMComment> This, BSTR data)>>
+      appendData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This, ffi.Long offset,
+              BSTR data)>> insertData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This, ffi.Long offset,
+              ffi.Long count)>> deleteData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMComment> This, ffi.Long offset,
+              ffi.Long count, BSTR data)>> replaceData;
+}
+
+final class IXMLDOMComment extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMCommentVtbl> lpVtbl;
+}
+
+final class IXMLDOMCDATASectionVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMCDATASection> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMCDATASection> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> name)>> get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCDATASection> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCDATASection> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCDATASection> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCDATASection> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCDATASection> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<BSTR> data)>> get_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This, BSTR data)>> put_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Pointer<ffi.Long> dataLength)>> get_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Long offset,
+              ffi.Long count,
+              ffi.Pointer<BSTR> data)>> substringData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCDATASection> This, BSTR data)>> appendData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Long offset, BSTR data)>> insertData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Long offset, ffi.Long count)>> deleteData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCDATASection> This,
+              ffi.Long offset, ffi.Long count, BSTR data)>> replaceData;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCDATASection> This,
+                  ffi.Long offset,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMText>> rightHandTextNode)>>
+      splitText;
+}
+
+final class IXMLDOMCDATASection extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMCDATASectionVtbl> lpVtbl;
+}
+
+final class IXMLDOMProcessingInstructionVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IXMLDOMProcessingInstruction> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ULONG Function(ffi.Pointer<IXMLDOMProcessingInstruction> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> name)>> get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              VARIANT$1 value)>> put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMProcessingInstruction> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              VARIANT$1 typedValue)>> put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              BSTR dataTypeName)>> put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMProcessingInstruction> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> name)>> get_target;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMProcessingInstruction> This,
+              ffi.Pointer<BSTR> value)>> get_data;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMProcessingInstruction> This, BSTR value)>>
+      put_data;
+}
+
+final class IXMLDOMProcessingInstruction extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMProcessingInstructionVtbl> lpVtbl;
+}
+
+final class IXMLDOMEntityReferenceVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMEntityReference> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMEntityReference> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> name)>> get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntityReference> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              VARIANT$1 typedValue)>> put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntityReference> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntityReference> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntityReference> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntityReference> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+}
+
+final class IXMLDOMEntityReference extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMEntityReferenceVtbl> lpVtbl;
+}
+
+final class IXMLDOMParseErrorVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMParseError> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMParseError> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMParseError> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMParseError> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<ffi.Long> errorCode)>> get_errorCode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<BSTR> urlString)>> get_url;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<BSTR> reasonString)>> get_reason;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<BSTR> sourceString)>> get_srcText;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<ffi.Long> lineNumber)>> get_line;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<ffi.Long> linePosition)>> get_linepos;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMParseError> This,
+              ffi.Pointer<ffi.Long> filePosition)>> get_filepos;
+}
+
+final class IXMLDOMParseError extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMParseErrorVtbl> lpVtbl;
+}
+
+final class IXMLDOMDocumentVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMDocument> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMDocument> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, ffi.Pointer<BSTR> text)>>
+      get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocumentType>> documentType)>>
+      get_doctype;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMImplementation>> impl)>>
+      get_implementation;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMElement>> DOMElement)>>
+      get_documentElement;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<IXMLDOMElement> DOMElement)>> putref_documentElement;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR tagName,
+              ffi.Pointer<ffi.Pointer<IXMLDOMElement>> element)>> createElement;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocumentFragment>> docFrag)>>
+      createDocumentFragment;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR data,
+              ffi.Pointer<ffi.Pointer<IXMLDOMText>> text)>> createTextNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR data,
+              ffi.Pointer<ffi.Pointer<IXMLDOMComment>> comment)>> createComment;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR data,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMCDATASection>> cdata)>>
+      createCDATASection;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This,
+                  BSTR target,
+                  BSTR data,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMProcessingInstruction>> pi)>>
+      createProcessingInstruction;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR name,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMAttribute>> attribute)>>
+      createAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR name,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMEntityReference>> entityRef)>>
+      createEntityReference;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR tagName,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      getElementsByTagName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT$1 Type,
+              BSTR name,
+              BSTR namespaceURI,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> node)>> createNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR idString,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> node)>> nodeFromID;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT$1 xmlSource,
+              ffi.Pointer<VARIANT_BOOL> isSuccessful)>> load;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<ffi.Long> value)>> get_readyState;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMParseError>> errorObj)>>
+      get_parseError;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<BSTR> urlString)>> get_url;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> isAsync)>> get_async;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, VARIANT_BOOL isAsync)>>
+      put_async;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IXMLDOMDocument> This)>>
+      abort;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This, BSTR bstrXML,
+              ffi.Pointer<VARIANT_BOOL> isSuccessful)>> loadXML;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMDocument> This, VARIANT$1 destination)>> save;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> isValidating)>> get_validateOnParse;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT_BOOL isValidating)>> put_validateOnParse;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> isResolving)>> get_resolveExternals;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMDocument> This, VARIANT_BOOL isResolving)>>
+      put_resolveExternals;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              ffi.Pointer<VARIANT_BOOL> isPreserving)>> get_preserveWhiteSpace;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT_BOOL isPreserving)>> put_preserveWhiteSpace;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT$1 readystatechangeSink)>> put_onreadystatechange;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT$1 ondataavailableSink)>> put_ondataavailable;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMDocument> This,
+              VARIANT$1 ontransformnodeSink)>> put_ontransformnode;
+}
+
+final class IXMLDOMDocument extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMDocumentVtbl> lpVtbl;
+}
+
+final class IXMLDOMNodeVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMNode> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMNode> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<VARIANT$1> value)>>
+      get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<BSTR> nodeType)>>
+      get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This, BSTR dataTypeName)>> put_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<BSTR> xmlString)>>
+      get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This, BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNode> This, BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNode> This, ffi.Pointer<BSTR> nameString)>>
+      get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNode> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+}
+
+final class IXMLDOMNode extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMNodeVtbl> lpVtbl;
+}
+
+final class IXMLDOMCharacterDataVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMCharacterData> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IXMLDOMCharacterData> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> name)>> get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCharacterData> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              VARIANT$1 typedValue)>> put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCharacterData> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCharacterData> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMCharacterData> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<BSTR> data)>> get_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This, BSTR data)>> put_data;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Pointer<ffi.Long> dataLength)>> get_length;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Long offset,
+              ffi.Long count,
+              ffi.Pointer<BSTR> data)>> substringData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMCharacterData> This, BSTR data)>> appendData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Long offset, BSTR data)>> insertData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Long offset, ffi.Long count)>> deleteData;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMCharacterData> This,
+              ffi.Long offset, ffi.Long count, BSTR data)>> replaceData;
+}
+
+final class IXMLDOMCharacterData extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMCharacterDataVtbl> lpVtbl;
+}
+
+final class IXMLDOMNotationVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMNotation> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMNotation> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<BSTR> nodeType)>> get_nodeTypeString;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This, ffi.Pointer<BSTR> text)>>
+      get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMNotation> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT$1> publicID)>> get_publicId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMNotation> This,
+              ffi.Pointer<VARIANT$1> systemID)>> get_systemId;
+}
+
+final class IXMLDOMNotation extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMNotationVtbl> lpVtbl;
+}
+
+final class IXMLDOMEntityVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMEntity> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDOMEntity> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT$1> value)>> get_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This, VARIANT$1 value)>> put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, ffi.Pointer<BSTR> nodeType)>>
+      get_nodeTypeString;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, ffi.Pointer<BSTR> text)>>
+      get_text;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This, BSTR text)>>
+      put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, BSTR dataTypeName)>>
+      put_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<BSTR> xmlString)>> get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This,
+                  BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<BSTR> nameString)>> get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT$1> publicID)>> get_publicId;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDOMEntity> This,
+              ffi.Pointer<VARIANT$1> systemID)>> get_systemId;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDOMEntity> This, ffi.Pointer<BSTR> name)>>
+      get_notationName;
+}
+
+final class IXMLDOMEntity extends ffi.Struct {
+  external ffi.Pointer<IXMLDOMEntityVtbl> lpVtbl;
+}
+
+final class IXTLRuntimeVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<ULONG Function(ffi.Pointer<IXTLRuntime> This)>> AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXTLRuntime> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, ffi.Pointer<BSTR> name)>>
+      get_nodeName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, ffi.Pointer<VARIANT$1> value)>>
+      get_nodeValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This, VARIANT$1 value)>>
+      put_nodeValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<ffi.UnsignedInt> type)>> get_nodeType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> parent)>> get_parentNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> childList)>>
+      get_childNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> firstChild)>>
+      get_firstChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> lastChild)>> get_lastChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> previousSibling)>>
+      get_previousSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> nextSibling)>>
+      get_nextSibling;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNamedNodeMap>> attributeMap)>>
+      get_attributes;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              VARIANT$1 refChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> insertBefore;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<IXMLDOMNode> oldChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outOldChild)>> replaceChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> childNode,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> oldChild)>> removeChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> newChild,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> outNewChild)>> appendChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<VARIANT_BOOL> hasChild)>> hasChildNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> XMLDOMDocument)>>
+      get_ownerDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This, VARIANT_BOOL deep,
+              ffi.Pointer<ffi.Pointer<IXMLDOMNode>> cloneRoot)>> cloneNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, ffi.Pointer<BSTR> nodeType)>>
+      get_nodeTypeString;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This, ffi.Pointer<BSTR> text)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This, BSTR text)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<VARIANT_BOOL> isSpecified)>> get_specified;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> definitionNode)>>
+      get_definition;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<VARIANT$1> typedValue)>> get_nodeTypedValue;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, VARIANT$1 typedValue)>>
+      put_nodeTypedValue;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<VARIANT$1> dataTypeName)>> get_dataType;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This, BSTR dataTypeName)>> put_dataType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, ffi.Pointer<BSTR> xmlString)>>
+      get_xml;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              ffi.Pointer<BSTR> xmlString)>> transformNode;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This, BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNodeList>> resultList)>>
+      selectNodes;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXTLRuntime> This, BSTR queryString,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMNode>> resultNode)>>
+      selectSingleNode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<VARIANT_BOOL> isParsed)>> get_parsed;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<BSTR> namespaceURI)>> get_namespaceURI;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<BSTR> prefixString)>> get_prefix;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXTLRuntime> This, ffi.Pointer<BSTR> nameString)>>
+      get_baseName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> stylesheet,
+              VARIANT$1 outputObject)>> transformNodeToObject;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> pNode,
+              ffi.Pointer<ffi.Long> pID)>> uniqueID;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> pNode,
+              ffi.Pointer<ffi.Long> pDepth)>> depth;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> pNode,
+              ffi.Pointer<ffi.Long> pNumber)>> childNumber;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              BSTR bstrNodeName,
+              ffi.Pointer<IXMLDOMNode> pNode,
+              ffi.Pointer<ffi.Long> pNumber)>> ancestorChildNumber;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Pointer<IXMLDOMNode> pNode,
+              ffi.Pointer<ffi.Long> pNumber)>> absoluteChildNumber;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Long lIndex,
+              BSTR bstrFormat,
+              ffi.Pointer<BSTR> pbstrFormattedString)>> formatIndex;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              ffi.Double dblNumber,
+              BSTR bstrFormat,
+              ffi.Pointer<BSTR> pbstrFormattedString)>> formatNumber;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              VARIANT$1 varDate,
+              BSTR bstrFormat,
+              VARIANT$1 varDestLocale,
+              ffi.Pointer<BSTR> pbstrFormattedString)>> formatDate;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXTLRuntime> This,
+              VARIANT$1 varTime,
+              BSTR bstrFormat,
+              VARIANT$1 varDestLocale,
+              ffi.Pointer<BSTR> pbstrFormattedString)>> formatTime;
+}
+
+final class IXTLRuntime extends ffi.Struct {
+  external ffi.Pointer<IXTLRuntimeVtbl> lpVtbl;
+}
+
+final class XMLDOMDocumentEventsVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<XMLDOMDocumentEvents> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<XMLDOMDocumentEvents> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<XMLDOMDocumentEvents> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<XMLDOMDocumentEvents> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<XMLDOMDocumentEvents> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<XMLDOMDocumentEvents> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<XMLDOMDocumentEvents> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+}
+
+final class XMLDOMDocumentEvents extends ffi.Struct {
+  external ffi.Pointer<XMLDOMDocumentEventsVtbl> lpVtbl;
+}
+
+final class DOMDocument extends ffi.Opaque {}
+
+final class DOMFreeThreadedDocument extends ffi.Opaque {}
+
+final class IXMLHttpRequestVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLHttpRequest> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLHttpRequest> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<UINT> pctinfo)>> GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLHttpRequest> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLHttpRequest> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLHttpRequest> This,
+              BSTR bstrMethod,
+              BSTR bstrUrl,
+              VARIANT$1 varAsync,
+              VARIANT$1 bstrUser,
+              VARIANT$1 bstrPassword)>> open;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This, BSTR bstrHeader,
+              BSTR bstrValue)>> setRequestHeader;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This, BSTR bstrHeader,
+              ffi.Pointer<BSTR> pbstrValue)>> getResponseHeader;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<BSTR> pbstrHeaders)>> getAllResponseHeaders;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLHttpRequest> This, VARIANT$1 varBody)>> send;
+
+  external ffi.Pointer<
+          ffi
+          .NativeFunction<HRESULT Function(ffi.Pointer<IXMLHttpRequest> This)>>
+      abort;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<ffi.Long> plStatus)>> get_status;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<BSTR> pbstrStatus)>> get_statusText;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<ffi.Pointer<IDispatch>> ppBody)>> get_responseXML;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<BSTR> pbstrBody)>> get_responseText;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<VARIANT$1> pvarBody)>> get_responseBody;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<VARIANT$1> pvarBody)>> get_responseStream;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<ffi.Long> plState)>> get_readyState;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLHttpRequest> This,
+              ffi.Pointer<IDispatch> pReadyStateSink)>> put_onreadystatechange;
+}
+
+final class IXMLHttpRequest extends ffi.Struct {
+  external ffi.Pointer<IXMLHttpRequestVtbl> lpVtbl;
+}
+
+final class XMLHTTPRequest extends ffi.Opaque {}
+
+final class IXMLDSOControlVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDSOControl> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDSOControl> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDSOControl> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDSOControl> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDSOControl> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDSOControl> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDSOControl> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDSOControl> This,
+                  ffi.Pointer<ffi.Pointer<IXMLDOMDocument>> ppDoc)>>
+      get_XMLDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDSOControl> This,
+              ffi.Pointer<IXMLDOMDocument> ppDoc)>> put_XMLDocument;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDSOControl> This,
+              ffi.Pointer<BOOL> fJavaDSOCompatible)>> get_JavaDSOCompatible;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDSOControl> This, BOOL fJavaDSOCompatible)>>
+      put_JavaDSOCompatible;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDSOControl> This,
+              ffi.Pointer<ffi.Long> state)>> get_readyState;
+}
+
+final class IXMLDSOControl extends ffi.Struct {
+  external ffi.Pointer<IXMLDSOControlVtbl> lpVtbl;
+}
+
+final class XMLDSOControl extends ffi.Opaque {}
+
+final class IXMLDocumentVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDocument> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDocument> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDocument> This,
+              ffi.Pointer<ffi.Pointer<IXMLElement>> p)>> get_root;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_fileSize;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_fileModifiedDate;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_fileUpdatedDate;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>> get_URL;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDocument> This, BSTR p)>> put_URL;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_mimeType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<ffi.Long> pl)>>
+      get_readyState;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_charset;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDocument> This, BSTR p)>>
+      put_charset;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_version;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>>
+      get_doctype;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This, ffi.Pointer<BSTR> p)>> get_dtdURL;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument> This,
+              VARIANT$1 vType,
+              VARIANT$1 var1,
+              ffi.Pointer<ffi.Pointer<IXMLElement>> ppElem)>> createElement;
+}
+
+final class IXMLDocument extends ffi.Struct {
+  external ffi.Pointer<IXMLDocumentVtbl> lpVtbl;
+}
+
+final class IXMLElement2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLElement2> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLElement2> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLElement2> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement2> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement2> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLElement2> This, ffi.Pointer<BSTR> p)>>
+      get_tagName;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLElement2> This, BSTR p)>>
+      put_tagName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement2> This,
+              ffi.Pointer<ffi.Pointer<IXMLElement2>> ppParent)>> get_parent;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement2> This, BSTR strPropertyName,
+              VARIANT$1 PropertyValue)>> setAttribute;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement2> This, BSTR strPropertyName,
+              ffi.Pointer<VARIANT$1> PropertyValue)>> getAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLElement2> This, BSTR strPropertyName)>>
+      removeAttribute;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLElement2> This,
+                  ffi.Pointer<ffi.Pointer<IXMLElementCollection>> pp)>>
+      get_children;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement2> This,
+              ffi.Pointer<ffi.Long> plType)>> get_type;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement2> This, ffi.Pointer<BSTR> p)>> get_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement2> This, BSTR p)>> put_text;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLElement2> This,
+              ffi.Pointer<IXMLElement2> pChildElem,
+              ffi.Long lIndex,
+              ffi.Long lReserved)>> addChild;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLElement2> This,
+              ffi.Pointer<IXMLElement2> pChildElem)>> removeChild;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLElement2> This,
+                  ffi.Pointer<ffi.Pointer<IXMLElementCollection>> pp)>>
+      get_attributes;
+}
+
+final class IXMLElement2 extends ffi.Struct {
+  external ffi.Pointer<IXMLElement2Vtbl> lpVtbl;
+}
+
+final class IXMLDocument2Vtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDocument2> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLDocument2> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDocument2> This,
+              ffi.Pointer<ffi.Pointer<IXMLElement2>> p)>> get_root;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_fileSize;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_fileModifiedDate;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_fileUpdatedDate;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>> get_URL;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDocument2> This, BSTR p)>> put_URL;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_mimeType;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<ffi.Long> pl)>>
+      get_readyState;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_charset;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IXMLDocument2> This, BSTR p)>>
+      put_charset;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_version;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_doctype;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLDocument2> This, ffi.Pointer<BSTR> p)>>
+      get_dtdURL;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This,
+              VARIANT$1 vType,
+              VARIANT$1 var1,
+              ffi.Pointer<ffi.Pointer<IXMLElement2>> ppElem)>> createElement;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLDocument2> This,
+              ffi.Pointer<VARIANT_BOOL> pf)>> get_async;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLDocument2> This, VARIANT_BOOL f)>> put_async;
+}
+
+final class IXMLDocument2 extends ffi.Struct {
+  external ffi.Pointer<IXMLDocument2Vtbl> lpVtbl;
+}
+
+final class IXMLAttributeVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLAttribute> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLAttribute> This)>>
+      AddRef;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLAttribute> This)>>
+      Release;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(
+                  ffi.Pointer<IXMLAttribute> This, ffi.Pointer<UINT> pctinfo)>>
+      GetTypeInfoCount;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLAttribute> This,
+              UINT iTInfo,
+              LCID lcid,
+              ffi.Pointer<ffi.Pointer<ITypeInfo>> ppTInfo)>> GetTypeInfo;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLAttribute> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<LPOLESTR> rgszNames,
+              UINT cNames,
+              LCID lcid,
+              ffi.Pointer<DISPID> rgDispId)>> GetIDsOfNames;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLAttribute> This,
+              DISPID dispIdMember,
+              ffi.Pointer<IID> riid,
+              LCID lcid,
+              WORD wFlags,
+              ffi.Pointer<DISPPARAMS> pDispParams,
+              ffi.Pointer<VARIANT$1> pVarResult,
+              ffi.Pointer<EXCEPINFO> pExcepInfo,
+              ffi.Pointer<UINT> puArgErr)>> Invoke;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLAttribute> This, ffi.Pointer<BSTR> n)>> get_name;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IXMLAttribute> This, ffi.Pointer<BSTR> v)>> get_value;
+}
+
+final class IXMLAttribute extends ffi.Struct {
+  external ffi.Pointer<IXMLAttributeVtbl> lpVtbl;
+}
+
 final class _xml_error extends ffi.Struct {
   @ffi.UnsignedInt()
   external int _nLine;
@@ -63743,6 +75164,33 @@ final class _xml_error extends ffi.Struct {
 }
 
 typedef XML_ERROR = _xml_error;
+
+final class IXMLErrorVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLError> This, ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObject)>> QueryInterface;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLError> This)>>
+      AddRef;
+
+  external ffi
+      .Pointer<ffi.NativeFunction<ULONG Function(ffi.Pointer<IXMLError> This)>>
+      Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IXMLError> This,
+              ffi.Pointer<XML_ERROR> pErrorReturn)>> GetErrorInfo;
+}
+
+final class IXMLError extends ffi.Struct {
+  external ffi.Pointer<IXMLErrorVtbl> lpVtbl;
+}
+
+final class XMLDocument extends ffi.Opaque {}
+
 typedef LPPERSISTMONIKER = ffi.Pointer<IPersistMoniker>;
 typedef LPMONIKERPROP = ffi.Pointer<IMonikerProp>;
 typedef LPBINDPROTOCOL = ffi.Pointer<IBindProtocol>;
@@ -63860,68 +75308,8 @@ typedef LPIINTERNETPRIORITY = ffi.Pointer<IInternetPriority>;
 typedef LPIINTERNETPROTOCOLINFO = ffi.Pointer<IInternetProtocolInfo>;
 typedef LPURLZONEMANAGER = ffi.Pointer<IInternetZoneManager>;
 typedef LPZONEATTRIBUTES = ffi.Pointer<_ZONEATTRIBUTES>;
-
-final class _tagCODEBASEHOLD extends ffi.Struct {
-  @ULONG()
-  external int cbSize;
-
-  external LPWSTR szDistUnit;
-
-  external LPWSTR szCodeBase;
-
-  @DWORD()
-  external int dwVersionMS;
-
-  @DWORD()
-  external int dwVersionLS;
-
-  @DWORD()
-  external int dwStyle;
-}
-
 typedef CODEBASEHOLD = _tagCODEBASEHOLD;
-typedef LPCODEBASEHOLD = ffi.Pointer<_tagCODEBASEHOLD>;
-
-final class _tagSOFTDISTINFO extends ffi.Struct {
-  @ULONG()
-  external int cbSize;
-
-  @DWORD()
-  external int dwFlags;
-
-  @DWORD()
-  external int dwAdState;
-
-  external LPWSTR szTitle;
-
-  external LPWSTR szAbstract;
-
-  external LPWSTR szHREF;
-
-  @DWORD()
-  external int dwInstalledVersionMS;
-
-  @DWORD()
-  external int dwInstalledVersionLS;
-
-  @DWORD()
-  external int dwUpdateVersionMS;
-
-  @DWORD()
-  external int dwUpdateVersionLS;
-
-  @DWORD()
-  external int dwAdvertisedVersionMS;
-
-  @DWORD()
-  external int dwAdvertisedVersionLS;
-
-  @DWORD()
-  external int dwReserved;
-}
-
 typedef SOFTDISTINFO = _tagSOFTDISTINFO;
-typedef LPSOFTDISTINFO = ffi.Pointer<_tagSOFTDISTINFO>;
 typedef LPCATALOGFILEINFO = ffi.Pointer<ICatalogFileInfo>;
 typedef LPDATAFILTER = ffi.Pointer<IDataFilter>;
 
@@ -63957,6 +75345,16 @@ final class _tagHIT_LOGGING_INFO extends ffi.Struct {
 
 typedef HIT_LOGGING_INFO = _tagHIT_LOGGING_INFO;
 typedef LPHIT_LOGGING_INFO = ffi.Pointer<_tagHIT_LOGGING_INFO>;
+
+final class CONFIRMSAFETY extends ffi.Struct {
+  external CLSID clsid;
+
+  external ffi.Pointer<IUnknown> pUnk;
+
+  @DWORD()
+  external int dwFlags;
+}
+
 typedef LPIWRAPPEDPROTOCOL = ffi.Pointer<IWrappedProtocol>;
 typedef LPGETBINDHANDLE = ffi.Pointer<IGetBindHandle>;
 
@@ -63979,6 +75377,33 @@ final class tagSERIALIZEDPROPERTYVALUE extends ffi.Struct {
 }
 
 typedef SERIALIZEDPROPERTYVALUE = tagSERIALIZEDPROPERTYVALUE;
+
+final class NUMPARSE extends ffi.Struct {
+  @INT()
+  external int cDig;
+
+  @ULONG()
+  external int dwInFlags;
+
+  @ULONG()
+  external int dwOutFlags;
+
+  @INT()
+  external int cchUsed;
+
+  @INT()
+  external int nBaseShift;
+
+  @INT()
+  external int nPwr10;
+}
+
+final class UDATE extends ffi.Struct {
+  external SYSTEMTIME st;
+
+  @USHORT()
+  external int wDayOfYear;
+}
 
 final class tagPARAMDATA extends ffi.Struct {
   external ffi.Pointer<OLECHAR> szName;
@@ -64703,6 +76128,88 @@ typedef PRINTDLGW = tagPDW;
 typedef LPPRINTDLGW = ffi.Pointer<tagPDW>;
 typedef PRINTDLG = PRINTDLGA;
 typedef LPPRINTDLG = LPPRINTDLGA;
+
+final class IPrintDialogCallbackVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPrintDialogCallback> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObj)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IPrintDialogCallback> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IPrintDialogCallback> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(ffi.Pointer<IPrintDialogCallback> This)>> InitDone;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              HRESULT Function(ffi.Pointer<IPrintDialogCallback> This)>>
+      SelectionChange;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPrintDialogCallback> This,
+              HWND hDlg,
+              UINT uMsg,
+              WPARAM wParam,
+              LPARAM lParam,
+              ffi.Pointer<LRESULT> pResult)>> HandleMessage;
+}
+
+final class IPrintDialogCallback extends ffi.Struct {
+  external ffi.Pointer<IPrintDialogCallbackVtbl> lpVtbl;
+}
+
+final class IPrintDialogServicesVtbl extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPrintDialogServices> This,
+              ffi.Pointer<IID> riid,
+              ffi.Pointer<ffi.Pointer<ffi.Void>> ppvObj)>> QueryInterface;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IPrintDialogServices> This)>> AddRef;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ULONG Function(ffi.Pointer<IPrintDialogServices> This)>> Release;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPrintDialogServices> This,
+              LPDEVMODE pDevMode,
+              ffi.Pointer<UINT> pcbSize)>> GetCurrentDevMode;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPrintDialogServices> This,
+              LPWSTR pPrinterName,
+              ffi.Pointer<UINT> pcchSize)>> GetCurrentPrinterName;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          HRESULT Function(
+              ffi.Pointer<IPrintDialogServices> This,
+              LPWSTR pPortName,
+              ffi.Pointer<UINT> pcchSize)>> GetCurrentPortName;
+}
+
+final class IPrintDialogServices extends ffi.Struct {
+  external ffi.Pointer<IPrintDialogServicesVtbl> lpVtbl;
+}
 
 final class tagPRINTPAGERANGE extends ffi.Struct {
   @DWORD()
@@ -66707,6 +78214,18 @@ final class hostent extends ffi.Struct {
   external ffi.Pointer<ffi.Pointer<ffi.Char>> h_addr_list;
 }
 
+final class netent extends ffi.Struct {
+  external ffi.Pointer<ffi.Char> n_name;
+
+  external ffi.Pointer<ffi.Pointer<ffi.Char>> n_aliases;
+
+  @ffi.Short()
+  external int n_addrtype;
+
+  @u_long()
+  external int n_net;
+}
+
 final class servent extends ffi.Struct {
   external ffi.Pointer<ffi.Char> s_name;
 
@@ -66751,6 +78270,14 @@ final class WSAData extends ffi.Struct {
 
 typedef WSADATA = WSAData;
 typedef LPWSADATA = ffi.Pointer<WSAData>;
+
+final class sockproto extends ffi.Struct {
+  @u_short()
+  external int sp_family;
+
+  @u_short()
+  external int sp_protocol;
+}
 
 final class linger extends ffi.Struct {
   @u_short()
@@ -67496,6 +79023,26 @@ final class pollfd extends ffi.Struct {
 typedef WSAPOLLFD = pollfd;
 typedef PWSAPOLLFD = ffi.Pointer<pollfd>;
 typedef LPWSAPOLLFD = ffi.Pointer<pollfd>;
+
+final class SOCK_NOTIFY_REGISTRATION extends ffi.Struct {
+  @SOCKET()
+  external int socket;
+
+  external PVOID completionKey;
+
+  @UINT16()
+  external int eventFilter;
+
+  @UINT8()
+  external int operation;
+
+  @UINT8()
+  external int triggerFlags;
+
+  @DWORD()
+  external int registrationResult;
+}
+
 typedef LPSOCKADDR_IN = ffi.Pointer<sockaddr_in>;
 typedef LINGER = linger;
 typedef PLINGER = ffi.Pointer<linger>;
@@ -67548,6 +79095,30 @@ final class tm extends ffi.Struct {
 typedef clock_t = ffi.Long;
 typedef Dartclock_t = int;
 
+final class _timespec32 extends ffi.Struct {
+  @__time32_t()
+  external int tv_sec;
+
+  @ffi.Long()
+  external int tv_nsec;
+}
+
+final class _timespec64 extends ffi.Struct {
+  @__time64_t()
+  external int tv_sec;
+
+  @ffi.Long()
+  external int tv_nsec;
+}
+
+final class timespec extends ffi.Struct {
+  @time_t()
+  external int tv_sec;
+
+  @ffi.Long()
+  external int tv_nsec;
+}
+
 final class _iobuf extends ffi.Struct {
   external ffi.Pointer<ffi.Void> _Placeholder;
 }
@@ -67581,6 +79152,9 @@ typedef OPENSSL_sk_copyfunc
     = ffi.Pointer<ffi.NativeFunction<OPENSSL_sk_copyfuncFunction>>;
 typedef OPENSSL_STRING = ffi.Pointer<ffi.Char>;
 typedef OPENSSL_CSTRING = ffi.Pointer<ffi.Char>;
+
+final class stack_st_OPENSSL_STRING extends ffi.Opaque {}
+
 typedef sk_OPENSSL_STRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ffi.Char>> a, ffi.Pointer<ffi.Pointer<ffi.Char>> b);
 typedef Dartsk_OPENSSL_STRING_compfuncFunction = int Function(
@@ -67597,6 +79171,9 @@ typedef sk_OPENSSL_STRING_copyfuncFunction = ffi.Pointer<ffi.Char> Function(
     ffi.Pointer<ffi.Char> a);
 typedef sk_OPENSSL_STRING_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_OPENSSL_STRING_copyfuncFunction>>;
+
+final class stack_st_OPENSSL_CSTRING extends ffi.Opaque {}
+
 typedef sk_OPENSSL_CSTRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ffi.Char>> a, ffi.Pointer<ffi.Pointer<ffi.Char>> b);
 typedef Dartsk_OPENSSL_CSTRING_compfuncFunction = int Function(
@@ -67614,6 +79191,9 @@ typedef sk_OPENSSL_CSTRING_copyfuncFunction = ffi.Pointer<ffi.Char> Function(
 typedef sk_OPENSSL_CSTRING_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_OPENSSL_CSTRING_copyfuncFunction>>;
 typedef OPENSSL_BLOCK = ffi.Pointer<ffi.Void>;
+
+final class stack_st_OPENSSL_BLOCK extends ffi.Opaque {}
+
 typedef sk_OPENSSL_BLOCK_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ffi.Void>> a, ffi.Pointer<ffi.Pointer<ffi.Void>> b);
 typedef Dartsk_OPENSSL_BLOCK_compfuncFunction = int Function(
@@ -67804,6 +79384,10 @@ final class buf_mem_st extends ffi.Struct {
 }
 
 typedef BUF_MEM = buf_mem_st;
+
+final class stack_st_BIGNUM extends ffi.Opaque {}
+
+final class stack_st_BIGNUM_const extends ffi.Opaque {}
 
 final class err_state_st extends ffi.Struct {
   @ffi.Array.multi([16])
@@ -68479,6 +80063,12 @@ typedef OSSL_PASSPHRASE_CALLBACK = ffi.NativeFunction<
         ffi.Pointer<ffi.Size> pass_len,
         ffi.Pointer<OSSL_PARAM> params,
         ffi.Pointer<ffi.Void> arg)>;
+
+final class CRYPTO_dynlock extends ffi.Struct {
+  @ffi.Int()
+  external int dummy;
+}
+
 typedef CRYPTO_RWLOCK = ffi.Void;
 typedef DartCRYPTO_RWLOCK = void;
 typedef sk_void_compfuncFunction = ffi.Int Function(
@@ -68554,6 +80144,9 @@ typedef CRYPTO_ONCE = LONG;
 final class ssl_comp_st extends ffi.Opaque {}
 
 typedef SSL_COMP = ssl_comp_st;
+
+final class stack_st_SSL_COMP extends ffi.Opaque {}
+
 typedef sk_SSL_COMP_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<SSL_COMP>> a, ffi.Pointer<ffi.Pointer<SSL_COMP>> b);
 typedef Dartsk_SSL_COMP_compfuncFunction = int Function(
@@ -68616,6 +80209,9 @@ typedef BIO_METHOD = bio_method_st;
 typedef BIO_info_cb
     = ffi.NativeFunction<ffi.Int Function(ffi.Pointer<BIO>, ffi.Int, ffi.Int)>;
 typedef bio_info_cb = BIO_info_cb;
+
+final class stack_st_BIO extends ffi.Opaque {}
+
 typedef sk_BIO_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<BIO>> a, ffi.Pointer<ffi.Pointer<BIO>> b);
 typedef Dartsk_BIO_compfuncFunction = int Function(
@@ -69740,6 +81336,9 @@ final class ASN1_ENCODING_st extends ffi.Struct {
 }
 
 typedef ASN1_ENCODING = ASN1_ENCODING_st;
+
+final class stack_st_ASN1_STRING_TABLE extends ffi.Opaque {}
+
 typedef sk_ASN1_STRING_TABLE_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ASN1_STRING_TABLE>> a,
     ffi.Pointer<ffi.Pointer<ASN1_STRING_TABLE>> b);
@@ -69851,6 +81450,9 @@ typedef sk_ASN1_INTEGER_copyfuncFunction = ffi.Pointer<ASN1_INTEGER> Function(
     ffi.Pointer<ASN1_INTEGER> a);
 typedef sk_ASN1_INTEGER_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_ASN1_INTEGER_copyfuncFunction>>;
+
+final class stack_st_ASN1_UTF8STRING extends ffi.Opaque {}
+
 typedef sk_ASN1_UTF8STRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ASN1_UTF8STRING>> a,
     ffi.Pointer<ffi.Pointer<ASN1_UTF8STRING>> b);
@@ -69869,6 +81471,9 @@ typedef sk_ASN1_UTF8STRING_copyfuncFunction = ffi.Pointer<ASN1_UTF8STRING>
     Function(ffi.Pointer<ASN1_UTF8STRING> a);
 typedef sk_ASN1_UTF8STRING_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_ASN1_UTF8STRING_copyfuncFunction>>;
+
+final class stack_st_ASN1_GENERALSTRING extends ffi.Opaque {}
+
 typedef sk_ASN1_GENERALSTRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ASN1_GENERALSTRING>> a,
     ffi.Pointer<ffi.Pointer<ASN1_GENERALSTRING>> b);
@@ -69901,6 +81506,18 @@ final class obj_name_st extends ffi.Struct {
 }
 
 typedef OBJ_NAME = obj_name_st;
+
+final class EVP_CTRL_TLS1_1_MULTIBLOCK_PARAM extends ffi.Struct {
+  external ffi.Pointer<ffi.UnsignedChar> out;
+
+  external ffi.Pointer<ffi.UnsignedChar> inp;
+
+  @ffi.Size()
+  external int len;
+
+  @ffi.UnsignedInt()
+  external int interleave;
+}
 
 final class evp_cipher_info_st extends ffi.Struct {
   external ffi.Pointer<EVP_CIPHER> cipher;
@@ -69952,6 +81569,14 @@ typedef ECPKPARAMETERS = ecpk_parameters_st;
 final class ec_parameters_st extends ffi.Opaque {}
 
 typedef ECPARAMETERS = ec_parameters_st;
+
+/// /
+final class EC_builtin_curve extends ffi.Struct {
+  @ffi.Int()
+  external int nid;
+
+  external ffi.Pointer<ffi.Char> comment;
+}
 
 final class ECDSA_SIG_st extends ffi.Opaque {}
 
@@ -70054,6 +81679,9 @@ final class SHA512state_st extends ffi.Struct {
 }
 
 typedef SHA512_CTX = SHA512state_st;
+
+final class stack_st_X509_NAME extends ffi.Opaque {}
+
 typedef sk_X509_NAME_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_NAME>> a,
     ffi.Pointer<ffi.Pointer<X509_NAME>> b);
@@ -70089,6 +81717,9 @@ typedef sk_X509_copyfuncFunction = ffi.Pointer<X509> Function(
     ffi.Pointer<X509> a);
 typedef sk_X509_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_X509_copyfuncFunction>>;
+
+final class stack_st_X509_REVOKED extends ffi.Opaque {}
+
 typedef sk_X509_REVOKED_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_REVOKED>> a,
     ffi.Pointer<ffi.Pointer<X509_REVOKED>> b);
@@ -70268,6 +81899,9 @@ final class X509_info_st extends ffi.Struct {
 }
 
 typedef X509_INFO = X509_info_st;
+
+final class stack_st_X509_INFO extends ffi.Opaque {}
+
 typedef sk_X509_INFO_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_INFO>> a,
     ffi.Pointer<ffi.Pointer<X509_INFO>> b);
@@ -70341,6 +81975,12 @@ final class PBKDF2PARAM_st extends ffi.Struct {
 
 typedef PBKDF2PARAM = PBKDF2PARAM_st;
 
+final class PBMAC1PARAM extends ffi.Struct {
+  external ffi.Pointer<X509_ALGOR> keyDerivationFunc;
+
+  external ffi.Pointer<X509_ALGOR> messageAuthScheme;
+}
+
 final class SCRYPT_PARAMS_st extends ffi.Struct {
   external ffi.Pointer<ASN1_OCTET_STRING> salt;
 
@@ -70409,6 +82049,21 @@ typedef OPENSSL_LH_DOALL_FUNCARG_THUNK
 final class lhash_st extends ffi.Opaque {}
 
 typedef OPENSSL_LHASH = lhash_st;
+
+final class lh_OPENSSL_STRING_dummy extends ffi.Union {
+  external ffi.Pointer<ffi.Void> d1;
+
+  @ffi.UnsignedLong()
+  external int d2;
+
+  @ffi.Int()
+  external int d3;
+}
+
+final class lhash_st_OPENSSL_STRING extends ffi.Struct {
+  external lh_OPENSSL_STRING_dummy dummy;
+}
+
 typedef lh_OPENSSL_STRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<OPENSSL_STRING> a, ffi.Pointer<OPENSSL_STRING> b);
 typedef Dartlh_OPENSSL_STRING_compfuncFunction = int Function(
@@ -70427,6 +82082,21 @@ typedef Dartlh_OPENSSL_STRING_doallfuncFunction = void Function(
     ffi.Pointer<OPENSSL_STRING> a);
 typedef lh_OPENSSL_STRING_doallfunc
     = ffi.Pointer<ffi.NativeFunction<lh_OPENSSL_STRING_doallfuncFunction>>;
+
+final class lh_OPENSSL_CSTRING_dummy extends ffi.Union {
+  external ffi.Pointer<ffi.Void> d1;
+
+  @ffi.UnsignedLong()
+  external int d2;
+
+  @ffi.Int()
+  external int d3;
+}
+
+final class lhash_st_OPENSSL_CSTRING extends ffi.Struct {
+  external lh_OPENSSL_CSTRING_dummy dummy;
+}
+
 typedef lh_OPENSSL_CSTRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<OPENSSL_CSTRING> a, ffi.Pointer<OPENSSL_CSTRING> b);
 typedef Dartlh_OPENSSL_CSTRING_compfuncFunction = int Function(
@@ -70445,6 +82115,9 @@ typedef Dartlh_OPENSSL_CSTRING_doallfuncFunction = void Function(
     ffi.Pointer<OPENSSL_CSTRING> a);
 typedef lh_OPENSSL_CSTRING_doallfunc
     = ffi.Pointer<ffi.NativeFunction<lh_OPENSSL_CSTRING_doallfuncFunction>>;
+
+final class stack_st_OCSP_RESPONSE extends ffi.Opaque {}
+
 typedef sk_OCSP_RESPONSE_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<OCSP_RESPONSE>> a,
     ffi.Pointer<ffi.Pointer<OCSP_RESPONSE>> b);
@@ -70480,6 +82153,8 @@ enum X509_LOOKUP_TYPE {
       };
 }
 
+final class stack_st_X509_LOOKUP extends ffi.Opaque {}
+
 typedef sk_X509_LOOKUP_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_LOOKUP>> a,
     ffi.Pointer<ffi.Pointer<X509_LOOKUP>> b);
@@ -70498,6 +82173,9 @@ typedef sk_X509_LOOKUP_copyfuncFunction = ffi.Pointer<X509_LOOKUP> Function(
     ffi.Pointer<X509_LOOKUP> a);
 typedef sk_X509_LOOKUP_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_X509_LOOKUP_copyfuncFunction>>;
+
+final class stack_st_X509_OBJECT extends ffi.Opaque {}
+
 typedef sk_X509_OBJECT_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_OBJECT>> a,
     ffi.Pointer<ffi.Pointer<X509_OBJECT>> b);
@@ -70516,6 +82194,9 @@ typedef sk_X509_OBJECT_copyfuncFunction = ffi.Pointer<X509_OBJECT> Function(
     ffi.Pointer<X509_OBJECT> a);
 typedef sk_X509_OBJECT_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_X509_OBJECT_copyfuncFunction>>;
+
+final class stack_st_X509_VERIFY_PARAM extends ffi.Opaque {}
+
 typedef sk_X509_VERIFY_PARAM_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_VERIFY_PARAM>> a,
     ffi.Pointer<ffi.Pointer<X509_VERIFY_PARAM>> b);
@@ -70557,6 +82238,9 @@ final class x509_trust_st extends ffi.Struct {
 }
 
 typedef X509_TRUST = x509_trust_st;
+
+final class stack_st_X509_TRUST extends ffi.Opaque {}
+
 typedef sk_X509_TRUST_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_TRUST>> a,
     ffi.Pointer<ffi.Pointer<X509_TRUST>> b);
@@ -70761,6 +82445,8 @@ typedef DartX509_LOOKUP_get_by_alias_fnFunction = int Function(
     ffi.Pointer<X509_OBJECT> ret);
 typedef X509_LOOKUP_get_by_alias_fn
     = ffi.Pointer<ffi.NativeFunction<X509_LOOKUP_get_by_alias_fnFunction>>;
+
+final class stack_st_X509_POLICY_NODE extends ffi.Opaque {}
 
 final class stack_st_POLICYQUALINFO extends ffi.Opaque {}
 
@@ -70975,6 +82661,9 @@ final class pkcs7_signed_st extends ffi.Struct {
 }
 
 typedef PKCS7 = pkcs7_st;
+
+final class stack_st_PKCS7 extends ffi.Opaque {}
+
 typedef sk_PKCS7_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<PKCS7>> a, ffi.Pointer<ffi.Pointer<PKCS7>> b);
 typedef Dartsk_PKCS7_compfuncFunction = int Function(
@@ -71042,6 +82731,11 @@ typedef CONF_IMODULE = conf_imodule_st;
 final class conf_module_st extends ffi.Opaque {}
 
 typedef CONF_MODULE = conf_module_st;
+
+final class stack_st_CONF_MODULE extends ffi.Opaque {}
+
+final class stack_st_CONF_IMODULE extends ffi.Opaque {}
+
 typedef conf_init_func = ffi.NativeFunction<
     ffi.Int Function(ffi.Pointer<CONF_IMODULE> md, ffi.Pointer<CONF> cnf)>;
 typedef conf_finish_func
@@ -71093,6 +82787,9 @@ typedef sk_SCT_freefunc
 typedef sk_SCT_copyfuncFunction = ffi.Pointer<SCT> Function(ffi.Pointer<SCT> a);
 typedef sk_SCT_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_SCT_copyfuncFunction>>;
+
+final class stack_st_CTLOG extends ffi.Opaque {}
+
 typedef sk_CTLOG_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<CTLOG>> a, ffi.Pointer<ffi.Pointer<CTLOG>> b);
 typedef Dartsk_CTLOG_compfuncFunction = int Function(
@@ -71148,6 +82845,9 @@ final class srtp_protection_profile_st extends ffi.Struct {
 }
 
 typedef SRTP_PROTECTION_PROFILE = srtp_protection_profile_st;
+
+final class stack_st_SRTP_PROTECTION_PROFILE extends ffi.Opaque {}
+
 typedef sk_SRTP_PROTECTION_PROFILE_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<SRTP_PROTECTION_PROFILE>> a,
     ffi.Pointer<ffi.Pointer<SRTP_PROTECTION_PROFILE>> b);
@@ -71314,6 +83014,9 @@ typedef DartGEN_SESSION_CBFunction = int Function(ffi.Pointer<SSL> ssl,
     ffi.Pointer<ffi.UnsignedChar> id, ffi.Pointer<ffi.UnsignedInt> id_len);
 typedef GEN_SESSION_CB
     = ffi.Pointer<ffi.NativeFunction<GEN_SESSION_CBFunction>>;
+
+final class lhash_st_SSL_SESSION extends ffi.Opaque {}
+
 typedef SSL_CTX_npn_advertised_cb_funcFunction = ffi.Int Function(
     ffi.Pointer<SSL> ssl,
     ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
@@ -71555,6 +83258,21 @@ final class ERR_string_data_st extends ffi.Struct {
 }
 
 typedef ERR_STRING_DATA = ERR_string_data_st;
+
+final class lh_ERR_STRING_DATA_dummy extends ffi.Union {
+  external ffi.Pointer<ffi.Void> d1;
+
+  @ffi.UnsignedLong()
+  external int d2;
+
+  @ffi.Int()
+  external int d3;
+}
+
+final class lhash_st_ERR_STRING_DATA extends ffi.Struct {
+  external lh_ERR_STRING_DATA_dummy dummy;
+}
+
 typedef lh_ERR_STRING_DATA_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ERR_STRING_DATA> a, ffi.Pointer<ERR_STRING_DATA> b);
 typedef Dartlh_ERR_STRING_DATA_compfuncFunction = int Function(
@@ -71668,6 +83386,9 @@ final class v3_ext_method extends ffi.Struct {
 }
 
 typedef X509V3_EXT_METHOD = v3_ext_method;
+
+final class stack_st_X509V3_EXT_METHOD extends ffi.Opaque {}
+
 typedef sk_X509V3_EXT_METHOD_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509V3_EXT_METHOD>> a,
     ffi.Pointer<ffi.Pointer<X509V3_EXT_METHOD>> b);
@@ -71820,6 +83541,9 @@ typedef sk_GENERAL_NAME_copyfunc
 typedef AUTHORITY_INFO_ACCESS = stack_st_ACCESS_DESCRIPTION;
 typedef EXTENDED_KEY_USAGE = stack_st_ASN1_OBJECT;
 typedef TLS_FEATURE = stack_st_ASN1_INTEGER;
+
+final class stack_st_GENERAL_NAMES extends ffi.Opaque {}
+
 typedef sk_GENERAL_NAMES_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<GENERAL_NAMES>> a,
     ffi.Pointer<ffi.Pointer<GENERAL_NAMES>> b);
@@ -72092,6 +83816,9 @@ final class x509_purpose_st extends ffi.Struct {
 }
 
 typedef X509_PURPOSE = x509_purpose_st;
+
+final class stack_st_X509_PURPOSE extends ffi.Opaque {}
+
 typedef sk_X509_PURPOSE_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<X509_PURPOSE>> a,
     ffi.Pointer<ffi.Pointer<X509_PURPOSE>> b);
@@ -72286,6 +84013,9 @@ typedef sk_IPAddressFamily_copyfuncFunction = ffi.Pointer<IPAddressFamily>
 typedef sk_IPAddressFamily_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_IPAddressFamily_copyfuncFunction>>;
 typedef IPAddrBlocks = stack_st_IPAddressFamily;
+
+final class stack_st_ASN1_STRING extends ffi.Opaque {}
+
 typedef sk_ASN1_STRING_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ASN1_STRING>> a,
     ffi.Pointer<ffi.Pointer<ASN1_STRING>> b);
@@ -72341,6 +84071,9 @@ typedef sk_PROFESSION_INFO_copyfuncFunction = ffi.Pointer<PROFESSION_INFO>
     Function(ffi.Pointer<PROFESSION_INFO> a);
 typedef sk_PROFESSION_INFO_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_PROFESSION_INFO_copyfuncFunction>>;
+
+final class stack_st_ADMISSIONS extends ffi.Opaque {}
+
 typedef sk_ADMISSIONS_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<ADMISSIONS>> a,
     ffi.Pointer<ffi.Pointer<ADMISSIONS>> b);
@@ -72828,6 +84561,9 @@ typedef PKCS12 = PKCS12_st;
 final class PKCS12_SAFEBAG_st extends ffi.Opaque {}
 
 typedef PKCS12_SAFEBAG = PKCS12_SAFEBAG_st;
+
+final class stack_st_PKCS12_SAFEBAG extends ffi.Opaque {}
+
 typedef sk_PKCS12_SAFEBAG_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<PKCS12_SAFEBAG>> a,
     ffi.Pointer<ffi.Pointer<PKCS12_SAFEBAG>> b);
@@ -72870,6 +84606,8 @@ final class CMS_SignedData_st extends ffi.Opaque {}
 
 typedef CMS_SignedData = CMS_SignedData_st;
 
+final class CMS_CertificateChoices extends ffi.Opaque {}
+
 final class CMS_RevocationInfoChoice_st extends ffi.Opaque {}
 
 typedef CMS_RevocationInfoChoice = CMS_RevocationInfoChoice_st;
@@ -72893,6 +84631,9 @@ typedef CMS_RecipientEncryptedKey = CMS_RecipientEncryptedKey_st;
 final class CMS_OtherKeyAttribute_st extends ffi.Opaque {}
 
 typedef CMS_OtherKeyAttribute = CMS_OtherKeyAttribute_st;
+
+final class stack_st_CMS_SignerInfo extends ffi.Opaque {}
+
 typedef sk_CMS_SignerInfo_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<CMS_SignerInfo>> a,
     ffi.Pointer<ffi.Pointer<CMS_SignerInfo>> b);
@@ -72911,6 +84652,9 @@ typedef sk_CMS_SignerInfo_copyfuncFunction = ffi.Pointer<CMS_SignerInfo>
     Function(ffi.Pointer<CMS_SignerInfo> a);
 typedef sk_CMS_SignerInfo_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_CMS_SignerInfo_copyfuncFunction>>;
+
+final class stack_st_CMS_RecipientEncryptedKey extends ffi.Opaque {}
+
 typedef sk_CMS_RecipientEncryptedKey_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<CMS_RecipientEncryptedKey>> a,
     ffi.Pointer<ffi.Pointer<CMS_RecipientEncryptedKey>> b);
@@ -72930,6 +84674,9 @@ typedef sk_CMS_RecipientEncryptedKey_copyfuncFunction
         ffi.Pointer<CMS_RecipientEncryptedKey> a);
 typedef sk_CMS_RecipientEncryptedKey_copyfunc = ffi
     .Pointer<ffi.NativeFunction<sk_CMS_RecipientEncryptedKey_copyfuncFunction>>;
+
+final class stack_st_CMS_RecipientInfo extends ffi.Opaque {}
+
 typedef sk_CMS_RecipientInfo_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<CMS_RecipientInfo>> a,
     ffi.Pointer<ffi.Pointer<CMS_RecipientInfo>> b);
@@ -72948,6 +84695,9 @@ typedef sk_CMS_RecipientInfo_copyfuncFunction = ffi.Pointer<CMS_RecipientInfo>
     Function(ffi.Pointer<CMS_RecipientInfo> a);
 typedef sk_CMS_RecipientInfo_copyfunc
     = ffi.Pointer<ffi.NativeFunction<sk_CMS_RecipientInfo_copyfuncFunction>>;
+
+final class stack_st_CMS_RevocationInfoChoice extends ffi.Opaque {}
+
 typedef sk_CMS_RevocationInfoChoice_compfuncFunction = ffi.Int Function(
     ffi.Pointer<ffi.Pointer<CMS_RevocationInfoChoice>> a,
     ffi.Pointer<ffi.Pointer<CMS_RevocationInfoChoice>> b);

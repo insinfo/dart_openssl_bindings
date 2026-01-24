@@ -9,7 +9,7 @@ import "package:openssl_bindings/src/dtls/dtls_alert.dart";
 
 import "package:test/test.dart";
 
-import "certs.dart";
+import "../certs.dart";
 
 const ciphers = "PSK-AES128-CCM8";
 

@@ -12,11 +12,11 @@ import 'x509_request.dart';
 import 'x509_extensions.dart';
 
 /// Builder for X509 Certificates.
-class X509CertificateBuilder /*implements Finalizable*/ {
+class X509CertificateBuilder implements Finalizable {
   final OpenSSL _context;
   final Pointer<X509> _cert;
   Pointer<X509>? _issuerCert;
-  // late final NativeFinalizer _finalizer;
+  late final NativeFinalizer _finalizer;
   bool _isDisposed = false;
   bool _isConsumed = false;
 
@@ -25,9 +25,9 @@ class X509CertificateBuilder /*implements Finalizable*/ {
       throw OpenSslException('Failed to create X509 structure');
     }
     print('DEBUG: X509CertificateBuilder created cert ${_cert.address.toRadixString(16)}');
-    // final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
-    // _finalizer = NativeFinalizer(freePtr.cast());
-    // _finalizer.attach(this, _cert.cast(), detach: this);
+    final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
+    _finalizer = NativeFinalizer(freePtr.cast());
+    _finalizer.attach(this, _cert.cast(), detach: this);
     // Set version to V3 (which is integer 2)
     _context.bindings.X509_set_version(_cert, 2);
     // Set default serial number (1)
@@ -247,45 +247,41 @@ class X509CertificateBuilder /*implements Finalizable*/ {
 
   void _addExtensionByName(String name, String value) {
     _ensureUsable();
-    final ctx = calloc<X509V3_CTX>();
+    final arena = Arena();
     try {
+      final ctx = arena<X509V3_CTX>();
       final issuer = _issuerCert ?? _cert;
       _context.bindings.X509V3_set_ctx(ctx, issuer, _cert, nullptr, nullptr, 0);
 
-      final namePtr = name.toNativeUtf8(allocator: calloc);
-      final valuePtr = value.toNativeUtf8(allocator: calloc);
+      final namePtr = name.toNativeUtf8(allocator: arena);
+      final valuePtr = value.toNativeUtf8(allocator: arena);
 
-      try {
-        final nid = _context.bindings.OBJ_txt2nid(namePtr.cast());
-        final ext = nid > 0
-            ? _context.bindings.X509V3_EXT_conf_nid(
-                nullptr,
-                ctx,
-                nid,
-                valuePtr.cast(),
-              )
-            : _context.bindings.X509V3_EXT_nconf(
-                nullptr,
-                ctx,
-                namePtr.cast(),
-                valuePtr.cast(),
-              );
-        if (ext == nullptr) {
-          throw OpenSslException('Failed to create X509 extension: $name');
-        }
-
-        if (_context.bindings.X509_add_ext(_cert, ext, -1) != 1) {
-          _context.bindings.X509_EXTENSION_free(ext);
-          throw OpenSslException('Failed to add X509 extension: $name');
-        }
-
-        _context.bindings.X509_EXTENSION_free(ext);
-      } finally {
-        calloc.free(namePtr);
-        calloc.free(valuePtr);
+      final nid = _context.bindings.OBJ_txt2nid(namePtr.cast());
+      final ext = nid > 0
+          ? _context.bindings.X509V3_EXT_conf_nid(
+              nullptr,
+              ctx,
+              nid,
+              valuePtr.cast(),
+            )
+          : _context.bindings.X509V3_EXT_nconf(
+              nullptr,
+              ctx,
+              namePtr.cast(),
+              valuePtr.cast(),
+            );
+      if (ext == nullptr) {
+        throw OpenSslException('Failed to create X509 extension: $name');
       }
+
+      if (_context.bindings.X509_add_ext(_cert, ext, -1) != 1) {
+        _context.bindings.X509_EXTENSION_free(ext);
+        throw OpenSslException('Failed to add X509 extension: $name');
+      }
+
+      _context.bindings.X509_EXTENSION_free(ext);
     } finally {
-      calloc.free(ctx);
+      arena.releaseAll();
     }
   }
 
@@ -491,7 +487,7 @@ class X509CertificateBuilder /*implements Finalizable*/ {
         throw OpenSslException('Failed to sign certificate: $errMsg ($err)'); 
      }
 
-     // _finalizer.detach(this);
+     _finalizer.detach(this);
      _isConsumed = true;
 
      // Transfer ownership to the wrapper
@@ -502,7 +498,7 @@ class X509CertificateBuilder /*implements Finalizable*/ {
   void dispose() {
     if (_isDisposed || _isConsumed) return;
     print('DEBUG: X509CertificateBuilder dispose freeing cert ${_cert.address.toRadixString(16)}');
-    // _finalizer.detach(this);
+    _finalizer.detach(this);
     _context.bindings.X509_free(_cert);
     _isDisposed = true;
   }

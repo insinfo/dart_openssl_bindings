@@ -1,10 +1,20 @@
+import 'dart:convert';
 import 'dart:ffi';
+
 import '../generated/ffi.dart';
 import '../infra/ssl_object.dart';
 import '../infra/ssl_exception.dart';
 import '../api/openssl.dart';
 
 import 'package:ffi/ffi.dart'; // import ffi/ffi
+
+Pointer<Uint8> _allocUtf8z(String s) {
+  final bytes = utf8.encode(s);
+  final p = calloc<Uint8>(bytes.length + 1);
+  p.asTypedList(bytes.length).setAll(0, bytes);
+  p[bytes.length] = 0; 
+  return p;
+}
 
 /// Wrapper around OpenSSL EVP_PKEY (Private/Public Key).
 class EvpPkey extends SslObject<EVP_PKEY> {
@@ -27,11 +37,14 @@ class EvpPkey extends SslObject<EVP_PKEY> {
   /// Otherwise exports as unencrypted PKCS#8 or traditional format depending on Key Type.
   String toPrivateKeyPem({String? password}) {
     final bio = _context.createBio();
-    Pointer<Char> pwdPtr = nullptr;
+    Pointer<Uint8>? pw;
     Pointer<EVP_CIPHER> cipher = nullptr;
+    int pwLen = 0;
     
     if (password != null) {
-      pwdPtr = password.toNativeUtf8(allocator: calloc).cast<Char>();
+      final bytes = utf8.encode(password);
+      pwLen = bytes.length;
+      pw = _allocUtf8z(password);
       // PKCS#8 standard recommends AES-256-CBC
       cipher = _context.bindings.EVP_aes_256_cbc();
     }
@@ -40,21 +53,16 @@ class EvpPkey extends SslObject<EVP_PKEY> {
       int result;
       if (password != null) {
          // Use PKCS#8 for encrypted keys (Standard)
-         // int PEM_write_bio_PKCS8PrivateKey(BIO *bp, EVP_PKEY *x, const EVP_CIPHER *enc,
-         //                                  char *kstr, int klen,
-         //                                  pem_password_cb *cb, void *u);
          result = _context.bindings.PEM_write_bio_PKCS8PrivateKey(
             bio,
             handle,
             cipher,
-            pwdPtr, // char* kstr
-            0,      // klen - 0 means let OpenSSL calculate strlen
+            pw!.cast(), // char* kstr
+            pwLen,      // klen - actual password length
             nullptr,
             nullptr
          );
       } else {
-         // For unencrypted, PEM_write_bio_PrivateKey is generally fine and widely compatible.
-         // It produces "-----BEGIN PRIVATE KEY-----" (PKCS#8) for modern OpenSSL defaults.
          result = _context.bindings.PEM_write_bio_PrivateKey(
             bio, 
             handle, 
@@ -69,7 +77,7 @@ class EvpPkey extends SslObject<EVP_PKEY> {
       if (result != 1) throw OpenSslException('Failed to write private key to PEM');
       return _context.bioToString(bio);
     } finally {
-      if (pwdPtr != nullptr) calloc.free(pwdPtr);
+      if (pw != null) calloc.free(pw);
       _context.freeBio(bio);
     }
   }
@@ -84,5 +92,10 @@ class EvpPkey extends SslObject<EVP_PKEY> {
     } finally {
       _context.freeBio(bio);
     }
+  }
+
+  /// Releases the underlying EVP_PKEY structure.
+  void dispose() {
+    _context.bindings.EVP_PKEY_free(handle);
   }
 }

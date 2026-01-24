@@ -82,9 +82,12 @@ jobs:
       - name: Install Dependencies
         run: dart pub get
 
-      - name: Run Tests
-        run: |
-          dart test 
+      - name: Run Tests (Linux - with heap corruption detection)
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          MALLOC_CHECK_: "3"
+          MALLOC_PERTURB_: "165"
+        run: |         
           dart test test/builder_dispose_test.dart
           dart test test/certificate_format_test.dart
           dart test test/cipher_test.dart
@@ -115,3 +118,41 @@ jobs:
           dart test test/x509_extensions_test.dart
           dart test test/x509_request_builder_test.dart
           dart test test/x509_test.dart
+          dart test -j 1
+          dart test 
+
+      - name: Run Tests (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |         
+          dart test test/builder_dispose_test.dart
+          dart test test/certificate_format_test.dart
+          dart test test/cipher_test.dart
+          dart test test/cms_test.dart
+          dart test test/dtls_test.dart
+          dart test test/ecdsa_test.dart
+          dart test test/ec_test.dart
+          dart test test/evp_pkey_test.dart
+          dart test test/features_expansions_test.dart
+          dart test test/features_test.dart
+          dart test test/govbr_signature_test.dart
+          dart test test/hashing_test.dart
+          dart test test/http_client_openssl_test.dart
+          dart test test/icp_brasil_test.dart
+          dart test test/isolate_test.dart
+          dart test test/multi_instance_test.dart
+          dart test test/pbkdf2_test.dart
+          dart test test/pem_chain_test.dart
+          dart test test/pkcs_test.dart
+          dart test test/signature_test.dart
+          dart test test/ssl_socket_async_parallel_test.dart
+          dart test test/ssl_socket_async_test.dart
+          dart test test/ssl_test.dart
+          dart test test/validation_test.dart
+          dart test test/x509_certificate_builder_test.dart
+          dart test test/x509_csr_signing_test.dart
+          dart test test/x509_ec_req_test.dart
+          dart test test/x509_extensions_test.dart
+          dart test test/x509_request_builder_test.dart
+          dart test test/x509_test.dart
+          dart test -j 1
+          dart test 

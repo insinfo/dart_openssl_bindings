@@ -1,30 +1,35 @@
 import 'dart:convert';
-import 'dart:ffi'; 
+import 'dart:ffi';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import '../generated/ffi.dart';
 import '../infra/ssl_object.dart';
 import '../infra/ssl_exception.dart';
 import '../api/openssl.dart';
+
 import 'icp_brasil_info.dart';
+import '../utils/tm_windows.dart';
+import '../utils/tm_unix.dart';
 
 const int BIO_CTRL_PENDING = 10;
 
 /// Wrapper around OpenSSL X509 (Certificate).
 class X509Certificate extends SslObject<X509> {
   final OpenSSL _context;
-  // late final NativeFinalizer _finalizer;
+  late final NativeFinalizer _finalizer;
 
   X509Certificate(Pointer<X509> ptr, this._context) : super(ptr) {
-    print('DEBUG: X509Certificate created wrapping ${ptr.address.toRadixString(16)}');
-    // final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
-    // _finalizer = NativeFinalizer(freePtr.cast());
-    // attachFinalizer(_finalizer, ptr.cast());
+    print(
+        'DEBUG: X509Certificate created wrapping ${ptr.address.toRadixString(16)}');
+    final freePtr = _context.lookup<Void Function(Pointer<X509>)>('X509_free');
+    _finalizer = NativeFinalizer(freePtr.cast());
+    _finalizer.attach(this, ptr.cast(), detach: this);
   }
 
   void dispose() {
     print('DEBUG: X509Certificate dispose ${handle.address.toRadixString(16)}');
-    // _finalizer.detach(this);
+    _finalizer.detach(this);
     _context.bindings.X509_free(handle);
   }
 
@@ -33,7 +38,8 @@ class X509Certificate extends SslObject<X509> {
     final bio = _context.createBio();
     try {
       final result = _context.bindings.PEM_write_bio_X509(bio, handle);
-      if (result != 1) throw OpenSslException('Failed to write certificate to PEM');
+      if (result != 1)
+        throw OpenSslException('Failed to write certificate to PEM');
       return _context.bioToString(bio);
     } finally {
       _context.freeBio(bio);
@@ -43,8 +49,8 @@ class X509Certificate extends SslObject<X509> {
   /// Gets the version of the certificate.
   /// Returns 1 for V1, 3 for V3.
   int get version {
-     final v = _context.bindings.X509_get_version(handle);
-     return v + 1;
+    final v = _context.bindings.X509_get_version(handle);
+    return v + 1;
   }
 
   /// Gets the Subject DN as a string (e.g. "C=BR, O=ICP-Brasil, ...").
@@ -63,20 +69,21 @@ class X509Certificate extends SslObject<X509> {
 
   String _x509NameToString(Pointer<X509_NAME> namePtr) {
     if (namePtr == nullptr) return '';
-    
+
     final bio = _context.bindings.BIO_new(_context.bindings.BIO_s_mem());
     if (bio == nullptr) return '';
-    
+
     try {
       // XN_FLAG_RFC2253 (0) -> C=BR,O=... (comma separated)
       // XN_FLAG_ONELINE (~0) ?
       // Use XN_FLAG_SEP_COMMA_PLUS (0x10000) | XN_FLAG_DN_REV (0x2000000) for RFC2253-like
       // Let's use simple RFC2253 format which is standard
-      _context.bindings.X509_NAME_print_ex(bio, namePtr, 0, 0); // 0 indent, 0 flags (RFC2253?)
-      
+      _context.bindings.X509_NAME_print_ex(
+          bio, namePtr, 0, 0); // 0 indent, 0 flags (RFC2253?)
+
       final len = _context.bindings.BIO_ctrl(bio, BIO_CTRL_PENDING, 0, nullptr);
       if (len <= 0) return '';
-      
+
       final buffer = calloc<Uint8>(len + 1);
       try {
         _context.bindings.BIO_read(bio, buffer.cast(), len);
@@ -93,19 +100,19 @@ class X509Certificate extends SslObject<X509> {
   String get serialNumber {
     final asn1Int = _context.bindings.X509_get_serialNumber(handle);
     if (asn1Int == nullptr) return '';
-    
+
     final bn = _context.bindings.ASN1_INTEGER_to_BN(asn1Int, nullptr);
     if (bn == nullptr) return '';
-    
+
     try {
       final decPtr = _context.bindings.BN_bn2dec(bn);
       if (decPtr == nullptr) return '';
-      
+
       try {
         return decPtr.cast<Utf8>().toDartString();
       } finally {
         // Safe to call CRYPTO_free on OpenSSL allocated strings
-        _context.bindings.CRYPTO_free(decPtr.cast(), nullptr, 0); 
+        _context.bindings.CRYPTO_free(decPtr.cast(), nullptr, 0);
       }
     } finally {
       _context.bindings.BN_free(bn);
@@ -124,10 +131,34 @@ class X509Certificate extends SslObject<X509> {
     return _parseAsn1Time(timePtr);
   }
 
+  /// Calculates the native size of struct tm for proper allocation.
+  /// Windows (MSVCRT): 36 bytes (9 int fields)
+  /// Unix/Linux (glibc): 56 bytes (9 ints + long tm_gmtoff + char* tm_zone)
+  int _tmNativeBytes() {
+    if (Platform.isWindows) return sizeOf<TmWindows>();
+    return sizeOf<TmUnix>();
+  }
+
+  /// Allocates a buffer large enough for struct tm on all platforms.
+  Pointer<tm> _allocTmCompat() {
+    final bytes = _tmNativeBytes();
+    final raw = calloc<Uint8>(bytes);
+    return raw.cast<tm>();
+  }
+
+  /// Frees the buffer allocated by _allocTmCompat.
+  void _freeTmCompat(Pointer<tm> tmPtr) {
+    calloc.free(tmPtr.cast<Uint8>());
+  }
+
   DateTime? _parseAsn1Time(Pointer<ASN1_TIME> timePtr) {
     if (timePtr == nullptr) return null;
-    
-    final tmPtr = calloc<tm>();
+
+    // Allocate a buffer large enough for struct tm on all platforms.
+    // Windows (MSVCRT): 36 bytes (9 int fields)
+    // Unix/Linux (glibc): ~56 bytes (9 fields + tm_gmtoff + tm_zone)
+    // We calculate the size dynamically and cast to Pointer<tm> for OpenSSL.
+    final tmPtr = _allocTmCompat();
     try {
       final success = _context.bindings.ASN1_TIME_to_tm(timePtr, tmPtr);
       if (success != 1) return null;
@@ -137,7 +168,7 @@ class X509Certificate extends SslObject<X509> {
       final year = t.tm_year + 1900;
       // tm_mon is 0-11
       final month = t.tm_mon + 1;
-      
+
       return DateTime.utc(
         year,
         month,
@@ -147,7 +178,7 @@ class X509Certificate extends SslObject<X509> {
         t.tm_sec,
       );
     } finally {
-      calloc.free(tmPtr);
+      _freeTmCompat(tmPtr);
     }
   }
 
@@ -371,4 +402,3 @@ class X509Certificate extends SslObject<X509> {
     return DateTime.utc(year, month, day);
   }
 }
-

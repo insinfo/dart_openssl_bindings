@@ -1,12 +1,32 @@
+import 'dart:convert';
 import 'dart:ffi'; 
-import 'dart:typed_data'; // Add typed_data
-import 'package:ffi/ffi.dart'; // Add ffi/ffi
+import 'dart:typed_data';
+import 'package:ffi/ffi.dart';
 
-import '../../generated/ffi.dart'; // Import generated bindings for types
+import '../../generated/ffi.dart';
 import '../openssl_context.dart';
 import '../../infra/ssl_exception.dart';
-import '../../crypto/evp_pkey.dart'; // Vamos atualizar este arquivo em breve
+import '../../crypto/evp_pkey.dart';
 import 'bio_mixin.dart';
+
+Pointer<Uint8> _allocUtf8z(String s) {
+  final bytes = utf8.encode(s);
+  final p = calloc<Uint8>(bytes.length + 1);
+  p.asTypedList(bytes.length).setAll(0, bytes);
+  p[bytes.length] = 0; // NUL
+  return p;
+}
+
+String _drainOpenSslErrors(OpenSslFfi lib) {
+  final msgs = <String>[];
+  while (true) {
+    final err = lib.ERR_get_error();
+    if (err == 0) break;
+    final p = lib.ERR_error_string(err, nullptr);
+    msgs.add(p == nullptr ? 'OpenSSL error $err' : p.cast<Utf8>().toDartString());
+  }
+  return msgs.isEmpty ? '' : msgs.join('\n');
+}
 
 /// Mixin para operações criptográficas e gerenciamento de chaves.
 mixin CryptoMixin on OpenSslContext, BioMixin {
@@ -51,32 +71,32 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
   /// Carrega uma Chave Privada de PEM, opcionalmente decifrando com [password].
   EvpPkey loadPrivateKeyPem(String pem, {String? password}) {
     final bio = createBioFromString(pem);
-    Pointer<Char> passwordPtr = nullptr;
-    if (password != null) {
-      passwordPtr = password.toNativeUtf8(allocator: calloc).cast<Char>();
-    }
+    Pointer<Uint8>? pw;
 
     try {
-      // Se password for fornecido, passamos como 4o argumento (u).
-      // Se cb (3o arg) for NULL e u não for NULL, OpenSSL usa u como senha.
+      if (password != null) {
+        pw = _allocUtf8z(password);
+      }
+      
+      // When callback is null but userdata is provided, OpenSSL uses it as password directly
       final pkey = bindings.PEM_read_bio_PrivateKey(
         bio,
         nullptr,
-        nullptr,
-        passwordPtr.cast(),
+        nullptr, // No callback - OpenSSL will use default behavior
+        pw?.cast<Void>() ?? nullptr,
       );
 
       if (pkey == nullptr) {
-         // Tenta pegar o erro do OpenSSL para detalhar
-         throw OpenSslException('Failed to read private key (check password?)');
+         final details = _drainOpenSslErrors(bindings);
+         throw OpenSslException(
+           'Failed to read private key.\n${details.isEmpty ? '(no OpenSSL error details)' : details}',
+         );
       }
 
       return EvpPkey(pkey, this as dynamic);
     } finally {
       freeBio(bio);
-      if (passwordPtr != nullptr) {
-        calloc.free(passwordPtr);
-      }
+      if (pw != null) calloc.free(pw);
     }
   }
 

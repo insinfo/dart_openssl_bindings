@@ -49,7 +49,7 @@ void main() {
         () => openSsl.loadPrivateKeyPem(pemEncrypted, password: 'senha-errada'),
         throwsA(isA<OpenSslException>()),
       );
-    });
+    }, );//skip: 'Skipped for debugging'
 
     // 2. X509 Details
     test('Deve ler detalhes do Certificado (Subject, Issuer, Serial, Validity)', () {
@@ -82,7 +82,7 @@ void main() {
       expect(cert.notBefore, isNotNull);
       expect(cert.notAfter, isNotNull);
       expect(cert.notAfter!.isAfter(cert.notBefore!), isTrue);
-    });
+    }, );//skip: 'Skipped for debugging'
 
     // 3. CMS Detached Signing & 4. Verificação de Assinatura
     test('Deve assinar (Detached) e verificar assinatura', () {
@@ -126,6 +126,6 @@ void main() {
       );
 
       expect(isValid, isTrue, reason: 'A verificação da assinatura deve passar');
-    });
+    }, );//skip: 'Skipped for debugging'
   });
 }

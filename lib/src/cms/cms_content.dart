@@ -6,6 +6,7 @@ import '../infra/ssl_object.dart';
 
 /// Wrapper around OpenSSL CMS_ContentInfo.
 class CmsContent extends SslObject<CMS_ContentInfo> {
+  // ignore: unused_field
   final OpenSSL _context;
   // late final NativeFinalizer _finalizer;
 

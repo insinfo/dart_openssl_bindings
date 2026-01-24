@@ -315,8 +315,10 @@ macros:
     - V_ASN1_BMPSTRING
     - V_ASN1_OCTET_STRING
 structs:
-  include:
-    - timeval
+  # tm is defined manually per-platform in lib/src/utils/
+  # because Linux glibc has extra fields (tm_gmtoff, tm_zone) that cause
+  # heap corruption if not accounted for. See doc.md for details.
+  exclude:
     - tm
 unions:
   include: []

@@ -238,3 +238,86 @@ final key = openssl.generateEc('prime256v1');
 
 print(key.toPrivateKeyPem());
 ```
+
+---
+
+## Bugs Conhecidos e Correções
+
+### Bug: Heap Corruption no Linux (struct tm)
+
+**Sintoma:** Testes passavam no Windows mas falhavam no Linux com erros como:
+```
+free(): invalid next size (fast)
+free(): invalid pointer
+```
+
+O crash ocorria tipicamente no `tearDownAll` após testes que usavam `X509Certificate.notBefore` ou `X509Certificate.notAfter`.
+
+**Causa Raiz:** A estrutura `struct tm` do C runtime (não OpenSSL!) tem tamanhos diferentes entre plataformas:
+
+| Plataforma | C Runtime | Campos | Tamanho |
+|------------|-----------|--------|---------|
+| Windows x64 | MSVCRT | 9 campos int | 36 bytes |
+| Linux x64 | glibc | 9 campos int + `tm_gmtoff` (long) + `tm_zone` (pointer) | ~56 bytes |
+| macOS x64 | BSD libc | 9 campos int + `tm_gmtoff` (long) + `tm_zone` (pointer) | ~56 bytes |
+
+O FFI gerado pelo ffigen (baseado nos headers do Windows) declarava apenas os 9 campos padrão (36 bytes). Quando `ASN1_TIME_to_tm` era chamada no Linux, o glibc escrevia nos campos extras (`tm_gmtoff`, `tm_zone`), corrompendo a memória adjacente no heap.
+
+**Por que o crash acontecia "depois":** A corrupção de heap é silenciosa no momento da escrita. O erro só aparece quando o allocator tenta liberar ou usar um bloco adjacente mais tarde, causando o típico `free(): invalid next size`.
+
+**Correção:** Criamos structs `PlatformTm` específicas para cada plataforma em [lib/src/utils/](lib/src/utils/):
+
+```dart
+// lib/src/utils/tm_unix.dart - struct com campos extras do glibc
+final class PlatformTm extends Struct {
+  @Int32() external int tm_sec;
+  @Int32() external int tm_min;
+  @Int32() external int tm_hour;
+  @Int32() external int tm_mday;
+  @Int32() external int tm_mon;
+  @Int32() external int tm_year;
+  @Int32() external int tm_wday;
+  @Int32() external int tm_yday;
+  @Int32() external int tm_isdst;
+  @Int64() external int tm_gmtoff;      // extensão glibc/BSD
+  external Pointer<Void> tm_zone;        // extensão glibc/BSD
+}
+```
+
+Uso no código:
+```dart
+import '../utils/platform_tm.dart';
+
+// Aloca com tamanho correto para a plataforma (~56 bytes no Linux)
+final tmPtr = calloc<PlatformTm>();
+
+// Cast para Pointer<tm> ao chamar OpenSSL (layout dos 9 primeiros campos é idêntico)
+bindings.ASN1_TIME_to_tm(timePtr, tmPtr.cast<tm>());
+
+// Lê os campos normalmente
+final year = tmPtr.ref.tm_year + 1900;
+
+calloc.free(tmPtr);
+```
+
+**Arquivos:**
+- [lib/src/utils/platform_tm.dart](lib/src/utils/platform_tm.dart) - export condicional
+- [lib/src/utils/tm_unix.dart](lib/src/utils/tm_unix.dart) - struct Unix/Linux (56 bytes)
+- [lib/src/utils/tm_windows.dart](lib/src/utils/tm_windows.dart) - struct Windows (36 bytes)
+- [lib/src/x509/x509_certificate.dart](lib/src/x509/x509_certificate.dart) - uso em `_parseAsn1Time`
+
+**Script de demonstração:** [script/demonstrate_tm_bug.dart](script/demonstrate_tm_bug.dart)
+
+**Dica para CI:** No Linux, ative verificação agressiva do heap para detectar corrupção mais cedo:
+```yaml
+- name: Run Tests (Linux)
+  if: matrix.os == 'ubuntu-latest'
+  env:
+    MALLOC_CHECK_: "3"
+    MALLOC_PERTURB_: "165"
+  run: dart test
+```
+
+**Lição aprendida:** Ao usar structs de bibliotecas C padrão (como `tm`, `timeval`, `stat`, etc.) via FFI, verificar se há campos extras específicos da plataforma. O ffigen gera baseado nos headers da máquina de build, que podem não refletir o layout de outras plataformas.
+
+
