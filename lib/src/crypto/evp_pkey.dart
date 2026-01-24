@@ -48,7 +48,7 @@ class EvpPkey extends SslObject<EVP_PKEY> {
             handle,
             cipher,
             pwdPtr, // char* kstr
-            password.length, // int klen
+            0,      // klen - 0 means let OpenSSL calculate strlen
             nullptr,
             nullptr
          );

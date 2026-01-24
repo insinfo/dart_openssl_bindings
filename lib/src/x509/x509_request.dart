@@ -15,6 +15,11 @@ class X509Request extends SslObject<X509_REQ> {
     attachFinalizer(_finalizer, ptr.cast());
   }
 
+  void dispose() {
+    _finalizer.detach(this);
+    _context.bindings.X509_REQ_free(handle);
+  }
+
   /// Exports CSR to PEM format.
   String toPem() {
     final bio = _context.createBio();

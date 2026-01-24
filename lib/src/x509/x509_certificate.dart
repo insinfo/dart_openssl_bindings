@@ -22,6 +22,12 @@ class X509Certificate extends SslObject<X509> {
     attachFinalizer(_finalizer, ptr.cast());
   }
 
+  void dispose() {
+    print('DEBUG: X509Certificate dispose ${handle.address.toRadixString(16)}');
+    _finalizer.detach(this);
+    _context.bindings.X509_free(handle);
+  }
+
   /// Exports Certificate to PEM format.
   String toPem() {
     final bio = _context.createBio();

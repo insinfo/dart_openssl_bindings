@@ -43,12 +43,18 @@ void main() {
     // 4. Verify
     final pem = userCert.toPem();
     expect(pem, startsWith('-----BEGIN CERTIFICATE-----'));
-    
-    // Check Issuer
-    // Note: We don't have easy getters for content yet exposed in X509Certificate wrapper,
-    // but the fact it generated and signed without error is the main test here.
-    
-    // We can check if verification works (if we exposed X509_verify)
-    // For now we rely on the builder sequence success.
+
+    // Manual dispose to check for crash
+    print('DEBUG: Disposing userCert');
+    userCert.dispose();
+    print('DEBUG: Disposing csr');
+    csr.dispose();
+    print('DEBUG: Disposing caCert');
+    caCert.dispose();
+    print('DEBUG: Disposing builders');
+    caBuilder.dispose();
+    csrBuilder.dispose();
+    certBuilder.dispose();
+    print('DEBUG: Disposed all manually');
   });
 }
