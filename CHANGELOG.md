@@ -36,3 +36,4 @@
   - Refactored native buffer utilities.
   - Updated FFI bindings.
   
+## 0.2.1 
