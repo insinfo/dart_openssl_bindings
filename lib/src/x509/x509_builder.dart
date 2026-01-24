@@ -45,8 +45,10 @@ class X509CertificateBuilder implements Finalizable {
   void _setSerial(int serial) {
     final asn1Int = _context.bindings.ASN1_INTEGER_new();
     _context.bindings.ASN1_INTEGER_set(asn1Int, serial);
-    _context.bindings.X509_set_serialNumber(_cert, asn1Int);
-    _context.bindings.ASN1_INTEGER_free(asn1Int);
+    if (_context.bindings.X509_set_serialNumber(_cert, asn1Int) != 1) {
+      _context.bindings.ASN1_INTEGER_free(asn1Int);
+      throw OpenSslException('Failed to set serial number');
+    }
   }
 
   /// Sets the serial number.
