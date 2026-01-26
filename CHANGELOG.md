@@ -75,3 +75,10 @@
   - Added `aesCbcPkcs7Encrypt` and `aesCbcPkcs7Decrypt` helpers (AES-128/256).
 - **Tests**:
   - Added coverage for PKCS#7 padding and AES-CBC PKCS#7 helpers.
+
+## 0.4.1
+
+- feat(stress): add HTTP signer stress server and test
+- add DER export for X509Certificate
+- add stress sign server script
+- add concurrent stress test for PKCS#7 signing

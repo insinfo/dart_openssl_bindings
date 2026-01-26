@@ -43,6 +43,29 @@ class X509Certificate extends SslObject<X509> {
     }
   }
 
+  /// Exports Certificate to DER bytes.
+  Uint8List toDer() {
+    final len = _context.bindings.i2d_X509(handle, nullptr);
+    if (len <= 0) {
+      throw OpenSslException('Failed to get certificate DER length');
+    }
+
+    final buffer = calloc<Uint8>(len);
+    final out = calloc<Pointer<UnsignedChar>>();
+    out.value = buffer.cast<UnsignedChar>();
+
+    try {
+      final written = _context.bindings.i2d_X509(handle, out);
+      if (written <= 0) {
+        throw OpenSslException('Failed to encode certificate to DER');
+      }
+      return Uint8List.fromList(buffer.asTypedList(written));
+    } finally {
+      calloc.free(out);
+      calloc.free(buffer);
+    }
+  }
+
   /// Gets the version of the certificate.
   /// Returns 1 for V1, 3 for V3.
   int get version {
