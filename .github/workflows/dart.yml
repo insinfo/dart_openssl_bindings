@@ -25,17 +25,31 @@ jobs:
         if: matrix.os == 'windows-2022'
         shell: pwsh
         run: |
-          $pf = $env:ProgramFiles
-          $pf86 = $env:'ProgramFiles(x86)'
+          $gitExe = (Get-Command git -ErrorAction SilentlyContinue).Source
+          if ($gitExe) {
+            # ...\Git\bin\git.exe -> ...\Git
+            $gitRoot = Split-Path (Split-Path $gitExe)
+          } else {
+            $gitRoot = Join-Path $env:ProgramFiles "Git"
+          }
 
           $candidates = @(
-            "$pf\Git\mingw64\bin",
-            "$pf\Git\usr\bin",
-            "$pf\Git\libexec\git-core",
-            "$pf86\Git\mingw64\bin",
-            "$pf86\Git\usr\bin",
-            "$pf86\Git\libexec\git-core"
-          ) | Where-Object { $_ -and (Test-Path $_) }
+            (Join-Path $gitRoot "mingw64\bin"),
+            (Join-Path $gitRoot "usr\bin"),
+            (Join-Path $gitRoot "libexec\git-core")
+          )
+
+          $pf86 = ${env:ProgramFiles(x86)}
+          if ($pf86) {
+            $gitRoot86 = Join-Path $pf86 "Git"
+            $candidates += @(
+              (Join-Path $gitRoot86 "mingw64\bin"),
+              (Join-Path $gitRoot86 "usr\bin"),
+              (Join-Path $gitRoot86 "libexec\git-core")
+            )
+          }
+
+          $candidates = $candidates | Where-Object { Test-Path $_ } | Select-Object -Unique
 
           $ssl = $null
           $crypto = $null
@@ -56,15 +70,13 @@ jobs:
             throw "Não encontrei libssl/libcrypto do Git."
           }
 
-          # Define variáveis de ambiente para o Dart (FFI) e adiciona ao PATH
-          "OPENSSL_LIBSSL_PATH=$($ssl.FullName)"       | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          "OPENSSL_LIBCRYPTO_PATH=$($crypto.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          # Para o loader abrir por nome, basta adicionar ao PATH
           $bin | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
           Write-Host "Usando OpenSSL do Git:"
-          Write-Host "  Bin: ${bin}"
-          Write-Host "  SSL: $($ssl.Name)"
-          Write-Host "  Crypto: $($crypto.Name)"
+          Write-Host "  Bin: $bin"
+          Write-Host "  SSL: $($ssl.FullName)"
+          Write-Host "  Crypto: $($crypto.FullName)"
 
       - name: Install OpenSSL (Linux)
         if: matrix.os == 'ubuntu-latest'
