@@ -56,8 +56,14 @@ jobs:
           $bin = $null
 
           foreach ($dir in $candidates) {
-            $ssl = Get-ChildItem -Path $dir -File -Filter "libssl*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
-            $crypto = Get-ChildItem -Path $dir -File -Filter "libcrypto*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+            $ssl = Get-ChildItem -Path $dir -File -Filter "libssl-3-x64.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+            $crypto = Get-ChildItem -Path $dir -File -Filter "libcrypto-3-x64.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $ssl) {
+              $ssl = Get-ChildItem -Path $dir -File -Filter "libssl*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+            }
+            if (-not $crypto) {
+              $crypto = Get-ChildItem -Path $dir -File -Filter "libcrypto*.dll" -ErrorAction SilentlyContinue | Select-Object -First 1
+            }
             if ($ssl -and $crypto) {
               $bin = $dir
               break
