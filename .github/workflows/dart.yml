@@ -26,7 +26,7 @@ jobs:
         shell: pwsh
         run: |
           $pf = $env:ProgramFiles
-          $pf86 = $env:ProgramFiles(x86)
+          $pf86 = $env:'ProgramFiles(x86)'
 
           $candidates = @(
             "$pf\Git\mingw64\bin",
