@@ -20,6 +20,7 @@ headers:
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/asn1.h'
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/pkcs12.h'
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/cms.h'
+    - 'C:/Progra~1/OpenSSL-Win64/include/openssl/ocsp.h'
 
 compiler-opts:
   # OpenSSL
@@ -215,6 +216,45 @@ functions:
     - OPENSSL_version_patch
     - SSL_CTX_set_security_level
     - PEM_read_bio_X509
+    # CRL (X509_CRL) support
+    - X509_CRL_new
+    - X509_CRL_free
+    - X509_CRL_set_version
+    - X509_CRL_set_issuer_name
+    - X509_CRL_set1_lastUpdate
+    - X509_CRL_set1_nextUpdate
+    - X509_CRL_add0_revoked
+    - X509_CRL_sort
+    - X509_CRL_sign
+    - i2d_X509_CRL
+    - PEM_write_bio_X509_CRL
+    - X509_REVOKED_new
+    - X509_REVOKED_free
+    - X509_REVOKED_set_serialNumber
+    - X509_REVOKED_set_revocationDate
+    - ASN1_TIME_new
+    - ASN1_TIME_set
+    - ASN1_TIME_free
+    # OCSP (Responder) support
+    - d2i_OCSP_REQUEST
+    - OCSP_REQUEST_free
+    - OCSP_request_onereq_count
+    - OCSP_request_onereq_get0
+    - OCSP_onereq_get0_id
+    - OCSP_id_get0_info
+    - OCSP_BASICRESP_new
+    - OCSP_BASICRESP_free
+    - OCSP_basic_add1_status
+    - OCSP_basic_sign
+    - OCSP_response_create
+    - OCSP_RESPONSE_free
+    - i2d_OCSP_RESPONSE
+    - OCSP_copy_nonce
+    - OCSP_REQUEST_new
+    - OCSP_request_add0_id
+    - OCSP_cert_to_id
+    - OCSP_CERTID_free
+    - i2d_OCSP_REQUEST
     # EC and Keygen
     - EVP_PKEY_keygen_init
     - EVP_PKEY_keygen

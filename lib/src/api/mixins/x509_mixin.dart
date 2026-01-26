@@ -6,6 +6,7 @@ import '../../api/openssl.dart';
 import '../../infra/ssl_exception.dart';
 import '../../x509/x509_certificate.dart';
 import '../../x509/x509_builder.dart';
+import '../../x509/x509_crl_builder.dart';
 import 'bio_mixin.dart';
 
 /// Mixin for X509 Certificate operations.
@@ -15,6 +16,11 @@ mixin X509Mixin on OpenSslContext, BioMixin {
   X509CertificateBuilder newCertificateBuilder() {
     // Cast to OpenSSL is safe as OpenSSL implements OpenSslContext and mixes this in.
     return X509CertificateBuilder(this as OpenSSL);
+  }
+
+  /// Creates a new Builder for creating and signing X509 CRLs.
+  X509CrlBuilder newCrlBuilder() {
+    return X509CrlBuilder(this as OpenSSL);
   }
 
   /// Loads an X509 Certificate from PEM string.

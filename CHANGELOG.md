@@ -48,3 +48,21 @@
 - **CI/Testing**:
   - Added memory-safety regression test for repeated `ASN1_TIME_to_tm` parsing.
   - Linux CI now uses `MALLOC_CHECK_` and `MALLOC_PERTURB_` for earlier detection of heap corruption.
+
+## 0.4.0
+
+- **CRL & OCSP**:
+  - Added `X509Crl` and `X509CrlBuilder` to generate and sign CRLs without invoking the OpenSSL executable.
+  - Added `OcspResponseBuilder` and `OcspMixin` to build DER OCSP responses directly via FFI.
+- **Cipher APIs**:
+  - Added AES-128-GCM and AES-128-CBC helpers.
+  - Added ChaCha20 and ChaCha20-Poly1305 helpers.
+  - Added Rijndael aliases (mapped to AES-128/256 CBC and GCM).
+- **TLS constants**:
+  - Added recommended TLS 1.2 cipher suite list and TLS 1.3 ciphersuite list + IDs.
+- **FFI**:
+  - Extended bindings for CRL/OCSP request/response APIs.
+- **Tests**:
+  - Added coverage for CRL/OCSP generation and new cipher helpers.
+- **Docs/cleanup**:
+  - Removed an unnecessary import in the tm bug demonstration script.

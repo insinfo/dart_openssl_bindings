@@ -13,6 +13,8 @@ export 'src/crypto/evp_pkey.dart';
 export 'src/x509/x509_certificate.dart';
 export 'src/x509/icp_brasil_info.dart';
 export 'src/x509/x509_extensions.dart';
+export 'src/x509/x509_crl.dart';
+export 'src/x509/x509_crl_builder.dart';
 export 'src/x509/x509_builder.dart';
 export 'src/x509/x509_request.dart';
 export 'src/x509/x509_request_builder.dart';
@@ -21,6 +23,9 @@ export 'src/x509/x509_name.dart';
 /// CMS / PKCS#7
 export 'src/cms/cms_content.dart';
 export 'src/cms/cms_pkcs7_signer.dart';
+
+/// OCSP
+export 'src/ocsp/ocsp_response_builder.dart';
 
 /// PKCS bundles
 export 'src/pkcs/pkcs12_bundle.dart';

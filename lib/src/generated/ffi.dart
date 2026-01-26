@@ -548,6 +548,47 @@ class OpenSslFfi {
       int Function(ffi.Pointer<ASN1_OCTET_STRING>,
           ffi.Pointer<ffi.UnsignedChar>, int)>();
 
+  ffi.Pointer<ASN1_TIME> ASN1_TIME_new() {
+    return _ASN1_TIME_new();
+  }
+
+  late final _ASN1_TIME_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ASN1_TIME> Function()>>(
+          'ASN1_TIME_new');
+  late final _ASN1_TIME_new =
+      _ASN1_TIME_newPtr.asFunction<ffi.Pointer<ASN1_TIME> Function()>();
+
+  void ASN1_TIME_free(
+    ffi.Pointer<ASN1_TIME> a,
+  ) {
+    return _ASN1_TIME_free(
+      a,
+    );
+  }
+
+  late final _ASN1_TIME_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ASN1_TIME>)>>(
+          'ASN1_TIME_free');
+  late final _ASN1_TIME_free =
+      _ASN1_TIME_freePtr.asFunction<void Function(ffi.Pointer<ASN1_TIME>)>();
+
+  ffi.Pointer<ASN1_TIME> ASN1_TIME_set(
+    ffi.Pointer<ASN1_TIME> s,
+    int t,
+  ) {
+    return _ASN1_TIME_set(
+      s,
+      t,
+    );
+  }
+
+  late final _ASN1_TIME_setPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_TIME> Function(
+              ffi.Pointer<ASN1_TIME>, time_t)>>('ASN1_TIME_set');
+  late final _ASN1_TIME_set = _ASN1_TIME_setPtr.asFunction<
+      ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<ASN1_TIME>, int)>();
+
   int ASN1_TIME_to_tm(
     ffi.Pointer<ASN1_TIME> s,
     ffi.Pointer<tm> tm,
@@ -1810,6 +1851,26 @@ class OpenSslFfi {
       int Function(
           ffi.Pointer<X509_REQ>, ffi.Pointer<EVP_PKEY>, ffi.Pointer<EVP_MD>)>();
 
+  int X509_CRL_sign(
+    ffi.Pointer<X509_CRL> x,
+    ffi.Pointer<EVP_PKEY> pkey,
+    ffi.Pointer<EVP_MD> md,
+  ) {
+    return _X509_CRL_sign(
+      x,
+      pkey,
+      md,
+    );
+  }
+
+  late final _X509_CRL_signPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<EVP_PKEY>,
+              ffi.Pointer<EVP_MD>)>>('X509_CRL_sign');
+  late final _X509_CRL_sign = _X509_CRL_signPtr.asFunction<
+      int Function(
+          ffi.Pointer<X509_CRL>, ffi.Pointer<EVP_PKEY>, ffi.Pointer<EVP_MD>)>();
+
   ffi.Pointer<X509> X509_dup(
     ffi.Pointer<X509> a,
   ) {
@@ -1983,6 +2044,89 @@ class OpenSslFfi {
   late final _i2d_X509 = _i2d_X509Ptr.asFunction<
       int Function(
           ffi.Pointer<X509>, ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  ffi.Pointer<X509_REVOKED> X509_REVOKED_new() {
+    return _X509_REVOKED_new();
+  }
+
+  late final _X509_REVOKED_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<X509_REVOKED> Function()>>(
+          'X509_REVOKED_new');
+  late final _X509_REVOKED_new =
+      _X509_REVOKED_newPtr.asFunction<ffi.Pointer<X509_REVOKED> Function()>();
+
+  void X509_REVOKED_free(
+    ffi.Pointer<X509_REVOKED> a,
+  ) {
+    return _X509_REVOKED_free(
+      a,
+    );
+  }
+
+  late final _X509_REVOKED_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<X509_REVOKED>)>>(
+          'X509_REVOKED_free');
+  late final _X509_REVOKED_free = _X509_REVOKED_freePtr.asFunction<
+      void Function(ffi.Pointer<X509_REVOKED>)>();
+
+  ffi.Pointer<X509_CRL> X509_CRL_new() {
+    return _X509_CRL_new();
+  }
+
+  late final _X509_CRL_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<X509_CRL> Function()>>(
+          'X509_CRL_new');
+  late final _X509_CRL_new =
+      _X509_CRL_newPtr.asFunction<ffi.Pointer<X509_CRL> Function()>();
+
+  void X509_CRL_free(
+    ffi.Pointer<X509_CRL> a,
+  ) {
+    return _X509_CRL_free(
+      a,
+    );
+  }
+
+  late final _X509_CRL_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<X509_CRL>)>>(
+          'X509_CRL_free');
+  late final _X509_CRL_free =
+      _X509_CRL_freePtr.asFunction<void Function(ffi.Pointer<X509_CRL>)>();
+
+  int i2d_X509_CRL(
+    ffi.Pointer<X509_CRL> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_X509_CRL(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_X509_CRLPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>('i2d_X509_CRL');
+  late final _i2d_X509_CRL = _i2d_X509_CRLPtr.asFunction<
+      int Function(
+          ffi.Pointer<X509_CRL>, ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  int X509_CRL_add0_revoked(
+    ffi.Pointer<X509_CRL> crl,
+    ffi.Pointer<X509_REVOKED> rev,
+  ) {
+    return _X509_CRL_add0_revoked(
+      crl,
+      rev,
+    );
+  }
+
+  late final _X509_CRL_add0_revokedPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>,
+              ffi.Pointer<X509_REVOKED>)>>('X509_CRL_add0_revoked');
+  late final _X509_CRL_add0_revoked = _X509_CRL_add0_revokedPtr.asFunction<
+      int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<X509_REVOKED>)>();
 
   ffi.Pointer<ffi.Char> X509_NAME_oneline(
     ffi.Pointer<X509_NAME> a,
@@ -2302,6 +2446,127 @@ class OpenSslFfi {
   late final _X509_REQ_get_pubkey = _X509_REQ_get_pubkeyPtr.asFunction<
       ffi.Pointer<EVP_PKEY> Function(ffi.Pointer<X509_REQ>)>();
 
+  int X509_CRL_set_version(
+    ffi.Pointer<X509_CRL> x,
+    int version,
+  ) {
+    return _X509_CRL_set_version(
+      x,
+      version,
+    );
+  }
+
+  late final _X509_CRL_set_versionPtr = _lookup<
+          ffi
+          .NativeFunction<ffi.Int Function(ffi.Pointer<X509_CRL>, ffi.Long)>>(
+      'X509_CRL_set_version');
+  late final _X509_CRL_set_version = _X509_CRL_set_versionPtr.asFunction<
+      int Function(ffi.Pointer<X509_CRL>, int)>();
+
+  int X509_CRL_set_issuer_name(
+    ffi.Pointer<X509_CRL> x,
+    ffi.Pointer<X509_NAME> name,
+  ) {
+    return _X509_CRL_set_issuer_name(
+      x,
+      name,
+    );
+  }
+
+  late final _X509_CRL_set_issuer_namePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>,
+              ffi.Pointer<X509_NAME>)>>('X509_CRL_set_issuer_name');
+  late final _X509_CRL_set_issuer_name =
+      _X509_CRL_set_issuer_namePtr.asFunction<
+          int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<X509_NAME>)>();
+
+  int X509_CRL_set1_lastUpdate(
+    ffi.Pointer<X509_CRL> x,
+    ffi.Pointer<ASN1_TIME> tm,
+  ) {
+    return _X509_CRL_set1_lastUpdate(
+      x,
+      tm,
+    );
+  }
+
+  late final _X509_CRL_set1_lastUpdatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>,
+              ffi.Pointer<ASN1_TIME>)>>('X509_CRL_set1_lastUpdate');
+  late final _X509_CRL_set1_lastUpdate =
+      _X509_CRL_set1_lastUpdatePtr.asFunction<
+          int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<ASN1_TIME>)>();
+
+  int X509_CRL_set1_nextUpdate(
+    ffi.Pointer<X509_CRL> x,
+    ffi.Pointer<ASN1_TIME> tm,
+  ) {
+    return _X509_CRL_set1_nextUpdate(
+      x,
+      tm,
+    );
+  }
+
+  late final _X509_CRL_set1_nextUpdatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>,
+              ffi.Pointer<ASN1_TIME>)>>('X509_CRL_set1_nextUpdate');
+  late final _X509_CRL_set1_nextUpdate =
+      _X509_CRL_set1_nextUpdatePtr.asFunction<
+          int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<ASN1_TIME>)>();
+
+  int X509_CRL_sort(
+    ffi.Pointer<X509_CRL> crl,
+  ) {
+    return _X509_CRL_sort(
+      crl,
+    );
+  }
+
+  late final _X509_CRL_sortPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<X509_CRL>)>>(
+          'X509_CRL_sort');
+  late final _X509_CRL_sort =
+      _X509_CRL_sortPtr.asFunction<int Function(ffi.Pointer<X509_CRL>)>();
+
+  int X509_REVOKED_set_serialNumber(
+    ffi.Pointer<X509_REVOKED> x,
+    ffi.Pointer<ASN1_INTEGER> serial,
+  ) {
+    return _X509_REVOKED_set_serialNumber(
+      x,
+      serial,
+    );
+  }
+
+  late final _X509_REVOKED_set_serialNumberPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_REVOKED>,
+              ffi.Pointer<ASN1_INTEGER>)>>('X509_REVOKED_set_serialNumber');
+  late final _X509_REVOKED_set_serialNumber =
+      _X509_REVOKED_set_serialNumberPtr.asFunction<
+          int Function(ffi.Pointer<X509_REVOKED>, ffi.Pointer<ASN1_INTEGER>)>();
+
+  int X509_REVOKED_set_revocationDate(
+    ffi.Pointer<X509_REVOKED> r,
+    ffi.Pointer<ASN1_TIME> tm,
+  ) {
+    return _X509_REVOKED_set_revocationDate(
+      r,
+      tm,
+    );
+  }
+
+  late final _X509_REVOKED_set_revocationDatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_REVOKED>,
+              ffi.Pointer<ASN1_TIME>)>>('X509_REVOKED_set_revocationDate');
+  late final _X509_REVOKED_set_revocationDate =
+      _X509_REVOKED_set_revocationDatePtr.asFunction<
+          int Function(ffi.Pointer<X509_REVOKED>, ffi.Pointer<ASN1_TIME>)>();
+
   int X509_NAME_print_ex(
     ffi.Pointer<BIO> out,
     ffi.Pointer<X509_NAME> nm,
@@ -2559,6 +2824,23 @@ class OpenSslFfi {
               ffi.Pointer<X509_REQ>)>>('PEM_write_bio_X509_REQ');
   late final _PEM_write_bio_X509_REQ = _PEM_write_bio_X509_REQPtr.asFunction<
       int Function(ffi.Pointer<BIO>, ffi.Pointer<X509_REQ>)>();
+
+  int PEM_write_bio_X509_CRL(
+    ffi.Pointer<BIO> out,
+    ffi.Pointer<X509_CRL> x,
+  ) {
+    return _PEM_write_bio_X509_CRL(
+      out,
+      x,
+    );
+  }
+
+  late final _PEM_write_bio_X509_CRLPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<BIO>,
+              ffi.Pointer<X509_CRL>)>>('PEM_write_bio_X509_CRL');
+  late final _PEM_write_bio_X509_CRL = _PEM_write_bio_X509_CRLPtr.asFunction<
+      int Function(ffi.Pointer<BIO>, ffi.Pointer<X509_CRL>)>();
 
   ffi.Pointer<RSA> PEM_read_bio_RSAPublicKey(
     ffi.Pointer<BIO> out,
@@ -4041,6 +4323,368 @@ class OpenSslFfi {
       _CMS_signed_add1_attr_by_OBJPtr.asFunction<
           int Function(ffi.Pointer<CMS_SignerInfo>, ffi.Pointer<ASN1_OBJECT>,
               int, ffi.Pointer<ffi.Void>, int)>();
+
+  ffi.Pointer<OCSP_CERTID> OCSP_cert_to_id(
+    ffi.Pointer<EVP_MD> dgst,
+    ffi.Pointer<X509> subject,
+    ffi.Pointer<X509> issuer,
+  ) {
+    return _OCSP_cert_to_id(
+      dgst,
+      subject,
+      issuer,
+    );
+  }
+
+  late final _OCSP_cert_to_idPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_CERTID> Function(ffi.Pointer<EVP_MD>,
+              ffi.Pointer<X509>, ffi.Pointer<X509>)>>('OCSP_cert_to_id');
+  late final _OCSP_cert_to_id = _OCSP_cert_to_idPtr.asFunction<
+      ffi.Pointer<OCSP_CERTID> Function(
+          ffi.Pointer<EVP_MD>, ffi.Pointer<X509>, ffi.Pointer<X509>)>();
+
+  ffi.Pointer<OCSP_ONEREQ> OCSP_request_add0_id(
+    ffi.Pointer<OCSP_REQUEST> req,
+    ffi.Pointer<OCSP_CERTID> cid,
+  ) {
+    return _OCSP_request_add0_id(
+      req,
+      cid,
+    );
+  }
+
+  late final _OCSP_request_add0_idPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_ONEREQ> Function(ffi.Pointer<OCSP_REQUEST>,
+              ffi.Pointer<OCSP_CERTID>)>>('OCSP_request_add0_id');
+  late final _OCSP_request_add0_id = _OCSP_request_add0_idPtr.asFunction<
+      ffi.Pointer<OCSP_ONEREQ> Function(
+          ffi.Pointer<OCSP_REQUEST>, ffi.Pointer<OCSP_CERTID>)>();
+
+  int OCSP_copy_nonce(
+    ffi.Pointer<OCSP_BASICRESP> resp,
+    ffi.Pointer<OCSP_REQUEST> req,
+  ) {
+    return _OCSP_copy_nonce(
+      resp,
+      req,
+    );
+  }
+
+  late final _OCSP_copy_noncePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<OCSP_BASICRESP>,
+              ffi.Pointer<OCSP_REQUEST>)>>('OCSP_copy_nonce');
+  late final _OCSP_copy_nonce = _OCSP_copy_noncePtr.asFunction<
+      int Function(ffi.Pointer<OCSP_BASICRESP>, ffi.Pointer<OCSP_REQUEST>)>();
+
+  int OCSP_request_onereq_count(
+    ffi.Pointer<OCSP_REQUEST> req,
+  ) {
+    return _OCSP_request_onereq_count(
+      req,
+    );
+  }
+
+  late final _OCSP_request_onereq_countPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<OCSP_REQUEST>)>>(
+          'OCSP_request_onereq_count');
+  late final _OCSP_request_onereq_count = _OCSP_request_onereq_countPtr
+      .asFunction<int Function(ffi.Pointer<OCSP_REQUEST>)>();
+
+  ffi.Pointer<OCSP_ONEREQ> OCSP_request_onereq_get0(
+    ffi.Pointer<OCSP_REQUEST> req,
+    int i,
+  ) {
+    return _OCSP_request_onereq_get0(
+      req,
+      i,
+    );
+  }
+
+  late final _OCSP_request_onereq_get0Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_ONEREQ> Function(
+              ffi.Pointer<OCSP_REQUEST>, ffi.Int)>>('OCSP_request_onereq_get0');
+  late final _OCSP_request_onereq_get0 =
+      _OCSP_request_onereq_get0Ptr.asFunction<
+          ffi.Pointer<OCSP_ONEREQ> Function(ffi.Pointer<OCSP_REQUEST>, int)>();
+
+  ffi.Pointer<OCSP_CERTID> OCSP_onereq_get0_id(
+    ffi.Pointer<OCSP_ONEREQ> one,
+  ) {
+    return _OCSP_onereq_get0_id(
+      one,
+    );
+  }
+
+  late final _OCSP_onereq_get0_idPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_CERTID> Function(
+              ffi.Pointer<OCSP_ONEREQ>)>>('OCSP_onereq_get0_id');
+  late final _OCSP_onereq_get0_id = _OCSP_onereq_get0_idPtr.asFunction<
+      ffi.Pointer<OCSP_CERTID> Function(ffi.Pointer<OCSP_ONEREQ>)>();
+
+  int OCSP_id_get0_info(
+    ffi.Pointer<ffi.Pointer<ASN1_OCTET_STRING>> piNameHash,
+    ffi.Pointer<ffi.Pointer<ASN1_OBJECT>> pmd,
+    ffi.Pointer<ffi.Pointer<ASN1_OCTET_STRING>> pikeyHash,
+    ffi.Pointer<ffi.Pointer<ASN1_INTEGER>> pserial,
+    ffi.Pointer<OCSP_CERTID> cid,
+  ) {
+    return _OCSP_id_get0_info(
+      piNameHash,
+      pmd,
+      pikeyHash,
+      pserial,
+      cid,
+    );
+  }
+
+  late final _OCSP_id_get0_infoPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ffi.Pointer<ASN1_OCTET_STRING>>,
+              ffi.Pointer<ffi.Pointer<ASN1_OBJECT>>,
+              ffi.Pointer<ffi.Pointer<ASN1_OCTET_STRING>>,
+              ffi.Pointer<ffi.Pointer<ASN1_INTEGER>>,
+              ffi.Pointer<OCSP_CERTID>)>>('OCSP_id_get0_info');
+  late final _OCSP_id_get0_info = _OCSP_id_get0_infoPtr.asFunction<
+      int Function(
+          ffi.Pointer<ffi.Pointer<ASN1_OCTET_STRING>>,
+          ffi.Pointer<ffi.Pointer<ASN1_OBJECT>>,
+          ffi.Pointer<ffi.Pointer<ASN1_OCTET_STRING>>,
+          ffi.Pointer<ffi.Pointer<ASN1_INTEGER>>,
+          ffi.Pointer<OCSP_CERTID>)>();
+
+  ffi.Pointer<OCSP_RESPONSE> OCSP_response_create(
+    int status,
+    ffi.Pointer<OCSP_BASICRESP> bs,
+  ) {
+    return _OCSP_response_create(
+      status,
+      bs,
+    );
+  }
+
+  late final _OCSP_response_createPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_RESPONSE> Function(
+              ffi.Int, ffi.Pointer<OCSP_BASICRESP>)>>('OCSP_response_create');
+  late final _OCSP_response_create = _OCSP_response_createPtr.asFunction<
+      ffi.Pointer<OCSP_RESPONSE> Function(int, ffi.Pointer<OCSP_BASICRESP>)>();
+
+  ffi.Pointer<OCSP_SINGLERESP> OCSP_basic_add1_status(
+    ffi.Pointer<OCSP_BASICRESP> rsp,
+    ffi.Pointer<OCSP_CERTID> cid,
+    int status,
+    int reason,
+    ffi.Pointer<ASN1_TIME> revtime,
+    ffi.Pointer<ASN1_TIME> thisupd,
+    ffi.Pointer<ASN1_TIME> nextupd,
+  ) {
+    return _OCSP_basic_add1_status(
+      rsp,
+      cid,
+      status,
+      reason,
+      revtime,
+      thisupd,
+      nextupd,
+    );
+  }
+
+  late final _OCSP_basic_add1_statusPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_SINGLERESP> Function(
+              ffi.Pointer<OCSP_BASICRESP>,
+              ffi.Pointer<OCSP_CERTID>,
+              ffi.Int,
+              ffi.Int,
+              ffi.Pointer<ASN1_TIME>,
+              ffi.Pointer<ASN1_TIME>,
+              ffi.Pointer<ASN1_TIME>)>>('OCSP_basic_add1_status');
+  late final _OCSP_basic_add1_status = _OCSP_basic_add1_statusPtr.asFunction<
+      ffi.Pointer<OCSP_SINGLERESP> Function(
+          ffi.Pointer<OCSP_BASICRESP>,
+          ffi.Pointer<OCSP_CERTID>,
+          int,
+          int,
+          ffi.Pointer<ASN1_TIME>,
+          ffi.Pointer<ASN1_TIME>,
+          ffi.Pointer<ASN1_TIME>)>();
+
+  int OCSP_basic_sign(
+    ffi.Pointer<OCSP_BASICRESP> brsp,
+    ffi.Pointer<X509> signer,
+    ffi.Pointer<EVP_PKEY> key,
+    ffi.Pointer<EVP_MD> dgst,
+    ffi.Pointer<stack_st_X509> certs,
+    int flags,
+  ) {
+    return _OCSP_basic_sign(
+      brsp,
+      signer,
+      key,
+      dgst,
+      certs,
+      flags,
+    );
+  }
+
+  late final _OCSP_basic_signPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<OCSP_BASICRESP>,
+              ffi.Pointer<X509>,
+              ffi.Pointer<EVP_PKEY>,
+              ffi.Pointer<EVP_MD>,
+              ffi.Pointer<stack_st_X509>,
+              ffi.UnsignedLong)>>('OCSP_basic_sign');
+  late final _OCSP_basic_sign = _OCSP_basic_signPtr.asFunction<
+      int Function(
+          ffi.Pointer<OCSP_BASICRESP>,
+          ffi.Pointer<X509>,
+          ffi.Pointer<EVP_PKEY>,
+          ffi.Pointer<EVP_MD>,
+          ffi.Pointer<stack_st_X509>,
+          int)>();
+
+  ffi.Pointer<OCSP_BASICRESP> OCSP_BASICRESP_new() {
+    return _OCSP_BASICRESP_new();
+  }
+
+  late final _OCSP_BASICRESP_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<OCSP_BASICRESP> Function()>>(
+          'OCSP_BASICRESP_new');
+  late final _OCSP_BASICRESP_new = _OCSP_BASICRESP_newPtr.asFunction<
+      ffi.Pointer<OCSP_BASICRESP> Function()>();
+
+  void OCSP_BASICRESP_free(
+    ffi.Pointer<OCSP_BASICRESP> a,
+  ) {
+    return _OCSP_BASICRESP_free(
+      a,
+    );
+  }
+
+  late final _OCSP_BASICRESP_freePtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<OCSP_BASICRESP>)>>(
+      'OCSP_BASICRESP_free');
+  late final _OCSP_BASICRESP_free = _OCSP_BASICRESP_freePtr.asFunction<
+      void Function(ffi.Pointer<OCSP_BASICRESP>)>();
+
+  void OCSP_RESPONSE_free(
+    ffi.Pointer<OCSP_RESPONSE> a,
+  ) {
+    return _OCSP_RESPONSE_free(
+      a,
+    );
+  }
+
+  late final _OCSP_RESPONSE_freePtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<OCSP_RESPONSE>)>>(
+      'OCSP_RESPONSE_free');
+  late final _OCSP_RESPONSE_free = _OCSP_RESPONSE_freePtr.asFunction<
+      void Function(ffi.Pointer<OCSP_RESPONSE>)>();
+
+  int i2d_OCSP_RESPONSE(
+    ffi.Pointer<OCSP_RESPONSE> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_OCSP_RESPONSE(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_OCSP_RESPONSEPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Int Function(ffi.Pointer<OCSP_RESPONSE>,
+                  ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>(
+      'i2d_OCSP_RESPONSE');
+  late final _i2d_OCSP_RESPONSE = _i2d_OCSP_RESPONSEPtr.asFunction<
+      int Function(ffi.Pointer<OCSP_RESPONSE>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  void OCSP_CERTID_free(
+    ffi.Pointer<OCSP_CERTID> a,
+  ) {
+    return _OCSP_CERTID_free(
+      a,
+    );
+  }
+
+  late final _OCSP_CERTID_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<OCSP_CERTID>)>>(
+          'OCSP_CERTID_free');
+  late final _OCSP_CERTID_free = _OCSP_CERTID_freePtr.asFunction<
+      void Function(ffi.Pointer<OCSP_CERTID>)>();
+
+  ffi.Pointer<OCSP_REQUEST> OCSP_REQUEST_new() {
+    return _OCSP_REQUEST_new();
+  }
+
+  late final _OCSP_REQUEST_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<OCSP_REQUEST> Function()>>(
+          'OCSP_REQUEST_new');
+  late final _OCSP_REQUEST_new =
+      _OCSP_REQUEST_newPtr.asFunction<ffi.Pointer<OCSP_REQUEST> Function()>();
+
+  void OCSP_REQUEST_free(
+    ffi.Pointer<OCSP_REQUEST> a,
+  ) {
+    return _OCSP_REQUEST_free(
+      a,
+    );
+  }
+
+  late final _OCSP_REQUEST_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<OCSP_REQUEST>)>>(
+          'OCSP_REQUEST_free');
+  late final _OCSP_REQUEST_free = _OCSP_REQUEST_freePtr.asFunction<
+      void Function(ffi.Pointer<OCSP_REQUEST>)>();
+
+  ffi.Pointer<OCSP_REQUEST> d2i_OCSP_REQUEST(
+    ffi.Pointer<ffi.Pointer<OCSP_REQUEST>> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> in$,
+    int len,
+  ) {
+    return _d2i_OCSP_REQUEST(
+      a,
+      in$,
+      len,
+    );
+  }
+
+  late final _d2i_OCSP_REQUESTPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_REQUEST> Function(
+              ffi.Pointer<ffi.Pointer<OCSP_REQUEST>>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+              ffi.Long)>>('d2i_OCSP_REQUEST');
+  late final _d2i_OCSP_REQUEST = _d2i_OCSP_REQUESTPtr.asFunction<
+      ffi.Pointer<OCSP_REQUEST> Function(ffi.Pointer<ffi.Pointer<OCSP_REQUEST>>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>, int)>();
+
+  int i2d_OCSP_REQUEST(
+    ffi.Pointer<OCSP_REQUEST> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_OCSP_REQUEST(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_OCSP_REQUESTPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<OCSP_REQUEST>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>('i2d_OCSP_REQUEST');
+  late final _i2d_OCSP_REQUEST = _i2d_OCSP_REQUESTPtr.asFunction<
+      int Function(ffi.Pointer<OCSP_REQUEST>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
 }
 
 typedef va_list = ffi.Pointer<ffi.Char>;
@@ -84717,6 +85361,143 @@ typedef sk_CMS_RevocationInfoChoice_copyfuncFunction
         ffi.Pointer<CMS_RevocationInfoChoice> a);
 typedef sk_CMS_RevocationInfoChoice_copyfunc = ffi
     .Pointer<ffi.NativeFunction<sk_CMS_RevocationInfoChoice_copyfuncFunction>>;
+
+final class ocsp_cert_id_st extends ffi.Opaque {}
+
+typedef OCSP_CERTID = ocsp_cert_id_st;
+
+final class ocsp_one_request_st extends ffi.Opaque {}
+
+typedef OCSP_ONEREQ = ocsp_one_request_st;
+
+final class ocsp_req_info_st extends ffi.Opaque {}
+
+typedef OCSP_REQINFO = ocsp_req_info_st;
+
+final class ocsp_signature_st extends ffi.Opaque {}
+
+typedef OCSP_SIGNATURE = ocsp_signature_st;
+
+final class ocsp_request_st extends ffi.Opaque {}
+
+typedef OCSP_REQUEST = ocsp_request_st;
+
+final class stack_st_OCSP_CERTID extends ffi.Opaque {}
+
+typedef sk_OCSP_CERTID_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_CERTID>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_CERTID>> b);
+typedef Dartsk_OCSP_CERTID_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_CERTID>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_CERTID>> b);
+typedef sk_OCSP_CERTID_compfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_CERTID_compfuncFunction>>;
+typedef sk_OCSP_CERTID_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<OCSP_CERTID> a);
+typedef Dartsk_OCSP_CERTID_freefuncFunction = void Function(
+    ffi.Pointer<OCSP_CERTID> a);
+typedef sk_OCSP_CERTID_freefunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_CERTID_freefuncFunction>>;
+typedef sk_OCSP_CERTID_copyfuncFunction = ffi.Pointer<OCSP_CERTID> Function(
+    ffi.Pointer<OCSP_CERTID> a);
+typedef sk_OCSP_CERTID_copyfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_CERTID_copyfuncFunction>>;
+
+final class stack_st_OCSP_ONEREQ extends ffi.Opaque {}
+
+typedef sk_OCSP_ONEREQ_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_ONEREQ>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_ONEREQ>> b);
+typedef Dartsk_OCSP_ONEREQ_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_ONEREQ>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_ONEREQ>> b);
+typedef sk_OCSP_ONEREQ_compfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_ONEREQ_compfuncFunction>>;
+typedef sk_OCSP_ONEREQ_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<OCSP_ONEREQ> a);
+typedef Dartsk_OCSP_ONEREQ_freefuncFunction = void Function(
+    ffi.Pointer<OCSP_ONEREQ> a);
+typedef sk_OCSP_ONEREQ_freefunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_ONEREQ_freefuncFunction>>;
+typedef sk_OCSP_ONEREQ_copyfuncFunction = ffi.Pointer<OCSP_ONEREQ> Function(
+    ffi.Pointer<OCSP_ONEREQ> a);
+typedef sk_OCSP_ONEREQ_copyfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_ONEREQ_copyfuncFunction>>;
+
+final class ocsp_resp_bytes_st extends ffi.Opaque {}
+
+typedef OCSP_RESPBYTES = ocsp_resp_bytes_st;
+
+final class stack_st_OCSP_RESPID extends ffi.Opaque {}
+
+typedef sk_OCSP_RESPID_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_RESPID>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_RESPID>> b);
+typedef Dartsk_OCSP_RESPID_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_RESPID>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_RESPID>> b);
+typedef sk_OCSP_RESPID_compfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_RESPID_compfuncFunction>>;
+typedef sk_OCSP_RESPID_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<OCSP_RESPID> a);
+typedef Dartsk_OCSP_RESPID_freefuncFunction = void Function(
+    ffi.Pointer<OCSP_RESPID> a);
+typedef sk_OCSP_RESPID_freefunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_RESPID_freefuncFunction>>;
+typedef sk_OCSP_RESPID_copyfuncFunction = ffi.Pointer<OCSP_RESPID> Function(
+    ffi.Pointer<OCSP_RESPID> a);
+typedef sk_OCSP_RESPID_copyfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_RESPID_copyfuncFunction>>;
+
+final class ocsp_revoked_info_st extends ffi.Opaque {}
+
+typedef OCSP_REVOKEDINFO = ocsp_revoked_info_st;
+
+final class ocsp_cert_status_st extends ffi.Opaque {}
+
+typedef OCSP_CERTSTATUS = ocsp_cert_status_st;
+
+final class ocsp_single_response_st extends ffi.Opaque {}
+
+typedef OCSP_SINGLERESP = ocsp_single_response_st;
+
+final class stack_st_OCSP_SINGLERESP extends ffi.Opaque {}
+
+typedef sk_OCSP_SINGLERESP_compfuncFunction = ffi.Int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_SINGLERESP>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_SINGLERESP>> b);
+typedef Dartsk_OCSP_SINGLERESP_compfuncFunction = int Function(
+    ffi.Pointer<ffi.Pointer<OCSP_SINGLERESP>> a,
+    ffi.Pointer<ffi.Pointer<OCSP_SINGLERESP>> b);
+typedef sk_OCSP_SINGLERESP_compfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_SINGLERESP_compfuncFunction>>;
+typedef sk_OCSP_SINGLERESP_freefuncFunction = ffi.Void Function(
+    ffi.Pointer<OCSP_SINGLERESP> a);
+typedef Dartsk_OCSP_SINGLERESP_freefuncFunction = void Function(
+    ffi.Pointer<OCSP_SINGLERESP> a);
+typedef sk_OCSP_SINGLERESP_freefunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_SINGLERESP_freefuncFunction>>;
+typedef sk_OCSP_SINGLERESP_copyfuncFunction = ffi.Pointer<OCSP_SINGLERESP>
+    Function(ffi.Pointer<OCSP_SINGLERESP> a);
+typedef sk_OCSP_SINGLERESP_copyfunc
+    = ffi.Pointer<ffi.NativeFunction<sk_OCSP_SINGLERESP_copyfuncFunction>>;
+
+final class ocsp_response_data_st extends ffi.Opaque {}
+
+typedef OCSP_RESPDATA = ocsp_response_data_st;
+
+final class ocsp_basic_response_st extends ffi.Opaque {}
+
+typedef OCSP_BASICRESP = ocsp_basic_response_st;
+
+final class ocsp_crl_id_st extends ffi.Opaque {}
+
+typedef OCSP_CRLID = ocsp_crl_id_st;
+
+final class ocsp_service_locator_st extends ffi.Opaque {}
+
+typedef OCSP_SERVICELOC = ocsp_service_locator_st;
+typedef OCSP_REQ_CTX = OSSL_HTTP_REQ_CTX;
 
 const int BIO_C_SET_BUF_MEM_EOF_RETURN = 130;
 

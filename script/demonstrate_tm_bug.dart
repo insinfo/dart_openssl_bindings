@@ -19,7 +19,6 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'package:openssl_bindings/openssl.dart';
-import 'package:openssl_bindings/src/generated/ffi.dart';
 
 
 void main() {

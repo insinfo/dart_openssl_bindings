@@ -7,7 +7,7 @@ import 'mixins/mixins.dart';
 /// A classe principal que representa uma instância da biblioteca OpenSSL.
 /// Agrega funcionalidade através de Mixins.
 class OpenSSL extends OpenSslContext
-  with BioMixin, CryptoMixin, Asn1Mixin, CmsMixin, SignatureMixin, X509Mixin, CipherMixin, PkcsMixin {
+  with BioMixin, CryptoMixin, Asn1Mixin, CmsMixin, SignatureMixin, X509Mixin, CipherMixin, PkcsMixin, OcspMixin {
   final OpenSslBindings _loader;
 
   /// Carrega a biblioteca OpenSSL.
