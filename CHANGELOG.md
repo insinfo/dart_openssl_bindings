@@ -67,4 +67,11 @@
 - **Docs/cleanup**:
   - Removed an unnecessary import in the tm bug demonstration script.
 
-  
+## 0.4.1
+
+- **PKCS#7 padding**:
+  - Added `pkcs7Pad` and `pkcs7Unpad` helpers for high-level padding/unpadding.
+- **AES-CBC convenience**:
+  - Added `aesCbcPkcs7Encrypt` and `aesCbcPkcs7Decrypt` helpers (AES-128/256).
+- **Tests**:
+  - Added coverage for PKCS#7 padding and AES-CBC PKCS#7 helpers.
