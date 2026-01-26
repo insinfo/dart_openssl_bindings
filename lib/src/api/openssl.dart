@@ -34,4 +34,17 @@ class OpenSSL extends OpenSslContext
       return _loader.sslLibrary.lookup<NativeFunction<T>>(name);
     }
   }
+
+  /// OpenSSL version (major).
+  int get opensslVersionMajor => bindings.OPENSSL_version_major();
+
+  /// OpenSSL version (minor).
+  int get opensslVersionMinor => bindings.OPENSSL_version_minor();
+
+  /// OpenSSL version (patch).
+  int get opensslVersionPatch => bindings.OPENSSL_version_patch();
+
+  /// OpenSSL version string (major.minor.patch).
+  String get opensslVersionString =>
+      '${opensslVersionMajor}.${opensslVersionMinor}.${opensslVersionPatch}';
 }
