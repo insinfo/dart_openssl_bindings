@@ -16,10 +16,15 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
 *   **Builders Fluentes**:
     *   `X509CertificateBuilder`: Criação de certificados (Self-Signed ou CA-Signed).
     *   `X509RequestBuilder`: Geração de CSR (Certificate Signing Request).
+  *   `X509CrlBuilder`: Geração e assinatura de CRLs diretamente via FFI.
 *   **Formatos**: Suporte a PEM e DER.
 
 ### Criptografia e Assinatura (CMS/PAdES)
 *   **Chaves**: Geração e carregamento de RSA/EVP keys (PEM/DER/Encrypted PEM).
+*   **Cifras Simétricas**:
+  *   AES-128/256 (CBC e GCM).
+  *   ChaCha20 e ChaCha20-Poly1305.
+  *   Aliases Rijndael (mapeados para AES-128/256 CBC e GCM).
 *   **CMS/PKCS#7**:
     *   Assinatura "Detached" (essencial para PAdES/CAdES).
     *   Suporte a **Signed Attributes** (customizáveis).
@@ -31,6 +36,13 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
 *   **TLS Síncrono**: `SecureSocketOpenSslSync` (blocado, útil para tunnels/proxies).
 *   **DTLS 1.2+**: `DtlsClient` e `DtlsServer` sobre UDP.
 *   **Path Injection**: Todos os sockets aceitam caminhos customizados para `libcrypto` e `libssl`, facilitando o deploy embarcado.
+
+### CRL & OCSP (Novo)
+*   `X509Crl` e `X509CrlBuilder`: geração e assinatura de CRLs sem uso do executável OpenSSL.
+*   `OcspResponseBuilder` e `OcspMixin`: geração de respostas OCSP em DER via FFI.
+
+### TLS (Constantes recomendadas)
+*   Listas de suites recomendadas para TLS 1.2 e TLS 1.3 (incluindo IDs das suites TLS 1.3).
 
 ---
 

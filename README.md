@@ -18,10 +18,15 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 *   **Fluent Builders**:
     *   `X509CertificateBuilder`: Create Self-Signed or CA-Signed certificates.
     *   `X509RequestBuilder`: Generate CSRs (Certificate Signing Requests).
+  *   `X509CrlBuilder`: Generate and sign CRLs directly via FFI.
 *   **Formats**: Full support for PEM and DER.
 
 ### Cryptography & Signing (CMS/PAdES)
 *   **Key Management**: Generate and load RSA/EVP keys (PEM/DER/Encrypted PEM).
+*   **Symmetric Ciphers**:
+  *   AES-128/256 (CBC and GCM).
+  *   ChaCha20 and ChaCha20-Poly1305.
+  *   Rijndael aliases (mapped to AES-128/256 CBC and GCM).
 *   **CMS/PKCS#7**:
     *   **Detached Signatures**: Critical for PAdES/CAdES standards.
     *   **External Digest Signing**: Support for signing pre-calculated hashes (e.g., for Hardware Security Modules or remote signing flows).
@@ -31,6 +36,13 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 *   **Async TLS**: `SecureSocketOpenSslAsync` (API compatible with `dart:io` Socket).
 *   **Sync TLS**: `SecureSocketOpenSslSync` (Blocking API, useful for tunnels/proxies).
 *   **DTLS 1.2+**: Full support for `DtlsClient` and `DtlsServer` over UDP.
+
+### CRL & OCSP (New)
+*   `X509Crl` and `X509CrlBuilder`: Generate and sign CRLs without invoking the OpenSSL executable.
+*   `OcspResponseBuilder` and `OcspMixin`: Build DER OCSP responses via FFI.
+
+### TLS (Recommended suites)
+*   Recommended TLS 1.2 cipher suite list and TLS 1.3 ciphersuite list (with TLS 1.3 IDs).
 
 ---
 

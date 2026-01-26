@@ -466,6 +466,83 @@ mixin CipherMixin on OpenSslContext {
     }
   }
 
+  /// Applies PKCS#7 padding to [data] for a given [blockSize].
+  ///
+  /// [blockSize] must be between 1 and 255. For AES, use 16.
+  Uint8List pkcs7Pad(Uint8List data, {int blockSize = 16}) {
+    if (blockSize <= 0 || blockSize > 255) {
+      throw ArgumentError('blockSize must be between 1 and 255');
+    }
+
+    final padLen = blockSize - (data.length % blockSize);
+    final padded = Uint8List(data.length + padLen);
+    padded.setAll(0, data);
+    for (var i = data.length; i < padded.length; i++) {
+      padded[i] = padLen;
+    }
+    return padded;
+  }
+
+  /// Removes PKCS#7 padding from [padded] for a given [blockSize].
+  ///
+  /// Throws [ArgumentError] if padding is invalid.
+  Uint8List pkcs7Unpad(Uint8List padded, {int blockSize = 16}) {
+    if (blockSize <= 0 || blockSize > 255) {
+      throw ArgumentError('blockSize must be between 1 and 255');
+    }
+    if (padded.isEmpty || padded.length % blockSize != 0) {
+      throw ArgumentError('Invalid PKCS#7 padding length');
+    }
+
+    final padLen = padded.last;
+    if (padLen <= 0 || padLen > blockSize) {
+      throw ArgumentError('Invalid PKCS#7 padding bytes');
+    }
+
+    final start = padded.length - padLen;
+    for (var i = start; i < padded.length; i++) {
+      if (padded[i] != padLen) {
+        throw ArgumentError('Invalid PKCS#7 padding bytes');
+      }
+    }
+
+    return padded.sublist(0, start);
+  }
+
+  /// Convenience helper that encrypts using AES-CBC with PKCS#7 padding.
+  ///
+  /// Supports AES-128 (16-byte key) and AES-256 (32-byte key).
+  Uint8List aesCbcPkcs7Encrypt({
+    required Uint8List data,
+    required Uint8List key,
+    required Uint8List iv,
+  }) {
+    if (key.length == 16) {
+      return aes128CbcEncrypt(data: data, key: key, iv: iv);
+    }
+    if (key.length == 32) {
+      return aes256CbcEncrypt(data: data, key: key, iv: iv);
+    }
+    throw ArgumentError('Key must be 16 or 32 bytes for AES-CBC');
+  }
+
+  /// Convenience helper that decrypts using AES-CBC with PKCS#7 padding.
+  ///
+  /// Supports AES-128 (16-byte key) and AES-256 (32-byte key).
+  Uint8List aesCbcPkcs7Decrypt({
+    required Uint8List ciphertext,
+    required Uint8List key,
+    required Uint8List iv,
+  }) {
+    if (key.length == 16) {
+      return aes128CbcDecrypt(ciphertext: ciphertext, key: key, iv: iv);
+    }
+    if (key.length == 32) {
+      return aes256CbcDecrypt(ciphertext: ciphertext, key: key, iv: iv);
+    }
+    throw ArgumentError('Key must be 16 or 32 bytes for AES-CBC');
+  }
+
   /// Encrypts [data] using AES-128-CBC with PKCS#7 padding.
   Uint8List aes128CbcEncrypt({
     required Uint8List data,
