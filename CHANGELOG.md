@@ -76,7 +76,7 @@
 - **Tests**:
   - Added coverage for PKCS#7 padding and AES-CBC PKCS#7 helpers.
 
-## 0.4.1
+## 0.4.2
 
 - feat(stress): add HTTP signer stress server and test
 - add DER export for X509Certificate
