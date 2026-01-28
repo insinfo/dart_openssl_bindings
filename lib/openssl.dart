@@ -19,6 +19,8 @@ export 'src/x509/x509_builder.dart';
 export 'src/x509/x509_request.dart';
 export 'src/x509/x509_request_builder.dart';
 export 'src/x509/x509_name.dart';
+export 'src/pki/pki_utils.dart';
+export 'src/pki/pki_builder.dart';
 
 /// CMS / PKCS#7
 export 'src/cms/cms_content.dart';

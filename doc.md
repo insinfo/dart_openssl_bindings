@@ -18,6 +18,9 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
     *   `X509RequestBuilder`: Geração de CSR (Certificate Signing Request).
   *   `X509CrlBuilder`: Geração e assinatura de CRLs diretamente via FFI.
 *   **Formatos**: Suporte a PEM e DER.
+*   **Utilitários PKI**:
+    *   `generateSerialNumberBigInt()` via `OpenSSL` (serial criptograficamente forte, 8–20 bytes).
+    *   `createUserCertificate()` via `OpenSSL` (helper de emissão com DN parseado).
 
 ### Criptografia e Assinatura (CMS/PAdES)
 *   **Chaves**: Geração e carregamento de RSA/EVP keys (PEM/DER/Encrypted PEM).
@@ -40,6 +43,7 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
 ### CRL & OCSP (Novo)
 *   `X509Crl` e `X509CrlBuilder`: geração e assinatura de CRLs sem uso do executável OpenSSL.
 *   `OcspResponseBuilder` e `OcspMixin`: geração de respostas OCSP em DER via FFI.
+*   **CRL Reason/Number**: suporte a `CRLReason` por revogado e extensão `CRLNumber`.
 
 ### TLS (Constantes recomendadas)
 *   Listas de suites recomendadas para TLS 1.2 e TLS 1.3 (incluindo IDs das suites TLS 1.3).
@@ -115,6 +119,32 @@ final cert = builder.sign(key, hashAlgorithm: 'SHA256');
 print(cert.toPem());
 ```
 
+### 3.1. Serial Forte (BigInt)
+
+```dart
+final serial = openssl.generateSerialNumberBigInt(bytes: 16);
+
+final cert = X509CertificateBuilder(openssl)
+  ..setSerialNumberBigInt(serial)
+  ..setSubject(commonName: 'User', organization: 'MyOrg')
+  ..setIssuerAsSubject()
+  ..setPublicKey(key)
+  ..setValidity(notAfterOffset: 31536000)
+  ..sign(key);
+```
+
+### 3.2. Emissão com DN em String (Helper)
+
+```dart
+final certDer = openssl.createUserCertificate(
+  keyPair: userKey,
+  issuerKeyPair: caKey,
+  subjectDn: 'CN=User,OU=Prod,O=MyOrg,L=Sao Paulo,ST=SP,C=BR,E=user@example.com,SERIALNUMBER=123',
+  issuerDn: 'CN=My CA,O=MyOrg,C=BR',
+  extendedKeyUsageOids: ['1.3.6.1.5.5.7.3.2'],
+);
+```
+
 ### 4. CMS/PAdES (Assinatura Digital)
 
 Para assinar documentos (PDF/PAdES) ou dados genéricos:
@@ -138,6 +168,25 @@ final sigFromHash = signer.signDetachedDigest(
   certificateDer: myCertBytes,
   privateKey: myPrivateKey,
 );
+```
+
+### 4.1. CRL com Reason e CRL Number
+
+```dart
+final now = DateTime.now().toUtc();
+final crl = openssl.newCrlBuilder()
+  ..setIssuerFromCertificate(caCert)
+  ..setUpdateTimes(
+    thisUpdate: now,
+    nextUpdate: now.add(const Duration(hours: 24)),
+  )
+  ..setCrlNumber(number: 1)
+  ..addRevokedSerialWithReason(
+    serialNumber: 42,
+    revocationTime: now,
+    reasonCode: CrlReason.keyCompromise,
+  )
+  ..sign(issuerKey: caKey);
 ```
 
 ### 5. DTLS (UDP Seguro) com DLLs Customizadas

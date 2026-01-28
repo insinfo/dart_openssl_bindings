@@ -2,6 +2,7 @@
 # https://slproweb.com/products/Win32OpenSSL.html
 # https://slproweb.com/download/Win64OpenSSL-3_6_0.msi
 # C:\Program Files\OpenSSL-Win64
+# C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\bin\Hostx64\x64\dumpbin.exe
 name: OpenSslFfi
 description: Bindings to OpenSSL for Dart.
 output: 'lib/src/generated/ffi.dart'
@@ -21,6 +22,7 @@ headers:
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/pkcs12.h'
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/cms.h'
     - 'C:/Progra~1/OpenSSL-Win64/include/openssl/ocsp.h'
+    - 'C:/Progra~1/OpenSSL-Win64/include/openssl/rand.h'
 
 compiler-opts:
   # OpenSSL
@@ -54,7 +56,10 @@ functions:
     - BIO_ADDR_free
     - BN_new
     - BN_set_word
+    - BN_bin2bn
+    - BN_to_ASN1_INTEGER
     - BN_free
+    - RAND_bytes
     - DTLS_client_method
     - DTLS_server_method
     - ERR_get_error
@@ -111,6 +116,10 @@ functions:
     - X509_getm_notBefore
     - X509_getm_notAfter
     - X509_gmtime_adj
+    - ASN1_TIME_adj
+    - ASN1_TIME_set
+    - ASN1_TIME_set_string
+    - X509_time_adj_ex
     - ASN1_TIME_to_tm
     - X509_NAME_new
     - X509_NAME_add_entry_by_txt
@@ -157,6 +166,7 @@ functions:
     - X509V3_EXT_conf_nid
     - X509_EXTENSION_free
     - X509_EXTENSION_create_by_OBJ
+    - X509_EXTENSION_create_by_NID
     - X509_add_ext
     - d2i_PKCS12
     - i2d_PKCS12
@@ -196,6 +206,9 @@ functions:
     - BN_bn2dec
     - BN_bn2hex
     - ASN1_TIME_print
+    - ASN1_ENUMERATED_new
+    - ASN1_ENUMERATED_set
+    - ASN1_ENUMERATED_free
     - PEM_write_bio_PrivateKey
     - PEM_write_bio_PUBKEY
     - PEM_write_bio_RSAPublicKey
@@ -224,6 +237,8 @@ functions:
     - X509_CRL_set1_lastUpdate
     - X509_CRL_set1_nextUpdate
     - X509_CRL_add0_revoked
+    - X509_CRL_add_ext
+    - X509_CRL_add1_ext_i2d
     - X509_CRL_sort
     - X509_CRL_sign
     - i2d_X509_CRL
@@ -232,9 +247,13 @@ functions:
     - X509_REVOKED_free
     - X509_REVOKED_set_serialNumber
     - X509_REVOKED_set_revocationDate
+    - X509_REVOKED_add1_ext_i2d
     - ASN1_TIME_new
     - ASN1_TIME_set
     - ASN1_TIME_free
+    - ASN1_GENERALIZEDTIME_new
+    - ASN1_GENERALIZEDTIME_set
+    - ASN1_GENERALIZEDTIME_free
     # OCSP (Responder) support
     - d2i_OCSP_REQUEST
     - OCSP_REQUEST_free
@@ -245,11 +264,13 @@ functions:
     - OCSP_BASICRESP_new
     - OCSP_BASICRESP_free
     - OCSP_basic_add1_status
+    - OCSP_basic_add1_cert
     - OCSP_basic_sign
     - OCSP_response_create
     - OCSP_RESPONSE_free
     - i2d_OCSP_RESPONSE
     - OCSP_copy_nonce
+    - OCSP_request_add1_nonce
     - OCSP_REQUEST_new
     - OCSP_request_add0_id
     - OCSP_cert_to_id
@@ -347,6 +368,7 @@ macros:
     - V_ASN1_OBJECT
     - V_ASN1_OCTET_STRING
     - CMS_NOSMIMECAP
+    - OCSP_RESPID_KEY
     - GEN_OTHERNAME
     - V_ASN1_UTF8STRING
     - V_ASN1_PRINTABLESTRING

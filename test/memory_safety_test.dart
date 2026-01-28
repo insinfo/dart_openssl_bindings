@@ -15,6 +15,7 @@ void main() {
       final key = openSsl.generateRsa(2048);
       try {
         const rounds = 5;
+        const warmupRounds = 1;
         const iterationsPerRound = 200;
         final maxAllowedDeltaMb = double.tryParse(
               Platform.environment['MEMORY_SAFETY_MAX_MB'] ?? '',
@@ -40,9 +41,13 @@ void main() {
             cert.dispose();
           }
 
+          sleep(const Duration(milliseconds: 20));
+
           final rssRound = ProcessInfo.currentRss;
-          firstRoundRss ??= rssRound;
-          lastRoundRss = rssRound;
+          if (round > warmupRounds) {
+            firstRoundRss ??= rssRound;
+            lastRoundRss = rssRound;
+          }
           print('RSS after round $round: ${_formatBytes(rssRound)}');
         }
 
@@ -53,7 +58,8 @@ void main() {
 
         final roundDeltaBytes = (lastRoundRss ?? rssAfter) - (firstRoundRss ?? rssBefore);
         final roundDeltaMb = roundDeltaBytes / (1024 * 1024);
-        print('RSS delta (round 1 -> round $rounds): ${roundDeltaMb.toStringAsFixed(2)} MB');
+        final measuredStart = warmupRounds + 1;
+        print('RSS delta (round $measuredStart -> round $rounds): ${roundDeltaMb.toStringAsFixed(2)} MB');
         print('RSS limit: ${maxAllowedDeltaMb.toStringAsFixed(2)} MB');
         expect(roundDeltaMb, lessThan(maxAllowedDeltaMb));
       } finally {

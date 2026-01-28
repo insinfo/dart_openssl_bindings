@@ -14,10 +14,13 @@ mixin OcspMixin on OpenSslContext {
     required Map<String, OcspStatusInfo> statusBySerial,
     required X509Certificate responderCertificate,
     required EvpPkey responderKey,
+    List<X509Certificate>? extraCertificates,
     String hashAlgorithm = 'SHA256',
     DateTime? defaultThisUpdate,
     DateTime? defaultNextUpdate,
     bool includeNonce = true,
+    OcspNoncePolicy? noncePolicy,
+    bool responderIdByKey = false,
   }) {
     final builder = OcspResponseBuilder(this as OpenSSL);
     return builder.buildDer(
@@ -25,10 +28,15 @@ mixin OcspMixin on OpenSslContext {
       statusBySerial: statusBySerial,
       responderCert: responderCertificate.handle,
       responderKey: responderKey,
+      extraCertificates: extraCertificates
+          ?.map((cert) => cert.handle)
+          .toList(growable: false),
       hashAlgorithm: hashAlgorithm,
       defaultThisUpdate: defaultThisUpdate,
       defaultNextUpdate: defaultNextUpdate,
       includeNonce: includeNonce,
+      noncePolicy: noncePolicy,
+      responderIdByKey: responderIdByKey,
     );
   }
 }

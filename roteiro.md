@@ -115,6 +115,42 @@ Para evitar uma "God Class", as funcionalidades são separadas:
 2. **Escrita de Chaves Criptografadas**: Implementar `savePrivateKeyPem({String? password})`.
 3. **Validação de Cadeia Completa**: Expor detalhes da validação (erros específicos baseados na flag de verify).
 
+## 6.1. Lacunas para CA Produção (Atual)
+
+### CRL
+- [x] CRL básica (v2) com revogação por serial.
+- [x] **CRL Number** (extensão 2.5.29.20).
+- [x] **CRL Reason** por entrada revogada (2.5.29.21).
+- [x] Authority Key Identifier na CRL.
+- [x] Delta CRL (emissão incremental).
+
+### OCSP
+- [x] Resposta OCSP básica assinada.
+- [x] Controle de nonce (copiar/exigir/ignorar) via `OCSP_copy_nonce`.
+- [ ] `producedAt` configurável (expor `OCSP_resp_set1_produced_at` se disponível na versão do OpenSSL).
+- [x] ResponderId por keyHash (flag `OCSP_RESPID_KEY` em `OCSP_basic_sign`).
+- [ ] ResponderId por name (requer API específica para `OCSP_RESPID_set_by_name`).
+- [x] Inclusão explícita de cadeia/responder cert (`OCSP_basic_add1_cert`).
+- [ ] Perfil de respostas por política (responderId, responder cert, etc).
+
+### Perfis/Políticas
+- [ ] Validador de perfis (CA/End-Entity) com enforcement de EKU/KeyUsage.
+- [ ] NameConstraints e PolicyConstraints para CAs subordinadas.
+- [x] Geração de cadeia (cross-cert/rollover).
+
+### Operação/Segurança (fora do código)
+- [ ] Persistência e unicidade de serial (DB transacional).
+- [ ] HSM/PKCS#11 para chaves da CA.
+- [ ] Auditoria, logging e rotação segura de chaves.
+
+### APIs OpenSSL específicas a expor (FFI) para PKI de ACs
+- [ ] CSR completo: `d2i_X509_REQ`, `i2d_X509_REQ`, `PEM_read_bio_X509_REQ`, `X509_REQ_add_extensions`, `X509_REQ_get_extensions`, `X509_REQ_add1_attr_by_NID`.
+- [ ] Extensões de CA avançadas via X509V3: `NameConstraints`, `PolicyConstraints`, `InhibitAnyPolicy`, `PolicyMappings`, `CertificatePolicies` (builder dedicado + `X509V3_EXT_conf_nid`).
+- [ ] Distribuição/Revogação: `CRLDistributionPoints`, `FreshestCRL`, `IssuingDistributionPoint`, `AuthorityInfoAccess` (OCSP/caIssuers).
+- [ ] Validação detalhada: `X509_STORE_CTX_get_error`, `X509_STORE_CTX_get_error_depth`, `X509_STORE_CTX_get0_chain`, `X509_VERIFY_PARAM_set_flags`.
+- [ ] OCSP avançado: `OCSP_request_add1_nonce` (já exposto), `OCSP_resp_set1_produced_at` (se disponível), `OCSP_RESPID_set_by_key` / `OCSP_RESPID_set_by_name`, `OCSP_basic_add1_cert`.
+- [ ] Cadeia/rollover: `X509_dup`, `X509_up_ref` já expostos; falta builder de cross-cert e controle de policy em verificação.
+
 ## 6. Próximos Passos (Expansão General Purpose - Substituir PointyCastle)
 
 Para tornar a library uma solução completa de criptografia, as seguintes funcionalidades serão implementadas:
@@ -152,12 +188,14 @@ Esses formatos podem ser convertidos entre si usando ferramentas como o OpenSSL.
 
 Possíveis lacunas de API para o seu cenário:
 
-Extensões KeyUsage e ExtendedKeyUsage no builder de certificado não aparecem em x509_builder.dart. Isso é usado no seu código para CA/usuario, então vale implementar.
-CmsMixin.signDetached não expõe extraCertsDer/hashAlgorithm; você pode usar direto cms_pkcs7_signer.dart ou adicionar overload no mixin.
+-OCSP: `producedAt` configurável (dependente de `OCSP_resp_set1_produced_at`), responderId por keyHash/byName e inclusão explícita de cadeia (via `OCSP_basic_add1_cert`).
+-CSR completo: geração/parse com `d2i_X509_REQ`/`i2d_X509_REQ` e extensões no CSR.
+-Validação com detalhes: expor erro, depth e cadeia da verificação (`X509_STORE_CTX_get_error*`).
+-Extensões avançadas de CA: `NameConstraints`, `PolicyConstraints`, `InhibitAnyPolicy`, `PolicyMappings`.
+
 Testes que eu adicionaria para ficar mais próximo do seu uso real:
 
-signDetachedDigest + verifyCmsDetached (incluindo cadeia) em cms_test.dart
-Falhas de validação com verifyCmsDetachedWithResult em cms_test.dart
-X.509 com SAN otherName + policies + (depois) KeyUsage/ExtendedKeyUsage em x509_certificate_builder_test.dart
-PKCS#12 com senha inválida em pkcs_test.dart
-Se quiser, implemento essas APIs e testes aqui.
+-OCSP: nonce obrigatório/ausente, include chain/responderId quando disponível.
+-CSR: geração + parse + validação de assinatura.
+-Verificação: falhas com `verifyCmsDetachedWithResult` e checagem de erro/detalhe.
+-PKCS#12 com senha inválida em pkcs_test.dart.

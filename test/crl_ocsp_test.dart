@@ -3,8 +3,10 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:openssl_bindings/src/api/openssl.dart';
+import 'package:openssl_bindings/src/infra/ssl_exception.dart';
 import 'package:openssl_bindings/src/ocsp/ocsp_response_builder.dart';
 import 'package:openssl_bindings/src/x509/x509_builder.dart';
+import 'package:openssl_bindings/src/x509/x509_crl_builder.dart';
 import 'package:openssl_bindings/src/generated/ffi.dart';
 import 'package:test/test.dart';
 
@@ -34,6 +36,9 @@ void main() {
           thisUpdate: now,
           nextUpdate: now.add(const Duration(hours: 24)),
         )
+        ..setAuthorityKeyIdentifierFromIssuer(issuerCert: issuerCert)
+        ..setCrlNumber(number: 1)
+        ..setDeltaCrlIndicator(baseCrlNumber: 1)
         ..addRevokedSerial(
           serialNumber: 1234,
           revocationTime: now,
@@ -44,6 +49,36 @@ void main() {
       final der = crl.toDer();
 
       expect(pem, contains('BEGIN X509 CRL'));
+      expect(der, isNotEmpty);
+      expect(der.first, equals(0x30));
+    });
+
+    test('Should add revoked entry with reason', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caCert = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Test Root CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final issuerCert = caCert.sign(caKey);
+
+      final now = DateTime.now().toUtc();
+      final crlBuilder = openSsl.newCrlBuilder()
+        ..setIssuerFromCertificate(issuerCert)
+        ..setUpdateTimes(
+          thisUpdate: now,
+          nextUpdate: now.add(const Duration(hours: 24)),
+        )
+        ..addRevokedSerialWithReason(
+          serialNumber: 42,
+          revocationTime: now,
+          reasonCode: CrlReason.keyCompromise,
+        );
+
+      final crl = crlBuilder.sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+      final der = crl.toDer();
       expect(der, isNotEmpty);
       expect(der.first, equals(0x30));
     });
@@ -85,6 +120,103 @@ void main() {
       expect(responseDer, isNotEmpty);
       expect(responseDer.first, equals(0x30));
     });
+
+    test('Should build OCSP response with responderId by key and extra certs', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caBuilder = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Test Root CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final caCert = caBuilder.sign(caKey);
+
+      final leafKey = openSsl.generateRsa(2048);
+      final leafBuilder = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Leaf', organization: 'Test')
+        ..setIssuer(issuerCert: caCert)
+        ..setPublicKey(leafKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: false, critical: true)
+        ..addKeyUsage(digitalSignature: true, keyEncipherment: true, critical: true);
+      final leafCert = leafBuilder.sign(caKey);
+
+      final requestDer = _buildOcspRequest(openSsl, leafCert.handle, caCert.handle);
+
+      final responseDer = openSsl.buildOcspResponse(
+        requestDer: requestDer,
+        statusBySerial: {
+          leafCert.serialNumber: const OcspStatusInfo(status: OcspCertStatus.good),
+        },
+        responderCertificate: caCert,
+        responderKey: caKey,
+        extraCertificates: [caCert],
+        responderIdByKey: true,
+        hashAlgorithm: 'SHA256',
+      );
+
+      expect(responseDer, isNotEmpty);
+      expect(responseDer.first, equals(0x30));
+    });
+
+    test('Should enforce OCSP nonce policy', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caBuilder = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Test Root CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final caCert = caBuilder.sign(caKey);
+
+      final leafKey = openSsl.generateRsa(2048);
+      final leafBuilder = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Leaf', organization: 'Test')
+        ..setIssuer(issuerCert: caCert)
+        ..setPublicKey(leafKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: false, critical: true)
+        ..addKeyUsage(digitalSignature: true, keyEncipherment: true, critical: true);
+      final leafCert = leafBuilder.sign(caKey);
+
+      final requestWithoutNonce =
+          _buildOcspRequest(openSsl, leafCert.handle, caCert.handle);
+      expect(
+        () => openSsl.buildOcspResponse(
+          requestDer: requestWithoutNonce,
+          statusBySerial: {
+            leafCert.serialNumber: const OcspStatusInfo(status: OcspCertStatus.good),
+          },
+          responderCertificate: caCert,
+          responderKey: caKey,
+          hashAlgorithm: 'SHA256',
+          noncePolicy: OcspNoncePolicy.require,
+        ),
+        throwsA(isA<OpenSslException>()),
+      );
+
+      final requestWithNonce = _buildOcspRequest(
+        openSsl,
+        leafCert.handle,
+        caCert.handle,
+        includeNonce: true,
+      );
+      final responseDer = openSsl.buildOcspResponse(
+        requestDer: requestWithNonce,
+        statusBySerial: {
+          leafCert.serialNumber: const OcspStatusInfo(status: OcspCertStatus.good),
+        },
+        responderCertificate: caCert,
+        responderKey: caKey,
+        hashAlgorithm: 'SHA256',
+        noncePolicy: OcspNoncePolicy.require,
+      );
+
+      expect(responseDer, isNotEmpty);
+      expect(responseDer.first, equals(0x30));
+    });
   });
 }
 
@@ -92,6 +224,7 @@ Uint8List _buildOcspRequest(
   OpenSSL openSsl,
   Pointer<X509> subject,
   Pointer<X509> issuer,
+  {bool includeNonce = false}
 ) {
   final bindings = openSsl.bindings;
 
@@ -115,6 +248,21 @@ Uint8List _buildOcspRequest(
     if (oneReq == nullptr) {
       bindings.OCSP_CERTID_free(certId);
       throw StateError('Failed to add CERTID to OCSP request');
+    }
+
+    if (includeNonce) {
+      const nonceLength = 16;
+      final nonce = calloc<UnsignedChar>(nonceLength);
+      try {
+        if (bindings.RAND_bytes(nonce, nonceLength) != 1) {
+          throw StateError('Failed to generate nonce');
+        }
+        if (bindings.OCSP_request_add1_nonce(request, nonce, nonceLength) != 1) {
+          throw StateError('Failed to add nonce to OCSP request');
+        }
+      } finally {
+        calloc.free(nonce);
+      }
     }
 
     final len = bindings.i2d_OCSP_REQUEST(request, nullptr);

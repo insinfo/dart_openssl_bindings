@@ -60,52 +60,42 @@ class Asn1Integer extends Asn1Object {
   Uint8List encodeValue() {
     if (value == BigInt.zero) return Uint8List.fromList([0]);
 
-    var v = value;
-    final isNegative = v.isNegative;
-
-    // Two's complement encoding
-    if (isNegative) {
-       // logic for negative bigints manually or use trick
-       // Simpler trick: convert to bytes, check sign bit.
-       // But BigInt.toRadixString(16) is unsigned style? No.
-       // Let's implement minimal big-endian writer.
-       // Actually for positive numbers (common in certificates):
-       // If MSB is 1, we prepend 00 to make it positive
-       // BigInt.toBytes is not standard in Dart 2... wait, dart 3.6 probably has nothing native helper yet?
-       // Let's use simple iterative shift.
-       
-       // Handle 0 and -1 special case if loop doesn't catch
-       if (v == -BigInt.one) return Uint8List.fromList([0xFF]); 
-    }
-
-    // Generic encoding (works for +)
-    // For specific CMS usage, we only expect Positive integers (Serial Number, Version).
-    // If we need negative support later, we'll fix it.
-    if (value < BigInt.zero) throw UnimplementedError('Binary encoding for negative BigInt');
-
-    var hex = value.toRadixString(16);
-
-    if (hex.length % 2 != 0) hex = '0$hex';
-    final rawBytes = <int>[];
-    for(int i=0; i<hex.length; i+=2) {
-      rawBytes.add(int.parse(hex.substring(i, i+2), radix: 16));
-    }
-    
-    // Fix sign if needed for positive numbers where MSB is set
-    // e.g. 128 -> 0x80 -> interpreted as -128 if signed.
-    // If value > 0 and rawBytes[0] >= 0x80, prepend 0x00.
     if (value > BigInt.zero) {
-        if (rawBytes.isNotEmpty && (rawBytes[0] & 0x80) != 0) {
-            rawBytes.insert(0, 0x00);
-        }
-    } else if (value < BigInt.zero) {
-        // This simple hex dump doesn't do 2's complement correctly for negative via toRadixString usually
-        // toRadixString(-10) -> "-a".
-        // So we need proper 2's complement.
-        // Assume mostly positive Serial Numbers for this task.
-        throw UnimplementedError('Negative integers not fully implemented in Mini ASN.1');
+      final bytes = _unsignedToBytes(value);
+      if ((bytes[0] & 0x80) != 0) {
+        return Uint8List.fromList([0x00, ...bytes]);
+      }
+      return bytes;
     }
-    
+
+    final absValue = -value;
+    var length = (absValue.bitLength + 7) ~/ 8;
+    if (length == 0) length = 1;
+
+    final maxPositive = BigInt.one << (length * 8 - 1);
+    if (absValue > maxPositive) {
+      length += 1;
+    }
+
+    final max = BigInt.one << (length * 8);
+    final twosComplement = max - absValue;
+    return _unsignedToBytes(twosComplement, length: length);
+  }
+
+  Uint8List _unsignedToBytes(BigInt value, {int? length}) {
+    var hex = value.toRadixString(16);
+    if (hex.length.isOdd) hex = '0$hex';
+
+    final rawBytes = <int>[];
+    for (var i = 0; i < hex.length; i += 2) {
+      rawBytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
+    }
+
+    if (length != null && rawBytes.length < length) {
+      final padding = List<int>.filled(length - rawBytes.length, 0x00);
+      rawBytes.insertAll(0, padding);
+    }
+
     return Uint8List.fromList(rawBytes);
   }
 }

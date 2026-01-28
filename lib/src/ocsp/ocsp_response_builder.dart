@@ -30,6 +30,18 @@ enum OcspRevocationReason {
   aACompromise,
 }
 
+/// OCSP nonce handling policy.
+enum OcspNoncePolicy {
+  /// Ignore any nonce in the request.
+  ignore,
+
+  /// Copy nonce if present in the request.
+  copyIfPresent,
+
+  /// Require nonce in the request and copy it.
+  require,
+}
+
 /// Single certificate OCSP status payload.
 class OcspStatusInfo {
   const OcspStatusInfo({
@@ -61,10 +73,13 @@ class OcspResponseBuilder {
     required Map<String, OcspStatusInfo> statusBySerial,
     required Pointer<X509> responderCert,
     required EvpPkey responderKey,
+    List<Pointer<X509>>? extraCertificates,
     String hashAlgorithm = 'SHA256',
     DateTime? defaultThisUpdate,
     DateTime? defaultNextUpdate,
     bool includeNonce = true,
+    OcspNoncePolicy? noncePolicy,
+    bool responderIdByKey = false,
   }) {
     final bindings = _context.bindings;
 
@@ -84,8 +99,13 @@ class OcspResponseBuilder {
     final fallbackNext = defaultNextUpdate ?? now.add(const Duration(hours: 24));
 
     try {
-      if (includeNonce) {
-        bindings.OCSP_copy_nonce(basic, reqPtr);
+      final effectiveNoncePolicy =
+          noncePolicy ?? (includeNonce ? OcspNoncePolicy.copyIfPresent : OcspNoncePolicy.ignore);
+      if (effectiveNoncePolicy != OcspNoncePolicy.ignore) {
+        final nonceResult = bindings.OCSP_copy_nonce(basic, reqPtr);
+        if (effectiveNoncePolicy == OcspNoncePolicy.require && nonceResult != 1) {
+          throw OpenSslException('OCSP request missing required nonce');
+        }
       }
 
       final count = bindings.OCSP_request_onereq_count(reqPtr);
@@ -144,14 +164,27 @@ class OcspResponseBuilder {
         }
       }
 
+      final extra = extraCertificates ?? const <Pointer<X509>>[];
+      for (final cert in extra) {
+        if (cert == nullptr) {
+          continue;
+        }
+        final added = bindings.OCSP_basic_add1_cert(basic, cert);
+        if (added != 1) {
+          throw OpenSslException('Failed to add OCSP extra certificate');
+        }
+      }
+
       final md = _getDigestByName(hashAlgorithm);
+      const responderIdKeyFlag = 0x400; // OCSP_RESPID_KEY
+      final flags = responderIdByKey ? responderIdKeyFlag : 0;
       final signResult = bindings.OCSP_basic_sign(
         basic,
         responderCert,
         responderKey.handle,
         md,
         nullptr,
-        0,
+        flags,
       );
       SslObject.checkCode(
         bindings,
@@ -282,6 +315,7 @@ class OcspResponseBuilder {
       _context.bindings.BN_free(bn);
     }
   }
+
 
   int _statusToNative(OcspCertStatus status) {
     switch (status) {

@@ -305,6 +305,26 @@ class OpenSslFfi {
       _lookup<ffi.NativeFunction<ffi.Pointer<BIGNUM> Function()>>('BN_new');
   late final _BN_new = _BN_newPtr.asFunction<ffi.Pointer<BIGNUM> Function()>();
 
+  ffi.Pointer<BIGNUM> BN_bin2bn(
+    ffi.Pointer<ffi.UnsignedChar> s,
+    int len,
+    ffi.Pointer<BIGNUM> ret,
+  ) {
+    return _BN_bin2bn(
+      s,
+      len,
+      ret,
+    );
+  }
+
+  late final _BN_bin2bnPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<BIGNUM> Function(ffi.Pointer<ffi.UnsignedChar>, ffi.Int,
+              ffi.Pointer<BIGNUM>)>>('BN_bin2bn');
+  late final _BN_bin2bn = _BN_bin2bnPtr.asFunction<
+      ffi.Pointer<BIGNUM> Function(
+          ffi.Pointer<ffi.UnsignedChar>, int, ffi.Pointer<BIGNUM>)>();
+
   int BN_set_word(
     ffi.Pointer<BIGNUM> a,
     int w,
@@ -501,6 +521,50 @@ class OpenSslFfi {
       int Function(ffi.Pointer<ASN1_INTEGER>,
           ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
 
+  ffi.Pointer<ASN1_ENUMERATED> ASN1_ENUMERATED_new() {
+    return _ASN1_ENUMERATED_new();
+  }
+
+  late final _ASN1_ENUMERATED_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ASN1_ENUMERATED> Function()>>(
+          'ASN1_ENUMERATED_new');
+  late final _ASN1_ENUMERATED_new = _ASN1_ENUMERATED_newPtr.asFunction<
+      ffi.Pointer<ASN1_ENUMERATED> Function()>();
+
+  void ASN1_ENUMERATED_free(
+    ffi.Pointer<ASN1_ENUMERATED> a,
+  ) {
+    return _ASN1_ENUMERATED_free(
+      a,
+    );
+  }
+
+  late final _ASN1_ENUMERATED_freePtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ASN1_ENUMERATED>)>>(
+      'ASN1_ENUMERATED_free');
+  late final _ASN1_ENUMERATED_free = _ASN1_ENUMERATED_freePtr.asFunction<
+      void Function(ffi.Pointer<ASN1_ENUMERATED>)>();
+
+  ffi.Pointer<ASN1_GENERALIZEDTIME> ASN1_GENERALIZEDTIME_set(
+    ffi.Pointer<ASN1_GENERALIZEDTIME> s,
+    int t,
+  ) {
+    return _ASN1_GENERALIZEDTIME_set(
+      s,
+      t,
+    );
+  }
+
+  late final _ASN1_GENERALIZEDTIME_setPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_GENERALIZEDTIME> Function(
+              ffi.Pointer<ASN1_GENERALIZEDTIME>,
+              time_t)>>('ASN1_GENERALIZEDTIME_set');
+  late final _ASN1_GENERALIZEDTIME_set =
+      _ASN1_GENERALIZEDTIME_setPtr.asFunction<
+          ffi.Pointer<ASN1_GENERALIZEDTIME> Function(
+              ffi.Pointer<ASN1_GENERALIZEDTIME>, int)>();
+
   ffi.Pointer<ASN1_OCTET_STRING> ASN1_OCTET_STRING_new() {
     return _ASN1_OCTET_STRING_new();
   }
@@ -548,6 +612,31 @@ class OpenSslFfi {
       int Function(ffi.Pointer<ASN1_OCTET_STRING>,
           ffi.Pointer<ffi.UnsignedChar>, int)>();
 
+  ffi.Pointer<ASN1_GENERALIZEDTIME> ASN1_GENERALIZEDTIME_new() {
+    return _ASN1_GENERALIZEDTIME_new();
+  }
+
+  late final _ASN1_GENERALIZEDTIME_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ASN1_GENERALIZEDTIME> Function()>>(
+          'ASN1_GENERALIZEDTIME_new');
+  late final _ASN1_GENERALIZEDTIME_new = _ASN1_GENERALIZEDTIME_newPtr
+      .asFunction<ffi.Pointer<ASN1_GENERALIZEDTIME> Function()>();
+
+  void ASN1_GENERALIZEDTIME_free(
+    ffi.Pointer<ASN1_GENERALIZEDTIME> a,
+  ) {
+    return _ASN1_GENERALIZEDTIME_free(
+      a,
+    );
+  }
+
+  late final _ASN1_GENERALIZEDTIME_freePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<ASN1_GENERALIZEDTIME>)>>('ASN1_GENERALIZEDTIME_free');
+  late final _ASN1_GENERALIZEDTIME_free = _ASN1_GENERALIZEDTIME_freePtr
+      .asFunction<void Function(ffi.Pointer<ASN1_GENERALIZEDTIME>)>();
+
   ffi.Pointer<ASN1_TIME> ASN1_TIME_new() {
     return _ASN1_TIME_new();
   }
@@ -589,6 +678,44 @@ class OpenSslFfi {
   late final _ASN1_TIME_set = _ASN1_TIME_setPtr.asFunction<
       ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<ASN1_TIME>, int)>();
 
+  ffi.Pointer<ASN1_TIME> ASN1_TIME_adj(
+    ffi.Pointer<ASN1_TIME> s,
+    int t,
+    int offset_day,
+    int offset_sec,
+  ) {
+    return _ASN1_TIME_adj(
+      s,
+      t,
+      offset_day,
+      offset_sec,
+    );
+  }
+
+  late final _ASN1_TIME_adjPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<ASN1_TIME>, time_t,
+              ffi.Int, ffi.Long)>>('ASN1_TIME_adj');
+  late final _ASN1_TIME_adj = _ASN1_TIME_adjPtr.asFunction<
+      ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<ASN1_TIME>, int, int, int)>();
+
+  int ASN1_TIME_set_string(
+    ffi.Pointer<ASN1_TIME> s,
+    ffi.Pointer<ffi.Char> str,
+  ) {
+    return _ASN1_TIME_set_string(
+      s,
+      str,
+    );
+  }
+
+  late final _ASN1_TIME_set_stringPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ASN1_TIME>,
+              ffi.Pointer<ffi.Char>)>>('ASN1_TIME_set_string');
+  late final _ASN1_TIME_set_string = _ASN1_TIME_set_stringPtr.asFunction<
+      int Function(ffi.Pointer<ASN1_TIME>, ffi.Pointer<ffi.Char>)>();
+
   int ASN1_TIME_to_tm(
     ffi.Pointer<ASN1_TIME> s,
     ffi.Pointer<tm> tm,
@@ -623,6 +750,24 @@ class OpenSslFfi {
   late final _ASN1_INTEGER_set = _ASN1_INTEGER_setPtr.asFunction<
       int Function(ffi.Pointer<ASN1_INTEGER>, int)>();
 
+  ffi.Pointer<ASN1_INTEGER> BN_to_ASN1_INTEGER(
+    ffi.Pointer<BIGNUM> bn,
+    ffi.Pointer<ASN1_INTEGER> ai,
+  ) {
+    return _BN_to_ASN1_INTEGER(
+      bn,
+      ai,
+    );
+  }
+
+  late final _BN_to_ASN1_INTEGERPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_INTEGER> Function(ffi.Pointer<BIGNUM>,
+              ffi.Pointer<ASN1_INTEGER>)>>('BN_to_ASN1_INTEGER');
+  late final _BN_to_ASN1_INTEGER = _BN_to_ASN1_INTEGERPtr.asFunction<
+      ffi.Pointer<ASN1_INTEGER> Function(
+          ffi.Pointer<BIGNUM>, ffi.Pointer<ASN1_INTEGER>)>();
+
   ffi.Pointer<BIGNUM> ASN1_INTEGER_to_BN(
     ffi.Pointer<ASN1_INTEGER> ai,
     ffi.Pointer<BIGNUM> bn,
@@ -640,6 +785,23 @@ class OpenSslFfi {
   late final _ASN1_INTEGER_to_BN = _ASN1_INTEGER_to_BNPtr.asFunction<
       ffi.Pointer<BIGNUM> Function(
           ffi.Pointer<ASN1_INTEGER>, ffi.Pointer<BIGNUM>)>();
+
+  int ASN1_ENUMERATED_set(
+    ffi.Pointer<ASN1_ENUMERATED> a,
+    int v,
+  ) {
+    return _ASN1_ENUMERATED_set(
+      a,
+      v,
+    );
+  }
+
+  late final _ASN1_ENUMERATED_setPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ASN1_ENUMERATED>, ffi.Long)>>('ASN1_ENUMERATED_set');
+  late final _ASN1_ENUMERATED_set = _ASN1_ENUMERATED_setPtr.asFunction<
+      int Function(ffi.Pointer<ASN1_ENUMERATED>, int)>();
 
   int ASN1_TIME_print(
     ffi.Pointer<BIO> bp,
@@ -1885,6 +2047,28 @@ class OpenSslFfi {
   late final _X509_dup =
       _X509_dupPtr.asFunction<ffi.Pointer<X509> Function(ffi.Pointer<X509>)>();
 
+  ffi.Pointer<ASN1_TIME> X509_time_adj_ex(
+    ffi.Pointer<ASN1_TIME> s,
+    int offset_day,
+    int offset_sec,
+    ffi.Pointer<time_t> t,
+  ) {
+    return _X509_time_adj_ex(
+      s,
+      offset_day,
+      offset_sec,
+      t,
+    );
+  }
+
+  late final _X509_time_adj_exPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<ASN1_TIME>, ffi.Int,
+              ffi.Long, ffi.Pointer<time_t>)>>('X509_time_adj_ex');
+  late final _X509_time_adj_ex = _X509_time_adj_exPtr.asFunction<
+      ffi.Pointer<ASN1_TIME> Function(
+          ffi.Pointer<ASN1_TIME>, int, int, ffi.Pointer<time_t>)>();
+
   ffi.Pointer<ASN1_TIME> X509_gmtime_adj(
     ffi.Pointer<ASN1_TIME> s,
     int adj,
@@ -2733,6 +2917,111 @@ class OpenSslFfi {
   late final _X509_get_ext_d2i = _X509_get_ext_d2iPtr.asFunction<
       ffi.Pointer<ffi.Void> Function(ffi.Pointer<X509>, int,
           ffi.Pointer<ffi.Int>, ffi.Pointer<ffi.Int>)>();
+
+  int X509_CRL_add_ext(
+    ffi.Pointer<X509_CRL> x,
+    ffi.Pointer<X509_EXTENSION> ex,
+    int loc,
+  ) {
+    return _X509_CRL_add_ext(
+      x,
+      ex,
+      loc,
+    );
+  }
+
+  late final _X509_CRL_add_extPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<X509_EXTENSION>,
+              ffi.Int)>>('X509_CRL_add_ext');
+  late final _X509_CRL_add_ext = _X509_CRL_add_extPtr.asFunction<
+      int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<X509_EXTENSION>, int)>();
+
+  int X509_CRL_add1_ext_i2d(
+    ffi.Pointer<X509_CRL> x,
+    int nid,
+    ffi.Pointer<ffi.Void> value,
+    int crit,
+    int flags,
+  ) {
+    return _X509_CRL_add1_ext_i2d(
+      x,
+      nid,
+      value,
+      crit,
+      flags,
+    );
+  }
+
+  late final _X509_CRL_add1_ext_i2dPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<X509_CRL>,
+              ffi.Int,
+              ffi.Pointer<ffi.Void>,
+              ffi.Int,
+              ffi.UnsignedLong)>>('X509_CRL_add1_ext_i2d');
+  late final _X509_CRL_add1_ext_i2d = _X509_CRL_add1_ext_i2dPtr.asFunction<
+      int Function(
+          ffi.Pointer<X509_CRL>, int, ffi.Pointer<ffi.Void>, int, int)>();
+
+  int X509_REVOKED_add1_ext_i2d(
+    ffi.Pointer<X509_REVOKED> x,
+    int nid,
+    ffi.Pointer<ffi.Void> value,
+    int crit,
+    int flags,
+  ) {
+    return _X509_REVOKED_add1_ext_i2d(
+      x,
+      nid,
+      value,
+      crit,
+      flags,
+    );
+  }
+
+  late final _X509_REVOKED_add1_ext_i2dPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<X509_REVOKED>,
+              ffi.Int,
+              ffi.Pointer<ffi.Void>,
+              ffi.Int,
+              ffi.UnsignedLong)>>('X509_REVOKED_add1_ext_i2d');
+  late final _X509_REVOKED_add1_ext_i2d =
+      _X509_REVOKED_add1_ext_i2dPtr.asFunction<
+          int Function(ffi.Pointer<X509_REVOKED>, int, ffi.Pointer<ffi.Void>,
+              int, int)>();
+
+  ffi.Pointer<X509_EXTENSION> X509_EXTENSION_create_by_NID(
+    ffi.Pointer<ffi.Pointer<X509_EXTENSION>> ex,
+    int nid,
+    int crit,
+    ffi.Pointer<ASN1_OCTET_STRING> data,
+  ) {
+    return _X509_EXTENSION_create_by_NID(
+      ex,
+      nid,
+      crit,
+      data,
+    );
+  }
+
+  late final _X509_EXTENSION_create_by_NIDPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<X509_EXTENSION> Function(
+              ffi.Pointer<ffi.Pointer<X509_EXTENSION>>,
+              ffi.Int,
+              ffi.Int,
+              ffi.Pointer<ASN1_OCTET_STRING>)>>('X509_EXTENSION_create_by_NID');
+  late final _X509_EXTENSION_create_by_NID =
+      _X509_EXTENSION_create_by_NIDPtr.asFunction<
+          ffi.Pointer<X509_EXTENSION> Function(
+              ffi.Pointer<ffi.Pointer<X509_EXTENSION>>,
+              int,
+              int,
+              ffi.Pointer<ASN1_OCTET_STRING>)>();
 
   ffi.Pointer<X509_EXTENSION> X509_EXTENSION_create_by_OBJ(
     ffi.Pointer<ffi.Pointer<X509_EXTENSION>> ex,
@@ -4362,6 +4651,28 @@ class OpenSslFfi {
       ffi.Pointer<OCSP_ONEREQ> Function(
           ffi.Pointer<OCSP_REQUEST>, ffi.Pointer<OCSP_CERTID>)>();
 
+  int OCSP_request_add1_nonce(
+    ffi.Pointer<OCSP_REQUEST> req,
+    ffi.Pointer<ffi.UnsignedChar> val,
+    int len,
+  ) {
+    return _OCSP_request_add1_nonce(
+      req,
+      val,
+      len,
+    );
+  }
+
+  late final _OCSP_request_add1_noncePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<OCSP_REQUEST>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Int)>>('OCSP_request_add1_nonce');
+  late final _OCSP_request_add1_nonce = _OCSP_request_add1_noncePtr.asFunction<
+      int Function(
+          ffi.Pointer<OCSP_REQUEST>, ffi.Pointer<ffi.UnsignedChar>, int)>();
+
   int OCSP_copy_nonce(
     ffi.Pointer<OCSP_BASICRESP> resp,
     ffi.Pointer<OCSP_REQUEST> req,
@@ -4514,6 +4825,23 @@ class OpenSslFfi {
           ffi.Pointer<ASN1_TIME>,
           ffi.Pointer<ASN1_TIME>,
           ffi.Pointer<ASN1_TIME>)>();
+
+  int OCSP_basic_add1_cert(
+    ffi.Pointer<OCSP_BASICRESP> resp,
+    ffi.Pointer<X509> cert,
+  ) {
+    return _OCSP_basic_add1_cert(
+      resp,
+      cert,
+    );
+  }
+
+  late final _OCSP_basic_add1_certPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<OCSP_BASICRESP>,
+              ffi.Pointer<X509>)>>('OCSP_basic_add1_cert');
+  late final _OCSP_basic_add1_cert = _OCSP_basic_add1_certPtr.asFunction<
+      int Function(ffi.Pointer<OCSP_BASICRESP>, ffi.Pointer<X509>)>();
 
   int OCSP_basic_sign(
     ffi.Pointer<OCSP_BASICRESP> brsp,
@@ -4685,6 +5013,23 @@ class OpenSslFfi {
   late final _i2d_OCSP_REQUEST = _i2d_OCSP_REQUESTPtr.asFunction<
       int Function(ffi.Pointer<OCSP_REQUEST>,
           ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
+  int RAND_bytes(
+    ffi.Pointer<ffi.UnsignedChar> buf,
+    int num,
+  ) {
+    return _RAND_bytes(
+      buf,
+      num,
+    );
+  }
+
+  late final _RAND_bytesPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ffi.UnsignedChar>, ffi.Int)>>('RAND_bytes');
+  late final _RAND_bytes = _RAND_bytesPtr.asFunction<
+      int Function(ffi.Pointer<ffi.UnsignedChar>, int)>();
 }
 
 typedef va_list = ffi.Pointer<ffi.Char>;
@@ -80216,7 +80561,30 @@ final class ec_key_method_st extends ffi.Opaque {}
 
 typedef EC_KEY_METHOD = ec_key_method_st;
 
-final class rand_meth_st extends ffi.Opaque {}
+final class rand_meth_st extends ffi.Struct {
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void> buf, ffi.Int num)>> seed;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Int Function(ffi.Pointer<ffi.UnsignedChar> buf, ffi.Int num)>>
+      bytes;
+
+  external ffi.Pointer<ffi.NativeFunction<ffi.Void Function()>> cleanup;
+
+  external ffi.Pointer<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void> buf, ffi.Int num,
+              ffi.Double randomness)>> add;
+
+  external ffi.Pointer<
+          ffi.NativeFunction<
+              ffi.Int Function(ffi.Pointer<ffi.UnsignedChar> buf, ffi.Int num)>>
+      pseudorand;
+
+  external ffi.Pointer<ffi.NativeFunction<ffi.Int Function()>> status;
+}
 
 typedef RAND_METHOD = rand_meth_st;
 
@@ -85566,3 +85934,5 @@ const int CMS_BINARY = 128;
 const int CMS_NOSMIMECAP = 512;
 
 const int CMS_PARTIAL = 16384;
+
+const int OCSP_RESPID_KEY = 1024;

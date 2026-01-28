@@ -55,10 +55,66 @@ class X509CertificateBuilder implements Finalizable {
     }
   }
 
+  Uint8List _bigIntToBytes(BigInt value) {
+    if (value <= BigInt.zero) {
+      throw ArgumentError('Serial number must be positive');
+    }
+
+    var hex = value.toRadixString(16);
+    if (hex.length.isOdd) {
+      hex = '0$hex';
+    }
+
+    final bytes = Uint8List(hex.length ~/ 2);
+    for (var i = 0; i < hex.length; i += 2) {
+      bytes[i ~/ 2] = int.parse(hex.substring(i, i + 2), radix: 16);
+    }
+    return bytes;
+  }
+
+  void _setSerialBigInt(BigInt serial) {
+    final bytes = _bigIntToBytes(serial);
+    final dataPtr = calloc<UnsignedChar>(bytes.length);
+    try {
+      dataPtr.cast<Uint8>().asTypedList(bytes.length).setAll(0, bytes);
+
+      final bn = _context.bindings.BN_bin2bn(dataPtr, bytes.length, nullptr);
+      if (bn == nullptr) {
+        throw OpenSslException('BN_bin2bn failed');
+      }
+
+      try {
+        final asn1Int = _context.bindings.BN_to_ASN1_INTEGER(bn, nullptr);
+        if (asn1Int == nullptr) {
+          throw OpenSslException('BN_to_ASN1_INTEGER failed');
+        }
+
+        try {
+          final res = _context.bindings.X509_set_serialNumber(_cert, asn1Int);
+          if (res != 1) {
+            throw OpenSslException('Failed to set serial number');
+          }
+        } finally {
+          _context.bindings.ASN1_INTEGER_free(asn1Int);
+        }
+      } finally {
+        _context.bindings.BN_free(bn);
+      }
+    } finally {
+      calloc.free(dataPtr);
+    }
+  }
+
   /// Sets the serial number.
   void setSerialNumber(int serial) {
     _ensureUsable();
     _setSerial(serial);
+  }
+
+  /// Sets the serial number using a BigInt (supports 64-160 bits as per RFC 5280).
+  void setSerialNumberBigInt(BigInt serial) {
+    _ensureUsable();
+    _setSerialBigInt(serial);
   }
 
   /// Sets the validity period in seconds from now.
@@ -71,6 +127,133 @@ class X509CertificateBuilder implements Finalizable {
     _context.bindings.X509_gmtime_adj(notAfter, notAfterOffset);
   }
 
+  /// Sets validity from explicit UTC dates (UTCTime/GeneralizedTime handled by OpenSSL).
+  void setValidityDates({
+    required DateTime notBefore,
+    required DateTime notAfter,
+  }) {
+    _ensureUsable();
+    final notBeforePtr = _context.bindings.X509_getm_notBefore(_cert);
+    final notAfterPtr = _context.bindings.X509_getm_notAfter(_cert);
+
+    final nbUtc = notBefore.toUtc();
+    final naUtc = notAfter.toUtc();
+
+    final nbEpoch = nbUtc.millisecondsSinceEpoch ~/ 1000;
+    final naEpoch = naUtc.millisecondsSinceEpoch ~/ 1000;
+
+    if (_context.bindings.ASN1_TIME_set(notBeforePtr, nbEpoch) == nullptr) {
+      throw OpenSslException('ASN1_TIME_set failed for notBefore');
+    }
+    if (_context.bindings.ASN1_TIME_set(notAfterPtr, naEpoch) == nullptr) {
+      throw OpenSslException('ASN1_TIME_set failed for notAfter');
+    }
+  }
+
+  /// Sets validity using explicit ASN.1 time strings.
+  ///
+  /// Accepted formats: "YYMMDDHHMMSSZ" (UTCTime) or
+  /// "YYYYMMDDHHMMSSZ" (GeneralizedTime).
+  void setValidityFromStrings({
+    required String notBefore,
+    required String notAfter,
+  }) {
+    _ensureUsable();
+    final notBeforePtr = _context.bindings.X509_getm_notBefore(_cert);
+    final notAfterPtr = _context.bindings.X509_getm_notAfter(_cert);
+
+    final arena = Arena();
+    try {
+      final nbPtr = notBefore.toNativeUtf8(allocator: arena);
+      final naPtr = notAfter.toNativeUtf8(allocator: arena);
+
+      final nbOk = _context.bindings.ASN1_TIME_set_string(
+        notBeforePtr,
+        nbPtr.cast(),
+      );
+      if (nbOk != 1) {
+        throw OpenSslException('ASN1_TIME_set_string failed for notBefore');
+      }
+
+      final naOk = _context.bindings.ASN1_TIME_set_string(
+        notAfterPtr,
+        naPtr.cast(),
+      );
+      if (naOk != 1) {
+        throw OpenSslException('ASN1_TIME_set_string failed for notAfter');
+      }
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Sets validity using X509_time_adj_ex for fine-grained control.
+  void setValidityAdjEx({
+    int notBeforeDays = 0,
+    int notBeforeSeconds = 0,
+    int notAfterDays = 365,
+    int notAfterSeconds = 0,
+  }) {
+    _ensureUsable();
+    final notBeforePtr = _context.bindings.X509_getm_notBefore(_cert);
+    final notAfterPtr = _context.bindings.X509_getm_notAfter(_cert);
+
+    if (_context.bindings.X509_time_adj_ex(
+          notBeforePtr,
+          notBeforeDays,
+          notBeforeSeconds,
+          nullptr,
+        ) ==
+        nullptr) {
+      throw OpenSslException('X509_time_adj_ex failed for notBefore');
+    }
+
+    if (_context.bindings.X509_time_adj_ex(
+          notAfterPtr,
+          notAfterDays,
+          notAfterSeconds,
+          nullptr,
+        ) ==
+        nullptr) {
+      throw OpenSslException('X509_time_adj_ex failed for notAfter');
+    }
+  }
+
+  /// Sets validity using ASN1_TIME_adj with a custom base time.
+  void setValidityAdjFromEpoch({
+    required DateTime baseTime,
+    int notBeforeDays = 0,
+    int notBeforeSeconds = 0,
+    int notAfterDays = 365,
+    int notAfterSeconds = 0,
+  }) {
+    _ensureUsable();
+    final notBeforePtr = _context.bindings.X509_getm_notBefore(_cert);
+    final notAfterPtr = _context.bindings.X509_getm_notAfter(_cert);
+
+    final baseEpoch = baseTime.toUtc().millisecondsSinceEpoch ~/ 1000;
+
+    if (_context.bindings.ASN1_TIME_adj(
+          notBeforePtr,
+          baseEpoch,
+          notBeforeDays,
+          notBeforeSeconds,
+        ) ==
+        nullptr) {
+      throw OpenSslException('ASN1_TIME_adj failed for notBefore');
+    }
+
+    if (_context.bindings.ASN1_TIME_adj(
+          notAfterPtr,
+          baseEpoch,
+          notAfterDays,
+          notAfterSeconds,
+        ) ==
+        nullptr) {
+      throw OpenSslException('ASN1_TIME_adj failed for notAfter');
+    }
+  }
+
   /// Sets the Subject DN (Distinguished Name).
   /// Example: `builder.setSubject(commonName: 'My Cert', organization: 'My Org')`
   void setSubject({
@@ -80,6 +263,8 @@ class X509CertificateBuilder implements Finalizable {
     String? locality,
     String? state,
     String? unit,
+    String? emailAddress,
+    String? serialNumber,
   }) {
     _ensureUsable();
     // X509_get_subject_name returns an internal pointer, do NOT free it.
@@ -92,6 +277,16 @@ class X509CertificateBuilder implements Finalizable {
     if (locality != null) name.addEntry('L', locality);
     if (state != null) name.addEntry('ST', state);
     if (unit != null) name.addEntry('OU', unit);
+    if (emailAddress != null) name.addEntry('emailAddress', emailAddress);
+    if (serialNumber != null) name.addEntry('serialNumber', serialNumber);
+  }
+
+  /// Adds a single Subject DN entry by field name (e.g. "CN", "O", "emailAddress").
+  void addSubjectEntry(String field, String value) {
+    _ensureUsable();
+    final namePtr = _context.bindings.X509_get_subject_name(_cert);
+    final name = X509Name(namePtr, _context, isOwned: false);
+    name.addEntry(field, value);
   }
 
   /// Sets the Issuer DN.
@@ -101,6 +296,11 @@ class X509CertificateBuilder implements Finalizable {
       String? commonName,
       String? organization,
       String? country,
+      String? locality,
+      String? state,
+      String? unit,
+      String? emailAddress,
+      String? serialNumber,
       X509Certificate? issuerCert
   }) {
       _ensureUsable();
@@ -121,7 +321,25 @@ class X509CertificateBuilder implements Finalizable {
       if (commonName != null) name.addEntry('CN', commonName);
       if (organization != null) name.addEntry('O', organization);
       if (country != null) name.addEntry('C', country);
+        if (locality != null) name.addEntry('L', locality);
+        if (state != null) name.addEntry('ST', state);
+        if (unit != null) name.addEntry('OU', unit);
+        if (emailAddress != null) name.addEntry('emailAddress', emailAddress);
+        if (serialNumber != null) name.addEntry('serialNumber', serialNumber);
   }
+
+    /// Adds a single Issuer DN entry by field name (e.g. "CN", "O", "emailAddress").
+    ///
+    /// If issuer was set via [issuerCert], manual edits are not allowed.
+    void addIssuerEntry(String field, String value) {
+      _ensureUsable();
+      if (_issuerCert != null && _issuerCert != _cert) {
+        throw StateError('Issuer is locked to issuerCert and cannot be modified');
+      }
+      final namePtr = _context.bindings.X509_get_issuer_name(_cert);
+      final name = X509Name(namePtr, _context, isOwned: false);
+      name.addEntry(field, value);
+    }
   
   /// Helper for Self-Signed: Sets Issuer = Subject.
   void setIssuerAsSubject() {
@@ -343,6 +561,61 @@ class X509CertificateBuilder implements Finalizable {
         calloc.free(dataPtr);
       }
       calloc.free(oidPtr);
+    }
+  }
+
+  /// Adds a raw extension by NID with DER-encoded value.
+  void addRawExtensionByNid({
+    required int nid,
+    required Uint8List der,
+    bool critical = false,
+  }) {
+    _ensureUsable();
+    Pointer<ASN1_OCTET_STRING> octet = nullptr;
+    Pointer<X509_EXTENSION> ext = nullptr;
+    Pointer<Uint8> dataPtr = nullptr;
+
+    try {
+      octet = _context.bindings.ASN1_OCTET_STRING_new();
+      if (octet == nullptr) {
+        throw OpenSslException('Failed to allocate ASN1 OCTET STRING');
+      }
+
+      dataPtr = calloc<Uint8>(der.length);
+      dataPtr.asTypedList(der.length).setAll(0, der);
+
+      if (_context.bindings.ASN1_OCTET_STRING_set(
+            octet,
+            dataPtr.cast<UnsignedChar>(),
+            der.length,
+          ) !=
+          1) {
+        throw OpenSslException('Failed to set DER data for extension');
+      }
+
+      ext = _context.bindings.X509_EXTENSION_create_by_NID(
+        nullptr,
+        nid,
+        critical ? 1 : 0,
+        octet,
+      );
+      if (ext == nullptr) {
+        throw OpenSslException('Failed to create X509 extension by NID: $nid');
+      }
+
+      if (_context.bindings.X509_add_ext(_cert, ext, -1) != 1) {
+        throw OpenSslException('Failed to add X509 extension by NID: $nid');
+      }
+    } finally {
+      if (ext != nullptr) {
+        _context.bindings.X509_EXTENSION_free(ext);
+      }
+      if (octet != nullptr) {
+        _context.bindings.ASN1_OCTET_STRING_free(octet);
+      }
+      if (dataPtr != nullptr) {
+        calloc.free(dataPtr);
+      }
     }
   }
 
