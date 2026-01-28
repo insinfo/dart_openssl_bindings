@@ -82,3 +82,19 @@
 - add DER export for X509Certificate
 - add stress sign server script
 - add concurrent stress test for PKCS#7 signing
+
+## 0.4.3 
+
+- **PKI (Mixins)**:
+  - Added `PkiMixin` and `PkiBuilderMixin` with serial generation and issuance helpers.
+  - Added CA rollover/cross‑cert helpers (`createCrossCertificate`, `createRolloverCrossCertificates`).
+- **X.509 Builder**:
+  - BigInt serial support, validity setters, DN field helpers, and raw extension support.
+- **CRL**:
+  - Added CRL Reason per revoked entry, CRL Number, Delta CRL indicator, and Authority Key Identifier support.
+- **OCSP**:
+  - Added nonce policy handling, responderId by key (flag), and extra responder cert inclusion.
+- **ASN.1**:
+  - Added negative BigInt two’s‑complement encoding utilities.
+- **Tests**:
+  - Added/updated tests for PKI helpers, ASN.1, CRL/OCSP, and certificate builder behaviors.
