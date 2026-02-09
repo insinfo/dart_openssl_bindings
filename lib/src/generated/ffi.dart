@@ -384,6 +384,24 @@ class OpenSslFfi {
   late final _BN_bn2dec = _BN_bn2decPtr.asFunction<
       ffi.Pointer<ffi.Char> Function(ffi.Pointer<BIGNUM>)>();
 
+  OSSL_PARAM OSSL_PARAM_construct_int(
+    ffi.Pointer<ffi.Char> key,
+    ffi.Pointer<ffi.Int> buf,
+  ) {
+    return _OSSL_PARAM_construct_int(
+      key,
+      buf,
+    );
+  }
+
+  late final _OSSL_PARAM_construct_intPtr = _lookup<
+      ffi.NativeFunction<
+          OSSL_PARAM Function(ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Int>)>>('OSSL_PARAM_construct_int');
+  late final _OSSL_PARAM_construct_int =
+      _OSSL_PARAM_construct_intPtr.asFunction<
+          OSSL_PARAM Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Int>)>();
+
   OSSL_PARAM OSSL_PARAM_construct_utf8_string(
     ffi.Pointer<ffi.Char> key,
     ffi.Pointer<ffi.Char> buf,
@@ -1121,6 +1139,62 @@ class OpenSslFfi {
   late final _EVP_DecryptFinal_ex = _EVP_DecryptFinal_exPtr.asFunction<
       int Function(ffi.Pointer<EVP_CIPHER_CTX>, ffi.Pointer<ffi.UnsignedChar>,
           ffi.Pointer<ffi.Int>)>();
+
+  int EVP_DigestSign(
+    ffi.Pointer<EVP_MD_CTX> ctx,
+    ffi.Pointer<ffi.UnsignedChar> sigret,
+    ffi.Pointer<ffi.Size> siglen,
+    ffi.Pointer<ffi.UnsignedChar> tbs,
+    int tbslen,
+  ) {
+    return _EVP_DigestSign(
+      ctx,
+      sigret,
+      siglen,
+      tbs,
+      tbslen,
+    );
+  }
+
+  late final _EVP_DigestSignPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<EVP_MD_CTX>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Pointer<ffi.Size>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Size)>>('EVP_DigestSign');
+  late final _EVP_DigestSign = _EVP_DigestSignPtr.asFunction<
+      int Function(ffi.Pointer<EVP_MD_CTX>, ffi.Pointer<ffi.UnsignedChar>,
+          ffi.Pointer<ffi.Size>, ffi.Pointer<ffi.UnsignedChar>, int)>();
+
+  int EVP_DigestVerify(
+    ffi.Pointer<EVP_MD_CTX> ctx,
+    ffi.Pointer<ffi.UnsignedChar> sigret,
+    int siglen,
+    ffi.Pointer<ffi.UnsignedChar> tbs,
+    int tbslen,
+  ) {
+    return _EVP_DigestVerify(
+      ctx,
+      sigret,
+      siglen,
+      tbs,
+      tbslen,
+    );
+  }
+
+  late final _EVP_DigestVerifyPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<EVP_MD_CTX>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Size,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Size)>>('EVP_DigestVerify');
+  late final _EVP_DigestVerify = _EVP_DigestVerifyPtr.asFunction<
+      int Function(ffi.Pointer<EVP_MD_CTX>, ffi.Pointer<ffi.UnsignedChar>, int,
+          ffi.Pointer<ffi.UnsignedChar>, int)>();
 
   int EVP_DigestSignInit(
     ffi.Pointer<EVP_MD_CTX> ctx,

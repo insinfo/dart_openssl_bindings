@@ -98,3 +98,21 @@
   - Added negative BigInt two’s‑complement encoding utilities.
 - **Tests**:
   - Added/updated tests for PKI helpers, ASN.1, CRL/OCSP, and certificate builder behaviors.
+
+## 0.4.4
+
+- **CRL (Long Serial Support)**:
+  - Added BigInt APIs: `addRevokedSerialBigInt`, `addRevokedSerialWithReasonBigInt`, `setCrlNumberBigInt`, `setDeltaCrlIndicatorBigInt`.
+  - Updated `addRevokedSerialHex` to support large serials through the BigInt path (removed native `int` limitation).
+- **Crypto (Modern/PQC Key Generation)**:
+  - Added `generateEd25519`, `generateEd448`.
+  - Added `generateX25519`, `generateX448`.
+  - Added `generateMlDsa44`, `generateMlDsa65`, `generateMlDsa87`.
+  - Added generic `generateKeyByName(...)` helper for provider-based OpenSSL algorithms.
+- **Signatures (One-Shot + ML-DSA)**:
+  - Added `signOneShot` and `verifyOneShot` with optional `null` digest support (required for ML-DSA/EdDSA flows).
+  - Added `MlDsaSignatureOptions` with ML-DSA parameters (`context-string`, `message-encoding`, `test-entropy`, `deterministic`, `mu`).
+  - Added high-level helpers: `signMlDsa` and `verifyMlDsa`.
+  - Added convenience presets: `MlDsaSignatureOptions.pure`, `.deterministic`, `.mu`.
+- **FFI**:
+  - Added `EVP_DigestSign`, `EVP_DigestVerify`, and `OSSL_PARAM_construct_int` to bindings (`ffigen.yaml` + regenerated `ffi.dart`).

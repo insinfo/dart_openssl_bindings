@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 
@@ -138,6 +139,27 @@ class X509CrlBuilder implements Finalizable {
     required int serialNumber,
     required DateTime revocationTime,
   }) {
+    _addRevokedSerialInternal(
+      serial: _asn1IntegerFromInt(serialNumber),
+      revocationTime: revocationTime,
+    );
+  }
+
+  /// Adds a revoked certificate entry (serial as BigInt).
+  void addRevokedSerialBigInt({
+    required BigInt serialNumber,
+    required DateTime revocationTime,
+  }) {
+    _addRevokedSerialInternal(
+      serial: _asn1IntegerFromBigInt(serialNumber),
+      revocationTime: revocationTime,
+    );
+  }
+
+  void _addRevokedSerialInternal({
+    required Pointer<ASN1_INTEGER> serial,
+    required DateTime revocationTime,
+  }) {
     _ensureUsable();
 
     final revoked = _context.bindings.X509_REVOKED_new();
@@ -145,17 +167,9 @@ class X509CrlBuilder implements Finalizable {
       throw OpenSslException('Failed to create X509_REVOKED');
     }
 
-    final serial = _context.bindings.ASN1_INTEGER_new();
-    if (serial == nullptr) {
-      _context.bindings.X509_REVOKED_free(revoked);
-      throw OpenSslException('Failed to create ASN1_INTEGER');
-    }
-
     final revocation = _createAsn1Time(revocationTime);
 
     try {
-      _context.bindings.ASN1_INTEGER_set(serial, serialNumber);
-
       SslObject.checkCode(
         _context.bindings,
         _context.bindings.X509_REVOKED_set_serialNumber(revoked, serial),
@@ -188,6 +202,35 @@ class X509CrlBuilder implements Finalizable {
     required int reasonCode,
     bool critical = false,
   }) {
+    _addRevokedSerialWithReasonInternal(
+      serial: _asn1IntegerFromInt(serialNumber),
+      revocationTime: revocationTime,
+      reasonCode: reasonCode,
+      critical: critical,
+    );
+  }
+
+  /// Adds a revoked certificate entry with CRL reason (serial as BigInt).
+  void addRevokedSerialWithReasonBigInt({
+    required BigInt serialNumber,
+    required DateTime revocationTime,
+    required int reasonCode,
+    bool critical = false,
+  }) {
+    _addRevokedSerialWithReasonInternal(
+      serial: _asn1IntegerFromBigInt(serialNumber),
+      revocationTime: revocationTime,
+      reasonCode: reasonCode,
+      critical: critical,
+    );
+  }
+
+  void _addRevokedSerialWithReasonInternal({
+    required Pointer<ASN1_INTEGER> serial,
+    required DateTime revocationTime,
+    required int reasonCode,
+    required bool critical,
+  }) {
     _ensureUsable();
 
     final revoked = _context.bindings.X509_REVOKED_new();
@@ -195,18 +238,10 @@ class X509CrlBuilder implements Finalizable {
       throw OpenSslException('Failed to create X509_REVOKED');
     }
 
-    final serial = _context.bindings.ASN1_INTEGER_new();
-    if (serial == nullptr) {
-      _context.bindings.X509_REVOKED_free(revoked);
-      throw OpenSslException('Failed to create ASN1_INTEGER');
-    }
-
     final revocation = _createAsn1Time(revocationTime);
 
     Pointer<ASN1_ENUMERATED> reason = nullptr;
     try {
-      _context.bindings.ASN1_INTEGER_set(serial, serialNumber);
-
       SslObject.checkCode(
         _context.bindings,
         _context.bindings.X509_REVOKED_set_serialNumber(revoked, serial),
@@ -261,25 +296,35 @@ class X509CrlBuilder implements Finalizable {
     required String serialHex,
     required DateTime revocationTime,
   }) {
-    final normalized = serialHex.replaceAll(RegExp(r'^0x', caseSensitive: false), '');
+    final normalized =
+        serialHex.replaceAll(RegExp(r'^0x', caseSensitive: false), '');
     final value = BigInt.parse(normalized, radix: 16);
-    if (value > BigInt.from(0x7FFFFFFF)) {
-      throw RangeError('Serial number is too large for ASN1_INTEGER_set');
-    }
-    addRevokedSerial(serialNumber: value.toInt(), revocationTime: revocationTime);
+    addRevokedSerialBigInt(serialNumber: value, revocationTime: revocationTime);
   }
 
   /// Sets CRL Number extension (RFC 5280).
   void setCrlNumber({required int number, bool critical = false}) {
+    _setCrlNumberInternal(
+      numberAsn1: _asn1IntegerFromInt(number),
+      critical: critical,
+    );
+  }
+
+  /// Sets CRL Number extension (RFC 5280) using BigInt.
+  void setCrlNumberBigInt({required BigInt number, bool critical = false}) {
+    _setCrlNumberInternal(
+      numberAsn1: _asn1IntegerFromBigInt(number),
+      critical: critical,
+    );
+  }
+
+  void _setCrlNumberInternal({
+    required Pointer<ASN1_INTEGER> numberAsn1,
+    required bool critical,
+  }) {
     _ensureUsable();
 
-    final asn1Int = _context.bindings.ASN1_INTEGER_new();
-    if (asn1Int == nullptr) {
-      throw OpenSslException('Failed to create ASN1_INTEGER');
-    }
-
     try {
-      _context.bindings.ASN1_INTEGER_set(asn1Int, number);
       final nid = _getNid(['crlNumber', 'CRLNumber', '2.5.29.20']);
 
       SslObject.checkCode(
@@ -287,28 +332,44 @@ class X509CrlBuilder implements Finalizable {
         _context.bindings.X509_CRL_add1_ext_i2d(
           _crl,
           nid,
-          asn1Int.cast(),
+          numberAsn1.cast(),
           critical ? 1 : 0,
           0,
         ),
         msg: 'Failed to add CRL number extension',
       );
     } finally {
-      _context.bindings.ASN1_INTEGER_free(asn1Int);
+      _context.bindings.ASN1_INTEGER_free(numberAsn1);
     }
   }
 
   /// Sets Delta CRL indicator (RFC 5280) referencing base CRL number.
-  void setDeltaCrlIndicator({required int baseCrlNumber, bool critical = true}) {
+  void setDeltaCrlIndicator(
+      {required int baseCrlNumber, bool critical = true}) {
+    _setDeltaCrlIndicatorInternal(
+      baseCrlNumberAsn1: _asn1IntegerFromInt(baseCrlNumber),
+      critical: critical,
+    );
+  }
+
+  /// Sets Delta CRL indicator (RFC 5280) using BigInt base CRL number.
+  void setDeltaCrlIndicatorBigInt({
+    required BigInt baseCrlNumber,
+    bool critical = true,
+  }) {
+    _setDeltaCrlIndicatorInternal(
+      baseCrlNumberAsn1: _asn1IntegerFromBigInt(baseCrlNumber),
+      critical: critical,
+    );
+  }
+
+  void _setDeltaCrlIndicatorInternal({
+    required Pointer<ASN1_INTEGER> baseCrlNumberAsn1,
+    required bool critical,
+  }) {
     _ensureUsable();
 
-    final asn1Int = _context.bindings.ASN1_INTEGER_new();
-    if (asn1Int == nullptr) {
-      throw OpenSslException('Failed to create ASN1_INTEGER');
-    }
-
     try {
-      _context.bindings.ASN1_INTEGER_set(asn1Int, baseCrlNumber);
       final nid = _getNid(['deltaCRL', 'deltaCRLIndicator', '2.5.29.27']);
 
       SslObject.checkCode(
@@ -316,14 +377,14 @@ class X509CrlBuilder implements Finalizable {
         _context.bindings.X509_CRL_add1_ext_i2d(
           _crl,
           nid,
-          asn1Int.cast(),
+          baseCrlNumberAsn1.cast(),
           critical ? 1 : 0,
           0,
         ),
         msg: 'Failed to add Delta CRL indicator',
       );
     } finally {
-      _context.bindings.ASN1_INTEGER_free(asn1Int);
+      _context.bindings.ASN1_INTEGER_free(baseCrlNumberAsn1);
     }
   }
 
@@ -475,5 +536,57 @@ class X509CrlBuilder implements Finalizable {
       throw OpenSslException('Failed to set ASN1_TIME');
     }
     return ptr;
+  }
+
+  Pointer<ASN1_INTEGER> _asn1IntegerFromInt(int value) {
+    final asn1 = _context.bindings.ASN1_INTEGER_new();
+    if (asn1 == nullptr) {
+      throw OpenSslException('Failed to create ASN1_INTEGER');
+    }
+    if (_context.bindings.ASN1_INTEGER_set(asn1, value) != 1) {
+      _context.bindings.ASN1_INTEGER_free(asn1);
+      throw OpenSslException('Failed to set ASN1_INTEGER');
+    }
+    return asn1;
+  }
+
+  Pointer<ASN1_INTEGER> _asn1IntegerFromBigInt(BigInt value) {
+    if (value <= BigInt.zero) {
+      throw RangeError('Serial number must be positive');
+    }
+
+    final bytes = _bigIntToBytes(value);
+    final bytesPtr = calloc<UnsignedChar>(bytes.length);
+    try {
+      bytesPtr.cast<Uint8>().asTypedList(bytes.length).setAll(0, bytes);
+      final bn = _context.bindings.BN_bin2bn(bytesPtr, bytes.length, nullptr);
+      if (bn == nullptr) {
+        throw OpenSslException('BN_bin2bn failed');
+      }
+      try {
+        final asn1 = _context.bindings.BN_to_ASN1_INTEGER(bn, nullptr);
+        if (asn1 == nullptr) {
+          throw OpenSslException('BN_to_ASN1_INTEGER failed');
+        }
+        return asn1;
+      } finally {
+        _context.bindings.BN_free(bn);
+      }
+    } finally {
+      calloc.free(bytesPtr);
+    }
+  }
+
+  Uint8List _bigIntToBytes(BigInt value) {
+    var hex = value.toRadixString(16);
+    if (hex.length.isOdd) {
+      hex = '0$hex';
+    }
+
+    final bytes = Uint8List(hex.length ~/ 2);
+    for (var i = 0; i < hex.length; i += 2) {
+      bytes[i ~/ 2] = int.parse(hex.substring(i, i + 2), radix: 16);
+    }
+    return bytes;
   }
 }

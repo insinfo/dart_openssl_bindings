@@ -83,6 +83,53 @@ void main() {
       expect(der.first, equals(0x30));
     });
 
+    test('Should support long serial APIs in CRL builder', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caCert = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Test Root CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final issuerCert = caCert.sign(caKey);
+
+      final now = DateTime.now().toUtc();
+      final longSerial =
+          BigInt.parse('1234567890ABCDEF1234567890ABCDEF', radix: 16);
+      final longCrlNumber =
+          BigInt.parse('11223344556677889900AABBCCDDEEFF', radix: 16);
+      final longDeltaBase =
+          BigInt.parse('FFEEDDCCBBAA00998877665544332211', radix: 16);
+
+      final crlBuilder = openSsl.newCrlBuilder()
+        ..setIssuerFromCertificate(issuerCert)
+        ..setUpdateTimes(
+          thisUpdate: now,
+          nextUpdate: now.add(const Duration(hours: 24)),
+        )
+        ..setCrlNumberBigInt(number: longCrlNumber)
+        ..setDeltaCrlIndicatorBigInt(baseCrlNumber: longDeltaBase)
+        ..addRevokedSerialBigInt(
+          serialNumber: longSerial,
+          revocationTime: now,
+        )
+        ..addRevokedSerialWithReasonBigInt(
+          serialNumber: longSerial + BigInt.one,
+          revocationTime: now,
+          reasonCode: CrlReason.superseded,
+        )
+        ..addRevokedSerialHex(
+          serialHex: '0xA1B2C3D4E5F60718293A4B5C6D7E8F90',
+          revocationTime: now,
+        );
+
+      final crl = crlBuilder.sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+      final der = crl.toDer();
+      expect(der, isNotEmpty);
+      expect(der.first, equals(0x30));
+    });
+
     test('Should build OCSP response for request', () {
       final caKey = openSsl.generateRsa(2048);
       final caBuilder = X509CertificateBuilder(openSsl)
@@ -101,10 +148,12 @@ void main() {
         ..setPublicKey(leafKey)
         ..setValidity(notAfterOffset: 3600)
         ..addBasicConstraints(isCa: false, critical: true)
-        ..addKeyUsage(digitalSignature: true, keyEncipherment: true, critical: true);
+        ..addKeyUsage(
+            digitalSignature: true, keyEncipherment: true, critical: true);
       final leafCert = leafBuilder.sign(caKey);
 
-      final requestDer = _buildOcspRequest(openSsl, leafCert.handle, caCert.handle);
+      final requestDer =
+          _buildOcspRequest(openSsl, leafCert.handle, caCert.handle);
       final serial = leafCert.serialNumber;
 
       final responseDer = openSsl.buildOcspResponse(
@@ -121,7 +170,8 @@ void main() {
       expect(responseDer.first, equals(0x30));
     });
 
-    test('Should build OCSP response with responderId by key and extra certs', () {
+    test('Should build OCSP response with responderId by key and extra certs',
+        () {
       final caKey = openSsl.generateRsa(2048);
       final caBuilder = X509CertificateBuilder(openSsl)
         ..setSubject(commonName: 'Test Root CA', organization: 'Test')
@@ -139,15 +189,18 @@ void main() {
         ..setPublicKey(leafKey)
         ..setValidity(notAfterOffset: 3600)
         ..addBasicConstraints(isCa: false, critical: true)
-        ..addKeyUsage(digitalSignature: true, keyEncipherment: true, critical: true);
+        ..addKeyUsage(
+            digitalSignature: true, keyEncipherment: true, critical: true);
       final leafCert = leafBuilder.sign(caKey);
 
-      final requestDer = _buildOcspRequest(openSsl, leafCert.handle, caCert.handle);
+      final requestDer =
+          _buildOcspRequest(openSsl, leafCert.handle, caCert.handle);
 
       final responseDer = openSsl.buildOcspResponse(
         requestDer: requestDer,
         statusBySerial: {
-          leafCert.serialNumber: const OcspStatusInfo(status: OcspCertStatus.good),
+          leafCert.serialNumber:
+              const OcspStatusInfo(status: OcspCertStatus.good),
         },
         responderCertificate: caCert,
         responderKey: caKey,
@@ -178,7 +231,8 @@ void main() {
         ..setPublicKey(leafKey)
         ..setValidity(notAfterOffset: 3600)
         ..addBasicConstraints(isCa: false, critical: true)
-        ..addKeyUsage(digitalSignature: true, keyEncipherment: true, critical: true);
+        ..addKeyUsage(
+            digitalSignature: true, keyEncipherment: true, critical: true);
       final leafCert = leafBuilder.sign(caKey);
 
       final requestWithoutNonce =
@@ -187,7 +241,8 @@ void main() {
         () => openSsl.buildOcspResponse(
           requestDer: requestWithoutNonce,
           statusBySerial: {
-            leafCert.serialNumber: const OcspStatusInfo(status: OcspCertStatus.good),
+            leafCert.serialNumber:
+                const OcspStatusInfo(status: OcspCertStatus.good),
           },
           responderCertificate: caCert,
           responderKey: caKey,
@@ -206,7 +261,8 @@ void main() {
       final responseDer = openSsl.buildOcspResponse(
         requestDer: requestWithNonce,
         statusBySerial: {
-          leafCert.serialNumber: const OcspStatusInfo(status: OcspCertStatus.good),
+          leafCert.serialNumber:
+              const OcspStatusInfo(status: OcspCertStatus.good),
         },
         responderCertificate: caCert,
         responderKey: caKey,
@@ -221,11 +277,8 @@ void main() {
 }
 
 Uint8List _buildOcspRequest(
-  OpenSSL openSsl,
-  Pointer<X509> subject,
-  Pointer<X509> issuer,
-  {bool includeNonce = false}
-) {
+    OpenSSL openSsl, Pointer<X509> subject, Pointer<X509> issuer,
+    {bool includeNonce = false}) {
   final bindings = openSsl.bindings;
 
   final request = bindings.OCSP_REQUEST_new();
@@ -257,7 +310,8 @@ Uint8List _buildOcspRequest(
         if (bindings.RAND_bytes(nonce, nonceLength) != 1) {
           throw StateError('Failed to generate nonce');
         }
-        if (bindings.OCSP_request_add1_nonce(request, nonce, nonceLength) != 1) {
+        if (bindings.OCSP_request_add1_nonce(request, nonce, nonceLength) !=
+            1) {
           throw StateError('Failed to add nonce to OCSP request');
         }
       } finally {

@@ -1,8 +1,6 @@
 import 'package:test/test.dart';
 import 'package:openssl_bindings/openssl.dart';
 
-
-
 void main() {
   late OpenSSL openssl;
 
@@ -13,7 +11,8 @@ void main() {
   group('X509CertificateBuilder (New)', () {
     test('generates self-signed certificate PEM', () {
       final builder = X509CertificateBuilder(openssl);
-      builder.setSubject(commonName: 'Test Self Signed', organization: 'Dart OpenSSL');
+      builder.setSubject(
+          commonName: 'Test Self Signed', organization: 'Dart OpenSSL');
       builder.setIssuerAsSubject(); // Subject = Issuer
 
       final key = openssl.generateRsa(2048);
@@ -22,7 +21,7 @@ void main() {
       final cert = builder.sign(key);
       final pem = cert.toPem();
       final keyPem = key.toPrivateKeyPem();
-      
+
       expect(pem, contains('BEGIN CERTIFICATE'));
       expect(keyPem, contains('BEGIN PRIVATE KEY'));
     });
@@ -74,10 +73,29 @@ void main() {
       expect(cert.serialNumber, equals(serial.toString()));
     });
 
+    test('ICP serial longo 128 bits', () {
+      final key = openssl.generateRsa(2048);
+      final serial128 = BigInt.parse(
+        'A1B2C3D4E5F60718293A4B5C6D7E8F90',
+        radix: 16,
+      );
+
+      final cert = (X509CertificateBuilder(openssl)
+            ..setSubject(commonName: 'ICP 128', organization: 'Dart OpenSSL')
+            ..setIssuerAsSubject()
+            ..setPublicKey(key)
+            ..setSerialNumberBigInt(serial128)
+            ..setValidity(notAfterOffset: 3600))
+          .sign(key);
+
+      expect(cert.serialNumber, equals(serial128.toString()));
+    });
+
     test('sets validity from ASN1 time strings', () {
       final key = openssl.generateRsa(2048);
       final builder = X509CertificateBuilder(openssl)
-        ..setSubject(commonName: 'Validity Strings', organization: 'Dart OpenSSL')
+        ..setSubject(
+            commonName: 'Validity Strings', organization: 'Dart OpenSSL')
         ..setIssuerAsSubject()
         ..setPublicKey(key)
         ..setValidityFromStrings(

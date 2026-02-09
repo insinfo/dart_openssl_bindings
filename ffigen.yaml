@@ -311,6 +311,7 @@ functions:
     - EVP_MAC_fetch
     - EVP_MAC_free
     # OSSL_PARAM for EVP_MAC
+    - OSSL_PARAM_construct_int
     - OSSL_PARAM_construct_utf8_string
     - OSSL_PARAM_construct_octet_string
     - OSSL_PARAM_construct_end
@@ -325,9 +326,11 @@ functions:
     - EVP_DigestUpdate
     - EVP_DigestFinal_ex
     - EVP_DigestSignInit
+    - EVP_DigestSign
     - EVP_DigestSignUpdate
     - EVP_DigestSignFinal
     - EVP_DigestVerifyInit
+    - EVP_DigestVerify
     - EVP_DigestVerifyUpdate
     - EVP_DigestVerifyFinal
     - EVP_get_digestbyname

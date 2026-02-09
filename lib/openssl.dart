@@ -4,6 +4,7 @@ library openssl;
 /// Core API
 export 'src/api/openssl.dart';
 export 'src/api/openssl_context.dart';
+export 'src/api/mixins/signature_mixin.dart';
 export 'src/openssl_loader.dart';
 
 /// Cryptography
