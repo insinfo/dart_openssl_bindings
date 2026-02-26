@@ -138,10 +138,7 @@ Para evitar uma "God Class", as funcionalidades são separadas:
 - [ ] NameConstraints e PolicyConstraints para CAs subordinadas.
 - [x] Geração de cadeia (cross-cert/rollover).
 
-### Operação/Segurança (fora do código)
-- [ ] Persistência e unicidade de serial (DB transacional).
-- [ ] HSM/PKCS#11 para chaves da CA.
-- [ ] Auditoria, logging e rotação segura de chaves.
+
 
 ### APIs OpenSSL específicas a expor (FFI) para PKI de ACs
 - [ ] CSR completo: `d2i_X509_REQ`, `i2d_X509_REQ`, `PEM_read_bio_X509_REQ`, `X509_REQ_add_extensions`, `X509_REQ_get_extensions`, `X509_REQ_add1_attr_by_NID`.

@@ -116,3 +116,29 @@
   - Added convenience presets: `MlDsaSignatureOptions.pure`, `.deterministic`, `.mu`.
 - **FFI**:
   - Added `EVP_DigestSign`, `EVP_DigestVerify`, and `OSSL_PARAM_construct_int` to bindings (`ffigen.yaml` + regenerated `ffi.dart`).
+
+## 0.5.0 
+
+- **ASN.1 / Serial Number APIs (no truncation):**
+  - Added `x509GetSerialBytes(Pointer<X509>)`.
+  - Added `x509GetSerialHex(Pointer<X509>, {bool prefixed = true})`.
+  - Added `x509GetSerialDecimal(Pointer<X509>)` via BN decimal conversion.
+  - Added safe ASN.1/BN conversion helpers: `asn1IntegerToHex`, `asn1IntegerToDecimal`, `asn1IntegerFromHex`.
+- **Issuer Matching + Security Rules:**
+  - Added `extractAkiSki`, `issuerSerialKey`, and `certMatchesIssuer` helpers.
+  - Added `prefilterIssuerCandidates` with mandatory fallback to full candidate set when empty/ambiguous.
+  - Reinforced rule: pre-filter never replaces final chain validation and does not decide by CN/text.
+- **PKI Performance Caches:**
+  - Added truststore pool/cache by key: `getOrCreateStore(String storeKey, List<Uint8List> rootsDer)`.
+  - Added parsed certificate cache by DER fingerprint: `getOrCreateParsedX509(Uint8List der)`.
+  - Added shared helper `fingerprintSha256(Uint8List)`.
+- **Revocation Cache (optional):**
+  - Added TTL caches for CRL/OCSP responses: `getCachedCrl`/`putCachedCrl`, `getCachedOcsp`/`putCachedOcsp`.
+- **CI / Coverage:**
+  - Updated GitHub Actions workflow to generate `coverage/lcov.info`, upload artifact, and publish to Codecov.
+  - Added Codecov badge and local coverage instructions in README.
+- **Tests / Organization:**
+  - Added focused tests for ASN.1 serial and error branches.
+  - Added dedicated PKI cache/matching tests (`test/pki_cache_and_match_test.dart`).
+- **Documentation:**
+  - README reviewed and expanded with missing APIs (PQC keygen, one-shot/ML-DSA signatures, ASN.1 serial helpers, issuer pre-filter/caches, and PEM/DER chain utilities).

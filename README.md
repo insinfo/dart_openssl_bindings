@@ -1,10 +1,11 @@
 # OpenSSL Bindings for Dart
 
 [![Dart CI](https://github.com/insinfo/dart_openssl_bindings/actions/workflows/dart.yml/badge.svg)](https://github.com/insinfo/dart_openssl_bindings/actions/workflows/dart.yml)
+[![codecov](https://codecov.io/gh/insinfo/dart_openssl_bindings/branch/main/graph/badge.svg)](https://codecov.io/gh/insinfo/dart_openssl_bindings)
 
 Robust and idiomatic FFI bindings for **OpenSSL 3.x** in Dart. This library provides advanced cryptographic operations, X.509 certificate generation/parsing, and secure networking (TLS/DTLS) directly via Dart FFI, without requiring native compilation steps (beyond having OpenSSL installed/available).
 
-It focuses on **memory safety** (automatic resource management), **flexibility** (customizable DLL paths), and providing a clean Object-Oriented API.
+It focuses on **memory safety** (automatic resource management), **flexibility** (customizable DLL paths), and providing a clean object-oriented API.
 
 ## Core Features
 
@@ -15,6 +16,9 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 
 ### X.509 & PKI
 *   **Complete Parsing**: Read Version, Serial, Validity (`notBefore`, `notAfter`), Subject, and Issuer.
+*   **Large Serial Support (ASN.1/BN)**:
+  *   `x509GetSerialBytes`, `x509GetSerialHex`, `x509GetSerialDecimal`.
+  *   `asn1IntegerToHex`, `asn1IntegerToDecimal`, `asn1IntegerFromHex`.
 *   **Fluent Builders**:
     *   `X509CertificateBuilder`: Create Self-Signed or CA-Signed certificates.
     *   `X509RequestBuilder`: Generate CSRs (Certificate Signing Requests).
@@ -23,14 +27,22 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 
 ### Cryptography & Signing (CMS/PAdES)
 *   **Key Management**: Generate and load RSA/EVP keys (PEM/DER/Encrypted PEM).
+*   **Modern/PQC Key Generation**:
+    *   EdDSA/XDH: `generateEd25519`, `generateEd448`, `generateX25519`, `generateX448`.
+    *   ML-DSA: `generateMlDsa44`, `generateMlDsa65`, `generateMlDsa87`.
+    *   Generic provider keygen: `generateKeyByName(...)`.
 *   **Symmetric Ciphers**:
   *   AES-128/256 (CBC and GCM).
   *   ChaCha20 and ChaCha20-Poly1305.
   *   Rijndael aliases (mapped to AES-128/256 CBC and GCM).
+  *   PKCS#7 helpers: `pkcs7Pad`, `pkcs7Unpad`, `aesCbcPkcs7Encrypt`, `aesCbcPkcs7Decrypt`.
 *   **CMS/PKCS#7**:
     *   **Detached Signatures**: Critical for PAdES/CAdES standards.
     *   **External Digest Signing**: Support for signing pre-calculated hashes (e.g., for Hardware Security Modules or remote signing flows).
     *   **Verification**: Verify CMS signatures against Trusted Root stores.
+*   **One-shot Signatures**:
+    *   `signOneShot` / `verifyOneShot`.
+    *   ML-DSA helpers: `signMlDsa` / `verifyMlDsa`.
 
 ### Secure Networking (TLS & DTLS)
 *   **Async TLS**: `SecureSocketOpenSslAsync` (API compatible with `dart:io` Socket).
@@ -40,6 +52,19 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 ### CRL & OCSP (New)
 *   `X509Crl` and `X509CrlBuilder`: Generate and sign CRLs without invoking the OpenSSL executable.
 *   `OcspResponseBuilder` and `OcspMixin`: Build DER OCSP responses via FFI.
+*   `PkiMixin` cache helpers: `getCachedCrl`/`putCachedCrl` and `getCachedOcsp`/`putCachedOcsp` (TTL-based).
+
+### Issuer Matching & Truststore Performance
+*   **Issuer Matching Helpers**:
+  *   `extractAkiSki`, `issuerSerialKey`, `certMatchesIssuer`, `prefilterIssuerCandidates`.
+  *   Follows secure behavior: binary hints only, no CN/text decision, fallback to full set on ambiguity.
+*   **Truststore / Parse Caches**:
+  *   `getOrCreateStore(storeKey, rootsDer)` for `X509_STORE` pooling.
+  *   `getOrCreateParsedX509(der)` for parsed `X509*` cache by DER fingerprint.
+  *   `fingerprintSha256(...)` for stable cache keys.
+*   **PEM/DER chain utilities**:
+  *   `loadCertificatesFromPemChain`, `convertPemChainToDerList`.
+  *   `convertCertificatePemToDer`, `convertCertificateDerToPem`.
 
 ### TLS (Recommended suites)
 *   Recommended TLS 1.2 cipher suite list and TLS 1.3 ciphersuite list (with TLS 1.3 IDs).
@@ -60,6 +85,18 @@ dependencies:
 *   **OpenSSL**: Version 3.0 or higher.
     *   **Windows**: Recommended [Win64OpenSSL](https://slproweb.com/products/Win32OpenSSL.html).
     *   **Linux**: `sudo apt-get install libssl-dev` (or equivalent).
+
+### Coverage (CI + local)
+*   **CI**: The workflow `.github/workflows/dart.yml` runs `dart test --coverage=coverage`, converts to `coverage/lcov.info`, uploads it as artifact, and sends it to Codecov.
+*   **Local**:
+
+```bash
+dart test --coverage=coverage
+dart pub global activate coverage
+format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib --packages=.dart_tool/package_config.json
+```
+
+*   To show the badge in GitHub, keep the Codecov badge above and configure `CODECOV_TOKEN` in repository secrets (for private repos; public repos may not require token).
 
 ---
 
@@ -174,4 +211,41 @@ await socket.send(utf8.encode('GET / HTTP/1.1\r\nHost: example.com\r\n\r\n'));
 socket.listen((data) {
   print(utf8.decode(data));
 });
+```
+
+### 6. Serial Number APIs (ASN.1 / BN)
+
+```dart
+import 'package:openssl_bindings/openssl.dart';
+
+final cert = openssl.loadCertificatePem(pem);
+
+final serialBytes = openssl.x509GetSerialBytes(cert.handle);
+final serialHex = openssl.x509GetSerialHex(cert.handle); // e.g. 0x01ab...
+final serialDec = openssl.x509GetSerialDecimal(cert.handle);
+
+print(serialBytes.length);
+print(serialHex);
+print(serialDec);
+```
+
+### 7. Issuer pre-filter + secure fallback
+
+```dart
+final childInfo = openssl.extractAkiSki(childCertPtr);
+
+final candidates = openssl.prefilterIssuerCandidates<Pointer<X509>>(
+  candidates: allIssuerCandidates,
+  matches: (issuerPtr) {
+    final issuerInfo = openssl.extractAkiSki(issuerPtr);
+    return openssl.certMatchesIssuer(
+      childAki: childInfo.aki,
+      issuerSki: issuerInfo.ski,
+      issuerSerialBytes: issuerInfo.serialBytes,
+      issuerNameHash: issuerInfo.issuerNameHash,
+    );
+  },
+);
+
+// Always run full certificate chain validation afterwards.
 ```
