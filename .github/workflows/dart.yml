@@ -115,12 +115,17 @@ jobs:
           path: coverage/lcov.info
 
       - name: Upload coverage to Codecov (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && secrets.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v4
         with:
           files: coverage/lcov.info
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Skip Codecov upload (missing token)
+        if: matrix.os == 'ubuntu-latest' && secrets.CODECOV_TOKEN == ''
+        run: |
+          echo "CODECOV_TOKEN is not configured; skipping Codecov upload."
 
       - name: Run Tests (Windows)
         if: matrix.os == 'windows-2022'
