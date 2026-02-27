@@ -6,12 +6,12 @@ import '../../api/openssl.dart';
 import '../../infra/ssl_exception.dart';
 import '../../x509/x509_certificate.dart';
 import '../../x509/x509_builder.dart';
+import '../../x509/x509_crl.dart';
 import '../../x509/x509_crl_builder.dart';
 import 'bio_mixin.dart';
 
 /// Mixin for X509 Certificate operations.
 mixin X509Mixin on OpenSslContext, BioMixin {
-
   /// Creates a new Builder for creating and signing X509 Certificates.
   X509CertificateBuilder newCertificateBuilder() {
     // Cast to OpenSSL is safe as OpenSSL implements OpenSslContext and mixes this in.
@@ -63,6 +63,49 @@ mixin X509Mixin on OpenSslContext, BioMixin {
       return loadCertificatePem(String.fromCharCodes(bytes));
     }
     return loadCertificateDer(bytes);
+  }
+
+  /// Loads an X509 CRL from PEM string.
+  X509Crl loadCrlPem(String pem) {
+    final bio = createBioFromString(pem);
+    try {
+      final crl =
+          bindings.PEM_read_bio_X509_CRL(bio, nullptr, nullptr, nullptr);
+      if (crl == nullptr) {
+        throw OpenSslException('Failed to read CRL from PEM');
+      }
+      return X509Crl(crl, this as dynamic);
+    } finally {
+      freeBio(bio);
+    }
+  }
+
+  /// Loads an X509 CRL from DER bytes.
+  X509Crl loadCrlDer(Uint8List der) {
+    final dataPtr = calloc<Uint8>(der.length);
+    dataPtr.asTypedList(der.length).setAll(0, der);
+
+    final inOutPtr = calloc<Pointer<UnsignedChar>>();
+    inOutPtr.value = dataPtr.cast<UnsignedChar>();
+
+    try {
+      final crl = bindings.d2i_X509_CRL(nullptr, inOutPtr, der.length);
+      if (crl == nullptr) {
+        throw OpenSslException('Failed to read CRL from DER');
+      }
+      return X509Crl(crl, this as dynamic);
+    } finally {
+      calloc.free(inOutPtr);
+      calloc.free(dataPtr);
+    }
+  }
+
+  /// Loads an X509 CRL from bytes (auto-detect PEM vs DER).
+  X509Crl loadCrlBytes(Uint8List bytes) {
+    if (_looksLikeCrlPem(bytes)) {
+      return loadCrlPem(String.fromCharCodes(bytes));
+    }
+    return loadCrlDer(bytes);
   }
 
   /// Encodes an X509 Certificate to DER bytes.
@@ -148,13 +191,19 @@ mixin X509Mixin on OpenSslContext, BioMixin {
         text.contains('-----BEGIN X509 CERTIFICATE-----');
   }
 
+  bool _looksLikeCrlPem(Uint8List bytes) {
+    final text = String.fromCharCodes(bytes);
+    return text.contains('-----BEGIN X509 CRL-----') ||
+        text.contains('-----BEGIN CRL-----');
+  }
+
   /// Creates a new empty X509 Certificate structure.
   /// Useful for building new certificates.
   X509Certificate createCertificate() {
-     final cert = bindings.X509_new();
-     if (cert == nullptr) {
-       throw OpenSslException('Failed to create X509 structure');
-     }
-     return X509Certificate(cert, this as dynamic);
+    final cert = bindings.X509_new();
+    if (cert == nullptr) {
+      throw OpenSslException('Failed to create X509 structure');
+    }
+    return X509Certificate(cert, this as dynamic);
   }
 }

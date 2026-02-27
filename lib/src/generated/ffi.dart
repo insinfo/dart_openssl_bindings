@@ -2351,6 +2351,28 @@ class OpenSslFfi {
   late final _X509_CRL_free =
       _X509_CRL_freePtr.asFunction<void Function(ffi.Pointer<X509_CRL>)>();
 
+  ffi.Pointer<X509_CRL> d2i_X509_CRL(
+    ffi.Pointer<ffi.Pointer<X509_CRL>> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> in$,
+    int len,
+  ) {
+    return _d2i_X509_CRL(
+      a,
+      in$,
+      len,
+    );
+  }
+
+  late final _d2i_X509_CRLPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<X509_CRL> Function(
+              ffi.Pointer<ffi.Pointer<X509_CRL>>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+              ffi.Long)>>('d2i_X509_CRL');
+  late final _d2i_X509_CRL = _d2i_X509_CRLPtr.asFunction<
+      ffi.Pointer<X509_CRL> Function(ffi.Pointer<ffi.Pointer<X509_CRL>>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>, int)>();
+
   int i2d_X509_CRL(
     ffi.Pointer<X509_CRL> a,
     ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
@@ -2385,6 +2407,28 @@ class OpenSslFfi {
               ffi.Pointer<X509_REVOKED>)>>('X509_CRL_add0_revoked');
   late final _X509_CRL_add0_revoked = _X509_CRL_add0_revokedPtr.asFunction<
       int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<X509_REVOKED>)>();
+
+  int X509_CRL_get0_by_serial(
+    ffi.Pointer<X509_CRL> crl,
+    ffi.Pointer<ffi.Pointer<X509_REVOKED>> ret,
+    ffi.Pointer<ASN1_INTEGER> serial,
+  ) {
+    return _X509_CRL_get0_by_serial(
+      crl,
+      ret,
+      serial,
+    );
+  }
+
+  late final _X509_CRL_get0_by_serialPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<X509_CRL>,
+              ffi.Pointer<ffi.Pointer<X509_REVOKED>>,
+              ffi.Pointer<ASN1_INTEGER>)>>('X509_CRL_get0_by_serial');
+  late final _X509_CRL_get0_by_serial = _X509_CRL_get0_by_serialPtr.asFunction<
+      int Function(ffi.Pointer<X509_CRL>,
+          ffi.Pointer<ffi.Pointer<X509_REVOKED>>, ffi.Pointer<ASN1_INTEGER>)>();
 
   ffi.Pointer<ffi.Char> X509_NAME_oneline(
     ffi.Pointer<X509_NAME> a,
@@ -3187,6 +3231,34 @@ class OpenSslFfi {
               ffi.Pointer<X509_REQ>)>>('PEM_write_bio_X509_REQ');
   late final _PEM_write_bio_X509_REQ = _PEM_write_bio_X509_REQPtr.asFunction<
       int Function(ffi.Pointer<BIO>, ffi.Pointer<X509_REQ>)>();
+
+  ffi.Pointer<X509_CRL> PEM_read_bio_X509_CRL(
+    ffi.Pointer<BIO> out,
+    ffi.Pointer<ffi.Pointer<X509_CRL>> x,
+    ffi.Pointer<pem_password_cb> cb,
+    ffi.Pointer<ffi.Void> u,
+  ) {
+    return _PEM_read_bio_X509_CRL(
+      out,
+      x,
+      cb,
+      u,
+    );
+  }
+
+  late final _PEM_read_bio_X509_CRLPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<X509_CRL> Function(
+              ffi.Pointer<BIO>,
+              ffi.Pointer<ffi.Pointer<X509_CRL>>,
+              ffi.Pointer<pem_password_cb>,
+              ffi.Pointer<ffi.Void>)>>('PEM_read_bio_X509_CRL');
+  late final _PEM_read_bio_X509_CRL = _PEM_read_bio_X509_CRLPtr.asFunction<
+      ffi.Pointer<X509_CRL> Function(
+          ffi.Pointer<BIO>,
+          ffi.Pointer<ffi.Pointer<X509_CRL>>,
+          ffi.Pointer<pem_password_cb>,
+          ffi.Pointer<ffi.Void>)>();
 
   int PEM_write_bio_X509_CRL(
     ffi.Pointer<BIO> out,
@@ -4764,6 +4836,77 @@ class OpenSslFfi {
   late final _OCSP_copy_nonce = _OCSP_copy_noncePtr.asFunction<
       int Function(ffi.Pointer<OCSP_BASICRESP>, ffi.Pointer<OCSP_REQUEST>)>();
 
+  int OCSP_response_status(
+    ffi.Pointer<OCSP_RESPONSE> resp,
+  ) {
+    return _OCSP_response_status(
+      resp,
+    );
+  }
+
+  late final _OCSP_response_statusPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<OCSP_RESPONSE>)>>(
+          'OCSP_response_status');
+  late final _OCSP_response_status = _OCSP_response_statusPtr.asFunction<
+      int Function(ffi.Pointer<OCSP_RESPONSE>)>();
+
+  ffi.Pointer<OCSP_BASICRESP> OCSP_response_get1_basic(
+    ffi.Pointer<OCSP_RESPONSE> resp,
+  ) {
+    return _OCSP_response_get1_basic(
+      resp,
+    );
+  }
+
+  late final _OCSP_response_get1_basicPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_BASICRESP> Function(
+              ffi.Pointer<OCSP_RESPONSE>)>>('OCSP_response_get1_basic');
+  late final _OCSP_response_get1_basic =
+      _OCSP_response_get1_basicPtr.asFunction<
+          ffi.Pointer<OCSP_BASICRESP> Function(ffi.Pointer<OCSP_RESPONSE>)>();
+
+  int OCSP_resp_find_status(
+    ffi.Pointer<OCSP_BASICRESP> bs,
+    ffi.Pointer<OCSP_CERTID> id,
+    ffi.Pointer<ffi.Int> status,
+    ffi.Pointer<ffi.Int> reason,
+    ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>> revtime,
+    ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>> thisupd,
+    ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>> nextupd,
+  ) {
+    return _OCSP_resp_find_status(
+      bs,
+      id,
+      status,
+      reason,
+      revtime,
+      thisupd,
+      nextupd,
+    );
+  }
+
+  late final _OCSP_resp_find_statusPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Int Function(
+                  ffi.Pointer<OCSP_BASICRESP>,
+                  ffi.Pointer<OCSP_CERTID>,
+                  ffi.Pointer<ffi.Int>,
+                  ffi.Pointer<ffi.Int>,
+                  ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>>,
+                  ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>>,
+                  ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>>)>>(
+      'OCSP_resp_find_status');
+  late final _OCSP_resp_find_status = _OCSP_resp_find_statusPtr.asFunction<
+      int Function(
+          ffi.Pointer<OCSP_BASICRESP>,
+          ffi.Pointer<OCSP_CERTID>,
+          ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>>,
+          ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>>,
+          ffi.Pointer<ffi.Pointer<ASN1_GENERALIZEDTIME>>)>();
+
   int OCSP_request_onereq_count(
     ffi.Pointer<OCSP_REQUEST> req,
   ) {
@@ -4990,6 +5133,30 @@ class OpenSslFfi {
       'OCSP_RESPONSE_free');
   late final _OCSP_RESPONSE_free = _OCSP_RESPONSE_freePtr.asFunction<
       void Function(ffi.Pointer<OCSP_RESPONSE>)>();
+
+  ffi.Pointer<OCSP_RESPONSE> d2i_OCSP_RESPONSE(
+    ffi.Pointer<ffi.Pointer<OCSP_RESPONSE>> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> in$,
+    int len,
+  ) {
+    return _d2i_OCSP_RESPONSE(
+      a,
+      in$,
+      len,
+    );
+  }
+
+  late final _d2i_OCSP_RESPONSEPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OCSP_RESPONSE> Function(
+              ffi.Pointer<ffi.Pointer<OCSP_RESPONSE>>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+              ffi.Long)>>('d2i_OCSP_RESPONSE');
+  late final _d2i_OCSP_RESPONSE = _d2i_OCSP_RESPONSEPtr.asFunction<
+      ffi.Pointer<OCSP_RESPONSE> Function(
+          ffi.Pointer<ffi.Pointer<OCSP_RESPONSE>>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+          int)>();
 
   int i2d_OCSP_RESPONSE(
     ffi.Pointer<OCSP_RESPONSE> a,

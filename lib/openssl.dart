@@ -29,6 +29,7 @@ export 'src/cms/cms_pkcs7_signer.dart';
 
 /// OCSP
 export 'src/ocsp/ocsp_response_builder.dart';
+export 'src/ocsp/ocsp_client.dart';
 
 /// PKCS bundles
 export 'src/pkcs/pkcs12_bundle.dart';

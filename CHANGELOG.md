@@ -142,3 +142,31 @@
   - Added dedicated PKI cache/matching tests (`test/pki_cache_and_match_test.dart`).
 - **Documentation:**
   - README reviewed and expanded with missing APIs (PQC keygen, one-shot/ML-DSA signatures, ASN.1 serial helpers, issuer pre-filter/caches, and PEM/DER chain utilities).
+
+
+## 0.6.0 
+
+- **OCSP (Client APIs):**
+  - Added `OcspClient` with DER request generation and response parsing (`buildRequestDer`, `readResponseStatus`).
+  - Added high-level `OcspMixin` helpers: `buildOcspRequest(...)` and `readOcspResponseStatus(...)`.
+  - Exported client API in package entrypoint (`lib/openssl.dart`).
+- **CRL (Loading + Revocation Check):**
+  - Added CRL loading helpers in `X509Mixin`: `loadCrlPem`, `loadCrlDer`, `loadCrlBytes`.
+  - Added revocation lookup helpers in `X509Crl`:
+    `isSerialRevoked`, `isSerialRevokedDecimal`, `isSerialRevokedHex`,
+    `isSerialRevokedBigInt`, and `isCertificateRevoked`.
+- **X.509 Extension Reading:**
+  - Added certificate getters for endpoint discovery:
+    `ocspUrls` (AIA/OCSP) and `crlDistributionPointUrls` (CRL Distribution Points).
+- **FFI:**
+  - Extended `ffigen.yaml` and regenerated bindings with CRL/OCSP client-side symbols:
+    `d2i_X509_CRL`, `PEM_read_bio_X509_CRL`, `X509_CRL_get0_by_serial`,
+    `d2i_OCSP_RESPONSE`, `OCSP_response_status`, `OCSP_response_get1_basic`,
+    `OCSP_resp_find_status`.
+- **PKI Cache Stability:**
+  - Updated CRL/OCSP TTL cache expiration logic in `PkiMixin` to use monotonic time (`Stopwatch`) instead of wall-clock (`DateTime.now`) to avoid flaky expiration behavior in short TTL tests.
+- **Tests:**
+  - Added coverage in `test/crl_ocsp_test.dart` for:
+    - OCSP request/response flow without `openssl` executable.
+    - CRL parsing + serial revocation checks without CLI.
+    - Reading OCSP/CRL URLs from certificate extensions.

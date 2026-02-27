@@ -14,6 +14,7 @@ mixin PkiMixin on OpenSslContext {
       <String, _TimedEntry<Uint8List>>{};
   final Map<String, _TimedEntry<Uint8List>> _ocspCache =
       <String, _TimedEntry<Uint8List>>{};
+  final Stopwatch _ttlClock = Stopwatch()..start();
 
   /// Generates a cryptographically strong random serial number.
   ///
@@ -233,7 +234,7 @@ mixin PkiMixin on OpenSslContext {
       Map<String, _TimedEntry<Uint8List>> cache, String key) {
     final item = cache[key];
     if (item == null) return null;
-    if (DateTime.now().isAfter(item.expiresAt)) {
+    if (_ttlClock.elapsedMicroseconds > item.expiresAtMicros) {
       cache.remove(key);
       return null;
     }
@@ -246,9 +247,15 @@ mixin PkiMixin on OpenSslContext {
     Uint8List value,
     Duration ttl,
   ) {
+    final ttlMicros = ttl.inMicroseconds;
+    if (ttlMicros <= 0) {
+      cache.remove(key);
+      return;
+    }
+
     cache[key] = _TimedEntry<Uint8List>(
       Uint8List.fromList(value),
-      DateTime.now().add(ttl),
+      _ttlClock.elapsedMicroseconds + ttlMicros,
     );
   }
 
@@ -403,7 +410,7 @@ mixin PkiMixin on OpenSslContext {
 
 final class _TimedEntry<T> {
   final T value;
-  final DateTime expiresAt;
+  final int expiresAtMicros;
 
-  _TimedEntry(this.value, this.expiresAt);
+  _TimedEntry(this.value, this.expiresAtMicros);
 }

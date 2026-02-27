@@ -222,10 +222,21 @@ class X509Certificate extends SslObject<X509> {
   /// Convenience getter for ICP-Brasil fields.
   IcpBrasilInfo get icpBrasilInfo => extractIcpBrasilInfo();
 
+  /// OCSP URLs from Authority Information Access (AIA).
+  List<String> get ocspUrls => _getOcspUrlsFromAia();
+
+  /// CRL distribution point URLs from CRL Distribution Points extension.
+  List<String> get crlDistributionPointUrls => _getCrlDistributionPointUrls();
+
   static const String _oidSubjectAltName = '2.5.29.17';
   static const String _oidCertificatePolicies = '2.5.29.32';
+  static const String _oidAuthorityInfoAccess = '1.3.6.1.5.5.7.1.1';
+  static const String _oidOcspAccessMethod = '1.3.6.1.5.5.7.48.1';
+  static const String _oidCrlDistributionPoints = '2.5.29.31';
   static const String _oidCpf = '2.16.76.1.3.1';
   static const String _oidBirthDate = '2.16.76.1.3.6';
+  static const int _genUri = 6;
+  static const int _distPointTypeFullName = 0;
 
   String? _extractDnValue(String dn, String key) {
     if (dn.isEmpty) return null;
@@ -267,6 +278,100 @@ class X509Certificate extends SslObject<X509> {
       }
     } finally {
       _context.bindings.GENERAL_NAMES_free(names);
+    }
+
+    return result;
+  }
+
+  List<String> _getOcspUrlsFromAia() {
+    final nid = _objTxtToNid(_oidAuthorityInfoAccess);
+    if (nid == 0) return const [];
+
+    final aiaPtr =
+        _context.bindings.X509_get_ext_d2i(handle, nid, nullptr, nullptr);
+    if (aiaPtr == nullptr) return const [];
+
+    final aia = aiaPtr.cast<AUTHORITY_INFO_ACCESS>();
+    final result = <String>[];
+
+    try {
+      final count = _context.bindings.OPENSSL_sk_num(aia.cast());
+      for (var i = 0; i < count; i++) {
+        final value = _context.bindings.OPENSSL_sk_value(aia.cast(), i);
+        if (value == nullptr) continue;
+
+        final accessDescription = value.cast<ACCESS_DESCRIPTION>();
+        final methodOid = _objToOid(accessDescription.ref.method);
+        if (methodOid != _oidOcspAccessMethod) continue;
+
+        final location = accessDescription.ref.location;
+        if (location == nullptr || location.ref.type != _genUri) continue;
+
+        final uri = _asn1StringToString(
+          location.ref.d.uniformResourceIdentifier.cast<ASN1_STRING>(),
+        );
+        if (uri != null && uri.isNotEmpty) {
+          result.add(uri);
+        }
+      }
+    } finally {
+      final freePtr = _context
+          .lookup<Void Function(Pointer<ACCESS_DESCRIPTION>)>(
+              'ACCESS_DESCRIPTION_free')
+          .cast<NativeFunction<Void Function(Pointer<Void>)>>();
+      _context.bindings.OPENSSL_sk_pop_free(aia.cast(), freePtr);
+    }
+
+    return result;
+  }
+
+  List<String> _getCrlDistributionPointUrls() {
+    final nid = _objTxtToNid(_oidCrlDistributionPoints);
+    if (nid == 0) return const [];
+
+    final cdpPtr =
+        _context.bindings.X509_get_ext_d2i(handle, nid, nullptr, nullptr);
+    if (cdpPtr == nullptr) return const [];
+
+    final cdp = cdpPtr.cast<CRL_DIST_POINTS>();
+    final result = <String>[];
+
+    try {
+      final count = _context.bindings.OPENSSL_sk_num(cdp.cast());
+      for (var i = 0; i < count; i++) {
+        final value = _context.bindings.OPENSSL_sk_value(cdp.cast(), i);
+        if (value == nullptr) continue;
+
+        final distPoint = value.cast<DIST_POINT>();
+        final distPointName = distPoint.ref.distpoint;
+        if (distPointName == nullptr) continue;
+        if (distPointName.ref.type != _distPointTypeFullName) continue;
+
+        final fullNames = distPointName.ref.name.fullname;
+        if (fullNames == nullptr) continue;
+
+        final namesCount = _context.bindings.OPENSSL_sk_num(fullNames.cast());
+        for (var j = 0; j < namesCount; j++) {
+          final gnValue =
+              _context.bindings.OPENSSL_sk_value(fullNames.cast(), j);
+          if (gnValue == nullptr) continue;
+
+          final generalName = gnValue.cast<GENERAL_NAME>();
+          if (generalName.ref.type != _genUri) continue;
+
+          final uri = _asn1StringToString(
+            generalName.ref.d.uniformResourceIdentifier.cast<ASN1_STRING>(),
+          );
+          if (uri != null && uri.isNotEmpty) {
+            result.add(uri);
+          }
+        }
+      }
+    } finally {
+      final freePtr = _context
+          .lookup<Void Function(Pointer<DIST_POINT>)>('DIST_POINT_free')
+          .cast<NativeFunction<Void Function(Pointer<Void>)>>();
+      _context.bindings.OPENSSL_sk_pop_free(cdp.cast(), freePtr);
     }
 
     return result;
