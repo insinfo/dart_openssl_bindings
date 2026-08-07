@@ -133,3 +133,39 @@ jobs:
         if: matrix.os == 'windows-2022'
         run: |   
           dart test 
+
+  # O job acima roda no Ubuntu LTS, que ainda traz OpenSSL 3.0 e por isso so
+  # exercita os caminhos de compatibilidade (setters TS_VERIFY_CTX pre-3.4,
+  # Argon2 em Dart puro). Este job roda num Debian recente para cobrir o
+  # OpenSSL moderno no Linux: Argon2 nativo via EVP_KDF (3.2+) e os
+  # TS_VERIFY_CTX_set0_* (3.4+).
+  test-debian-openssl-recente:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:trixie
+    steps:
+      - name: Install prerequisites
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates curl git unzip openssl libssl3 libssl-dev
+
+      - name: Show OpenSSL version and modules
+        run: |
+          openssl version -a
+          ls -l /usr/lib/*/ossl-modules/ || true
+
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.6.2
+
+      - name: Install Dependencies
+        run: dart pub get
+
+      - name: Run Tests (Debian - with heap corruption detection)
+        env:
+          MALLOC_CHECK_: "3"
+          MALLOC_PERTURB_: "165"
+        run: dart test
