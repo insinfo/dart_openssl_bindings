@@ -6,6 +6,7 @@ export 'src/api/openssl.dart';
 export 'src/api/openssl_context.dart';
 export 'src/api/mixins/signature_mixin.dart';
 export 'src/api/mixins/provider_mixin.dart';
+export 'src/api/mixins/verification_mixin.dart';
 export 'src/openssl_loader.dart';
 
 /// Cryptography
