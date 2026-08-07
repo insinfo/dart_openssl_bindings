@@ -5,6 +5,7 @@ library openssl;
 export 'src/api/openssl.dart';
 export 'src/api/openssl_context.dart';
 export 'src/api/mixins/signature_mixin.dart';
+export 'src/api/mixins/provider_mixin.dart';
 export 'src/openssl_loader.dart';
 
 /// Cryptography
@@ -33,6 +34,12 @@ export 'src/ocsp/ocsp_client.dart';
 
 /// PKCS bundles
 export 'src/pkcs/pkcs12_bundle.dart';
+
+/// PKCS#12 em Dart puro (sem FFI, dispensa o provider `legacy`).
+/// As primitivas (der.dart, digests.dart, block_ciphers.dart) ficam fora do
+/// barril para não despejar nomes genéricos como `hmac` e `pbkdf2` no
+/// namespace de quem importa o pacote; importe-as pelo caminho direto.
+export 'src/pkcs/pure/pkcs12_pure.dart';
 
 /// TLS (TCP)
 export 'src/ssl/secure_socket_openssl_async.dart';

@@ -11,6 +11,8 @@ import '../../infra/ssl_exception.dart';
 import '../../crypto/evp_pkey.dart';
 import '../../x509/x509_certificate.dart';
 import '../../pkcs/pkcs12_bundle.dart';
+import 'provider_mixin.dart';
+import '../../pkcs/pure/pkcs12_pure.dart';
 
 /// Mixin for PKCS#7 (.p7b) and PKCS#12 (.pfx/.p12) helpers.
 mixin PkcsMixin on OpenSslContext {
@@ -45,9 +47,42 @@ mixin PkcsMixin on OpenSslContext {
   }
 
   /// Parses PKCS#12/PFX (DER) and returns key, certificate and chain.
-  Pkcs12Bundle parsePkcs12(Uint8List der, {String password = ''}) {
+  ///
+  /// [legacy] loads the OpenSSL 3.x `legacy` provider before calling
+  /// `PKCS12_parse`. It is needed for files encrypted with algorithms that
+  /// left the default provider in 3.0, typically
+  /// `pbeWithSHA1And40BitRC2-CBC` and `pbeWithSHA1And128BitRC4`. Without the
+  /// provider, OpenSSL fails with a generic error that looks like a wrong
+  /// password.
+  ///
+  /// Use [pkcs12NeedsLegacyProvider] to decide beforehand, or just pass
+  /// `legacy: true` — loading the provider is idempotent and keeps the
+  /// `default` provider active.
+  ///
+  /// [autoLegacy] handles everything on its own: it detects the algorithm by
+  /// OID, loads the provider when the file needs it and, if the `legacy`
+  /// module is not installed, opens the file with the pure Dart decoder
+  /// ([parsePkcs12Pure]). This is the option to reach for in application code.
+  Pkcs12Bundle parsePkcs12(
+    Uint8List der, {
+    String password = '',
+    bool legacy = false,
+    bool autoLegacy = false,
+  }) {
     final arena = Arena();
     Pointer<PKCS12> p12 = nullptr;
+
+    if (legacy) {
+      _providerMixin.loadLegacyProvider();
+    } else if (autoLegacy && pkcs12NeedsLegacyProvider(der)) {
+      // With no `legacy` module installed, fall back to the pure Dart decoder
+      // instead of failing: the resulting bundle is the same.
+      final provider =
+          _providerMixin.loadLegacyProvider(required: false);
+      if (provider == null) {
+        return parsePkcs12Pure(der, password: password);
+      }
+    }
 
     try {
       final inPtr = arena<UnsignedChar>(der.length);
@@ -78,7 +113,7 @@ mixin PkcsMixin on OpenSslContext {
           caPtr,
         );
         if (result != 1) {
-          throw OpenSslException('PKCS12_parse failed (check password?)');
+          throw _pkcs12ParseException(der, usedLegacy: legacy);
         }
 
         final pkey = EvpPkey(pkeyPtr.value, this as OpenSSL);
@@ -111,6 +146,34 @@ mixin PkcsMixin on OpenSslContext {
       }
       arena.releaseAll();
     }
+  }
+
+  /// Opens a PKCS#12/PFX with the **pure Dart** decoder: no OpenSSL in the
+  /// decryption path and no need for the `legacy` provider.
+  ///
+  /// The resulting key and certificates are loaded into OpenSSL afterwards, so
+  /// the return value is the same [Pkcs12Bundle] as [parsePkcs12]. Useful where
+  /// the `legacy` module is not installed (containers, slim images) and the
+  /// file uses RC2/RC4 — see [decodePkcs12Pure].
+  Pkcs12Bundle parsePkcs12Pure(Uint8List der, {String password = ''}) {
+    final pure = decodePkcs12Pure(der, password: password);
+    final openssl = this as OpenSSL;
+
+    return Pkcs12Bundle(
+      privateKey: openssl.loadPrivateKeyPem(pure.privateKeyPem),
+      certificate: openssl.loadCertificatePem(pure.certificatePem),
+      caCertificates:
+          pure.chainPem.map(openssl.loadCertificatePem).toList(growable: false),
+    );
+  }
+
+  ProviderMixin get _providerMixin {
+    final Object context = this;
+    if (context is ProviderMixin) return context;
+    throw OpenSslException(
+      'Loading the legacy provider requires an instance with ProviderMixin '
+      '(the OpenSSL class already mixes it in)',
+    );
   }
 
   /// Creates a PKCS#12/PFX bundle (DER) with key + certificate (+ optional chain).
@@ -172,6 +235,105 @@ mixin PkcsMixin on OpenSslContext {
         calloc.free(namePtr);
       }
     }
+  }
+
+  /// Legacy algorithms (outside the OpenSSL 3.x default provider) present in
+  /// the [der] PKCS#12 file, by readable name. Empty when the file only uses
+  /// algorithms the `default` provider supports.
+  ///
+  /// The scan runs over the OIDs encoded in the DER, so it works even when the
+  /// file cannot be opened for lack of the provider.
+  List<String> pkcs12LegacyAlgorithms(Uint8List der) {
+    final encontrados = <String>[];
+    for (final entry in _legacyOids.entries) {
+      if (_containsSequence(der, entry.key)) {
+        encontrados.add(entry.value);
+      }
+    }
+    return encontrados;
+  }
+
+  /// Whether the [der] PKCS#12 file needs the `legacy` provider to be opened.
+  ///
+  /// Equivalent to `pkcs12LegacyAlgorithms(der).isNotEmpty`.
+  bool pkcs12NeedsLegacyProvider(Uint8List der) =>
+      pkcs12LegacyAlgorithms(der).isNotEmpty;
+
+  OpenSslException _pkcs12ParseException(
+    Uint8List der, {
+    required bool usedLegacy,
+  }) {
+    final code = bindings.ERR_get_error();
+    OpenSslException.clearError(bindings);
+
+    final legacyAlgorithms = pkcs12LegacyAlgorithms(der);
+    if (legacyAlgorithms.isEmpty) {
+      return OpenSslException(
+        'PKCS12_parse failed (wrong password or invalid file)',
+        code,
+        'PKCS12_parse',
+      );
+    }
+
+    if (usedLegacy) {
+      return OpenSslException(
+        'PKCS12_parse failed. The file uses '
+        '${legacyAlgorithms.join(', ')} and the "legacy" provider was loaded, '
+        'so the likely cause is a wrong password or a corrupted file.',
+        code,
+        'PKCS12_parse',
+      );
+    }
+
+    return OpenSslException(
+      'PKCS12_parse failed. The file uses ${legacyAlgorithms.join(', ')}, '
+      'which OpenSSL 3.x moved from the "default" provider to "legacy". This '
+      'is usually NOT a wrong password: call parsePkcs12(..., legacy: true) '
+      'or loadLegacyProvider() first.',
+      code,
+      'PKCS12_parse',
+    );
+  }
+
+  /// OIDs (in DER, without the OBJECT IDENTIFIER header) of algorithms that
+  /// left the OpenSSL 3.x default provider, mapped to the name used in error
+  /// messages.
+  ///
+  /// Note that `pbeWithSHA1And3-KeyTripleDES-CBC` (`...1.12.1.3`) and the
+  /// 2-key variant (`.4`) are still in the default provider, hence absent.
+  static const Map<List<int>, String> _legacyOids = {
+    // 1.2.840.113549.1.12.1.1 - pbeWithSHA1And128BitRC4
+    [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x01]:
+        'pbeWithSHA1And128BitRC4',
+    // 1.2.840.113549.1.12.1.2 - pbeWithSHA1And40BitRC4
+    [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x02]:
+        'pbeWithSHA1And40BitRC4',
+    // 1.2.840.113549.1.12.1.5 - pbeWithSHA1And128BitRC2-CBC
+    [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x05]:
+        'pbeWithSHA1And128BitRC2-CBC',
+    // 1.2.840.113549.1.12.1.6 - pbeWithSHA1And40BitRC2-CBC
+    [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x0c, 0x01, 0x06]:
+        'pbeWithSHA1And40BitRC2-CBC',
+    // 1.2.840.113549.3.2 - rc2-cbc
+    [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x03, 0x02]: 'RC2-CBC',
+    // 1.2.840.113549.3.4 - rc4
+    [0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x03, 0x04]: 'RC4',
+  };
+
+  static bool _containsSequence(Uint8List haystack, List<int> needle) {
+    if (needle.isEmpty || haystack.length < needle.length) return false;
+    final limite = haystack.length - needle.length;
+    for (var i = 0; i <= limite; i++) {
+      var igual = true;
+      for (var j = 0; j < needle.length; j++) {
+        if (haystack[i + j] != needle[j]) {
+          igual = false;
+          break;
+        }
+      }
+      if (igual) return true;
+    }
+    return false;
   }
 
   Pointer<CMS_ContentInfo> _d2iCms(Uint8List der) {

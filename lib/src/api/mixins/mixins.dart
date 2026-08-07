@@ -7,5 +7,6 @@ export 'x509_mixin.dart';
 export 'cipher_mixin.dart';
 export 'pkcs_mixin.dart';
 export 'ocsp_mixin.dart';
+export 'provider_mixin.dart';
 export '../../pki/pki_utils.dart';
 export '../../pki/pki_builder.dart';

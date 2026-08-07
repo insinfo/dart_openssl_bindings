@@ -7,6 +7,7 @@ import '../generated/ffi.dart';
 import '../infra/ssl_object.dart';
 import '../infra/ssl_exception.dart';
 import '../api/openssl.dart';
+import '../crypto/evp_pkey.dart';
 
 import 'icp_brasil_info.dart';
 import '../utils/tm_windows.dart';
@@ -114,6 +115,25 @@ class X509Certificate extends SslObject<X509> {
     } finally {
       _context.bindings.BIO_free(bio);
     }
+  }
+
+  /// Public key of the certificate.
+  ///
+  /// Returns a fresh [EvpPkey] on every call; the caller owns it and should
+  /// call `dispose()` when done.
+  EvpPkey get publicKey {
+    final pkey = _context.bindings.X509_get_pubkey(handle);
+    if (pkey == nullptr) {
+      throw OpenSslException('X509_get_pubkey failed');
+    }
+    return EvpPkey(pkey, _context);
+  }
+
+  /// Serial number as a [BigInt], handy for matching CRL entries.
+  BigInt get serialNumberBigInt {
+    final decimal = serialNumber;
+    if (decimal.isEmpty) return BigInt.zero;
+    return BigInt.parse(decimal);
   }
 
   /// Gets the Serial Number as a decimal string.
