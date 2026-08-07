@@ -10,7 +10,7 @@ import 'package:openssl_bindings/openssl.dart';
 /// PBE-SHA1-RC2-40 -macalg sha1`. It exercises the `legacy` provider, which
 /// OpenSSL 3.x does not load on its own.
 final File _p12Legado = File('test/fixtures/legacy_rc2_40.p12');
-const String _senhaP12 = 'senha123';
+const String _password = 'senha123';
 
 void main() {
   group('OpenSSL 3.x providers', () {
@@ -93,7 +93,7 @@ void main() {
       expect(openSsl.pkcs12NeedsLegacyProvider(der), isTrue);
     });
 
-    test('parsePkcs12(legacy: true) abre o arquivo', () {
+    test('parsePkcs12(legacy: true) opens the file', () {
       if (openSsl.loadLegacyProvider(required: false) == null) {
         markTestSkipped('legacy module not found on this machine');
         return;
@@ -101,7 +101,7 @@ void main() {
 
       final bundle = openSsl.parsePkcs12(
         der,
-        password: _senhaP12,
+        password: _password,
         legacy: true,
       );
 
@@ -109,18 +109,24 @@ void main() {
       expect(bundle.privateKey.handle, isNot(nullptr));
     });
 
-    test('legacy: true é alias de legacy: true', () {
+    test('the legacy provider and the pure Dart decoder agree', () {
       if (openSsl.loadLegacyProvider(required: false) == null) {
         markTestSkipped('legacy module not found on this machine');
         return;
       }
 
-      final bundle = openSsl.parsePkcs12(
-        der,
-        password: _senhaP12,
-        legacy: true,
+      // Same file, two independent implementations: OpenSSL's legacy provider
+      // and the Dart decoder. They have to produce the same key and the same
+      // certificate, or one of them is decrypting it wrong.
+      final viaProvider =
+          openSsl.parsePkcs12(der, password: _password, legacy: true);
+      final viaDart = openSsl.parsePkcs12Pure(der, password: _password);
+
+      expect(viaProvider.certificate.toDer(), viaDart.certificate.toDer());
+      expect(
+        viaProvider.privateKey.toPrivateKeyPem(),
+        viaDart.privateKey.toPrivateKeyPem(),
       );
-      expect(bundle.certificate.subject, contains('Legacy P12 Fixture'));
     });
 
     test('a wrong password is still reported as such once legacy is loaded',
@@ -154,13 +160,13 @@ void main() {
       final moderno = openSsl.createPkcs12(
         privateKey: key,
         certificate: cert,
-        password: _senhaP12,
+        password: _password,
       );
 
       expect(openSsl.pkcs12LegacyAlgorithms(moderno), isEmpty);
       expect(openSsl.pkcs12NeedsLegacyProvider(moderno), isFalse);
 
-      final bundle = openSsl.parsePkcs12(moderno, password: _senhaP12);
+      final bundle = openSsl.parsePkcs12(moderno, password: _password);
       expect(bundle.certificate.subject, contains('P12 Moderno'));
     });
   });

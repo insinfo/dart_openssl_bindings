@@ -128,7 +128,7 @@ void main() {
       r.dispose();
     });
 
-    test('verificationTime no futuro reprova certificado expired', () {
+    test('a verificationTime in the future rejects an expired certificate', () {
       final r = openSsl.verifyChain(
         certificate: pki.folha,
         anchors: [pki.raiz],
@@ -167,7 +167,7 @@ void main() {
       comFlag.dispose();
     });
 
-    test('CRL com o serial revoked reprova a cadeia', () {
+    test('a CRL listing the serial rejects the chain', () {
       final crl = (openSsl.newCrlBuilder()
             ..setIssuerFromCertificate(pki.intermediaria)
             ..setUpdateTimes(

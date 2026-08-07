@@ -132,13 +132,13 @@ void main() {
   group('Password hashing (PHC strings)', () {
     test('hash and verify round trip', () {
       final phc = openSsl.argon2HashPassword(
-        'senha-do-usuario',
+        'the-user-password',
         options: Argon2Options.interactive,
       );
 
       expect(phc, startsWith(r'$argon2id$v=19$m=19456,t=2,p=1$'));
-      expect(openSsl.argon2VerifyPassword(phc, 'senha-do-usuario'), isTrue);
-      expect(openSsl.argon2VerifyPassword(phc, 'senha-errada'), isFalse);
+      expect(openSsl.argon2VerifyPassword(phc, 'the-user-password'), isTrue);
+      expect(openSsl.argon2VerifyPassword(phc, 'the-wrong-password'), isFalse);
     });
 
     test('two hashes of the same password differ (random salt)', () {
@@ -157,28 +157,33 @@ void main() {
         return;
       }
 
+      // Hashed natively, verified in Dart: a hash written by a machine with
+      // OpenSSL 3.2+ has to check out on one without it.
       final phc = openSsl.argon2HashPassword(
-        'multiplataforma',
+        'cross-backend',
         options: Argon2Options.interactive,
         backend: Argon2Backend.native,
       );
       expect(
-        openSsl.argon2VerifyPassword('multiplataforma'.isEmpty ? '' : phc,
-            'multiplataforma', backend: Argon2Backend.dart),
+        openSsl.argon2VerifyPassword(
+          phc,
+          'cross-backend',
+          backend: Argon2Backend.dart,
+        ),
         isTrue,
       );
     });
 
     test('a hash with a secret only verifies with the same secret', () {
-      final secret = Uint8List.fromList('pepper-do-servidor'.codeUnits);
+      final secret = Uint8List.fromList('server-side-pepper'.codeUnits);
       final phc = openSsl.argon2HashPassword(
-        'segredo',
+        'a-secret',
         options: Argon2Options.interactive.copyWith(secret: secret),
       );
 
-      expect(openSsl.argon2VerifyPassword(phc, 'segredo'), isFalse);
+      expect(openSsl.argon2VerifyPassword(phc, 'a-secret'), isFalse);
       expect(
-        openSsl.argon2VerifyPassword(phc, 'segredo', secret: secret),
+        openSsl.argon2VerifyPassword(phc, 'a-secret', secret: secret),
         isTrue,
       );
     });
