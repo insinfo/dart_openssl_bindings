@@ -66,6 +66,34 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
   *   `loadCertificatesFromPemChain`, `convertPemChainToDerList`.
   *   `convertCertificatePemToDer`, `convertCertificateDerToPem`.
 
+### Legacy PKCS#12 (RC2/RC4) on OpenSSL 3.x
+*   `ProviderMixin`: `loadLegacyProvider()`, `loadProvider(name)`, `isProviderAvailable(name)`, `setProviderSearchPath(dir)`.
+*   `parsePkcs12(..., legacy: true)` and `autoLegacy: true` (detects, loads and, when the module is missing, uses the pure Dart decoder).
+*   `pkcs12LegacyAlgorithms(der)` / `pkcs12NeedsLegacyProvider(der)`: identify the algorithm by OID without opening the file.
+*   `decodePkcs12Pure(...)` / `parsePkcs12Pure(...)`: 100% Dart PKCS#12, no FFI and no provider.
+
+### X.509 chain verification (New)
+*   `verifyChain(...)` on top of `X509_verify_cert`, with CRLs, verification time and partial chains.
+*   `VerificationResult`: OpenSSL error code, message, depth, failing certificate and the chain that was built.
+*   `verifyCertificateSignature(cert, issuer)`.
+
+### Time-stamping (RFC 3161) (New)
+*   `buildTimestampRequest` / `createTimestampResponse` / `verifyTimestamp`: request, issue and verify tokens.
+*   Runs an internal TSA with a caller-supplied serial, policy and accuracy; verification covers signature, imprint, nonce, policy and chain.
+
+### Argon2 (RFC 9106)
+*   `argon2HashPassword` / `argon2VerifyPassword` with PHC strings, and `argon2Derive` for raw key derivation.
+*   Native backend through OpenSSL's `EVP_KDF` (3.2+) with a pure Dart fallback; `hasNativeArgon2` tells which is in use.
+
+### WebAuthn / passkeys
+*   `sign`/`verify` route Ed25519, Ed448 and ML-DSA keys to the one-shot API automatically.
+*   `loadPublicKeyDer` / `loadPublicKeyBytes` for SubjectPublicKeyInfo coming from COSE keys.
+
+### ICP-Brasil
+*   `IcpBrasilParser`: CPF/CNPJ using the official DOC-ICP-04 offsets, with check-digit validation.
+*   Reads the rest of the positional block (birth date, NIS, ID card) and every ICP-Brasil `otherName` OID.
+*   `maskCpf` / `maskCnpj` for log lines, and an `IcpBrasilInfo.toString()` that never prints a document number.
+
 ### TLS (Recommended suites)
 *   Recommended TLS 1.2 cipher suite list and TLS 1.3 ciphersuite list (with TLS 1.3 IDs).
 
@@ -229,7 +257,115 @@ print(serialHex);
 print(serialDec);
 ```
 
-### 7. Issuer pre-filter + secure fallback
+### 7. Legacy PKCS#12 (40-bit RC2)
+
+```dart
+final openssl = OpenSSL();
+final der = File('certificate.p12').readAsBytesSync();
+
+// Diagnosis without opening the file
+if (openssl.pkcs12NeedsLegacyProvider(der)) {
+  print(openssl.pkcs12LegacyAlgorithms(der)); // [pbeWithSHA1And40BitRC2-CBC]
+}
+
+// Recommended: sorts itself out (legacy provider or pure Dart decoder)
+final bundle = openssl.parsePkcs12(der, password: pass, autoLegacy: true);
+
+// Explicit control
+openssl.loadLegacyProvider();
+final withProvider = openssl.parsePkcs12(der, password: pass, legacy: true);
+
+// 100% Dart, no FFI and no legacy module installed
+final pure = decodePkcs12Pure(der, password: pass);
+print(pure.certificatePem);
+print(pure.privateKeyPem);
+```
+
+### 8. X.509 chain verification
+
+```dart
+final result = openssl.verifyChain(
+  certificate: receivedCertificate,
+  anchors: [rootCa],
+  intermediates: [intermediateCa],
+  crls: [caCrl],
+  checkRevocation: true,
+  verificationTime: signatureDate, // validate as of signing time
+);
+
+if (!result.valid) {
+  print('${result.message} (code ${result.errorCode}, depth ${result.depth})');
+  print('failed at: ${result.failingCertificate}');
+}
+result.dispose();
+```
+
+### 9. Argon2 password hashing
+
+```dart
+final openssl = OpenSSL();
+
+// Uses OpenSSL's native Argon2 when the loaded libcrypto is 3.2+,
+// and the vendored pure Dart implementation otherwise.
+final phc = openssl.argon2HashPassword('user-password');
+// $argon2id$v=19$m=65536,t=3,p=1$<salt>$<hash>
+
+final ok = openssl.argon2VerifyPassword(phc, 'user-password');
+
+// Raw derivation, for key material rather than password storage
+final key = openssl.argon2DeriveFromString(
+  'passphrase',
+  openssl.randomBytes(16),
+  options: const Argon2Options(memoryKib: 65536, iterations: 3, length: 32),
+);
+```
+
+### 10. WebAuthn / passkey keys
+
+```dart
+// A COSE public key re-encoded as SubjectPublicKeyInfo
+final publicKey = openssl.loadPublicKeyDer(spkiDer);
+
+// ES256 (P-256), EdDSA (Ed25519) and RS256 all go through the same call:
+// Ed25519 rejects an external digest, so sign/verify switch to the one-shot
+// API on their own.
+final valid = openssl.verify(publicKey, signedData, signature);
+```
+
+### 11. Time-stamping (RFC 3161)
+
+```dart
+// Client: ask a TSA to stamp the hash of a signature
+final request = openssl.buildTimestampRequest(hash: signatureHash);
+final answer = await postToTsa(request.der); // application/timestamp-query
+
+final check = openssl.verifyTimestamp(
+  responseDer: answer,
+  hash: signatureHash,
+  nonce: request.nonce, // matching it is what rules out a replay
+  anchors: [tsaRootCa],
+);
+print(check.token?.genTime);
+
+// Internal TSA: sign with a certificate carrying
+// extendedKeyUsage = critical, timeStamping
+final response = openssl.createTimestampResponse(
+  requestDer: incomingRequest,
+  signerCertificate: tsaCertificate,
+  signerKey: tsaKey,
+  defaultPolicyOid: '1.3.6.1.4.1.99999.1.1',
+  serialNumber: nextSerialFromTheDatabase, // must be unique per TSA
+);
+
+// Later, with only the archived token and no request left
+final archived = openssl.verifyTimestamp(
+  tokenDer: token.der,
+  hash: signatureHash,
+  anchors: [tsaRootCa],
+);
+```
+
+### 12. Issuer pre-filter + secure fallback
 
 ```dart
 final childInfo = openssl.extractAkiSki(childCertPtr);
