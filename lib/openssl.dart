@@ -34,6 +34,9 @@ export 'src/cms/cms_pkcs7_signer.dart';
 export 'src/ocsp/ocsp_response_builder.dart';
 export 'src/ocsp/ocsp_client.dart';
 
+/// RFC 3161 time-stamping
+export 'src/ts/timestamp.dart';
+
 /// KDF (Argon2: nativo via EVP_KDF, com fallback em Dart puro)
 export 'src/kdf/argon2.dart';
 

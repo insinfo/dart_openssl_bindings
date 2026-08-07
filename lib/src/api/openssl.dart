@@ -4,11 +4,12 @@ import '../generated/ffi.dart';
 import 'openssl_context.dart';
 import 'mixins/mixins.dart';
 import '../kdf/argon2.dart';
+import '../ts/timestamp.dart';
 
 /// A classe principal que representa uma instância da biblioteca OpenSSL.
 /// Agrega funcionalidade através de Mixins.
 class OpenSSL extends OpenSslContext
-  with BioMixin, CryptoMixin, Asn1Mixin, CmsMixin, SignatureMixin, X509Mixin, CipherMixin, PkcsMixin, OcspMixin, PkiMixin, PkiBuilderMixin, ProviderMixin, VerificationMixin, Argon2Mixin {
+  with BioMixin, CryptoMixin, Asn1Mixin, CmsMixin, SignatureMixin, X509Mixin, CipherMixin, PkcsMixin, OcspMixin, PkiMixin, PkiBuilderMixin, ProviderMixin, VerificationMixin, Argon2Mixin, TimestampMixin {
   final OpenSslBindings _loader;
 
   /// Carrega a biblioteca OpenSSL.
