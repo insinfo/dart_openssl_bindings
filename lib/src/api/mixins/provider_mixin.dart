@@ -193,8 +193,18 @@ mixin ProviderMixin on OpenSslContext {
   }
 
   /// Provider search directory in use, or `null` when it is the built-in one.
+  ///
+  /// Also `null` on libcrypto older than 3.2, which has no
+  /// `OSSL_PROVIDER_get0_default_search_path` to ask — the Ubuntu LTS ships
+  /// 3.0. Only reading it back is lost; [setProviderSearchPath] has been there
+  /// since 3.0.
   String? get providerSearchPath {
-    final ptr = bindings.OSSL_PROVIDER_get0_default_search_path(nullptr);
+    final Pointer<Char> ptr;
+    try {
+      ptr = bindings.OSSL_PROVIDER_get0_default_search_path(nullptr);
+    } on ArgumentError {
+      return null;
+    }
     if (ptr == nullptr) return null;
     return ptr.cast<Utf8>().toDartString();
   }
