@@ -15,6 +15,7 @@ export 'src/crypto/evp_pkey.dart';
 /// X.509 & PKI
 export 'src/x509/x509_certificate.dart';
 export 'src/x509/icp_brasil_info.dart';
+export 'src/x509/icp_brasil_parser.dart';
 export 'src/x509/x509_extensions.dart';
 export 'src/x509/x509_crl.dart';
 export 'src/x509/x509_crl_builder.dart';

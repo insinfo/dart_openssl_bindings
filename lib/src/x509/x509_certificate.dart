@@ -10,6 +10,7 @@ import '../api/openssl.dart';
 import '../crypto/evp_pkey.dart';
 
 import 'icp_brasil_info.dart';
+import 'icp_brasil_parser.dart';
 import '../utils/tm_windows.dart';
 import '../utils/tm_unix.dart';
 
@@ -222,19 +223,41 @@ class X509Certificate extends SslObject<X509> {
     }
   }
 
-  /// Extracts ICP-Brasil fields (name, CPF, birth date, policies) from the certificate.
+  /// Extracts ICP-Brasil fields (name, CPF/CNPJ, birth date, policies) from
+  /// the certificate.
   IcpBrasilInfo extractIcpBrasilInfo() {
-    final subjectName = _extractDnValue(subject, 'CN');
     final otherNames = _getSubjectAltNameOtherNames();
-    final cpf = otherNames[_oidCpf];
-    final birthDate = _parseBirthDate(otherNames[_oidBirthDate]);
-    final policies = _getCertificatePolicyOids();
+    final naturalPersonBlock = otherNames[IcpBrasilParser.oidNaturalPerson];
+    final responsibleBlock =
+        otherNames[IcpBrasilParser.oidLegalEntityResponsible];
+    final subjectDn = subject;
+
+    // The positional block of the responsible is the fallback for a legal
+    // entity certificate, where the natural-person block is absent.
+    final personBlock = naturalPersonBlock ?? responsibleBlock;
 
     return IcpBrasilInfo(
-      name: subjectName,
-      cpf: cpf,
-      birthDate: birthDate,
-      policyOids: policies,
+      name: _extractDnValue(subjectDn, 'CN'),
+      cpf: IcpBrasilParser.extractCpf(
+        subjectDn: subjectDn,
+        otherNameNaturalPerson: naturalPersonBlock,
+        otherNameResponsible: responsibleBlock,
+      ),
+      cpfOtherNameRaw: naturalPersonBlock,
+      cnpj: IcpBrasilParser.extractCnpj(
+        subjectDn: subjectDn,
+        otherNameCnpj: otherNames[IcpBrasilParser.oidCnpj],
+      ),
+      birthDate: IcpBrasilParser.extractBirthDate(personBlock),
+      nis: IcpBrasilParser.extractNis(personBlock),
+      idCard: IcpBrasilParser.extractIdCard(personBlock),
+      cei: otherNames[IcpBrasilParser.oidNaturalPersonCei] ??
+          otherNames[IcpBrasilParser.oidLegalEntityCei],
+      voterRegistration: otherNames[IcpBrasilParser.oidVoterRegistration],
+      companyName: otherNames[IcpBrasilParser.oidCompanyName],
+      responsibleName:
+          otherNames[IcpBrasilParser.oidLegalEntityResponsibleName],
+      policyOids: _getCertificatePolicyOids(),
       otherNames: otherNames,
     );
   }
@@ -253,8 +276,6 @@ class X509Certificate extends SslObject<X509> {
   static const String _oidAuthorityInfoAccess = '1.3.6.1.5.5.7.1.1';
   static const String _oidOcspAccessMethod = '1.3.6.1.5.5.7.48.1';
   static const String _oidCrlDistributionPoints = '2.5.29.31';
-  static const String _oidCpf = '2.16.76.1.3.1';
-  static const String _oidBirthDate = '2.16.76.1.3.6';
   static const int _genUri = 6;
   static const int _distPointTypeFullName = 0;
 
@@ -525,25 +546,4 @@ class X509Certificate extends SslObject<X509> {
     return buffer.toString();
   }
 
-  DateTime? _parseBirthDate(String? value) {
-    if (value == null) return null;
-    final digits = value.replaceAll(RegExp(r'\D'), '');
-    if (digits.length != 8) return null;
-
-    int year;
-    int month;
-    int day;
-
-    if (digits.startsWith('19') || digits.startsWith('20')) {
-      year = int.parse(digits.substring(0, 4));
-      month = int.parse(digits.substring(4, 6));
-      day = int.parse(digits.substring(6, 8));
-    } else {
-      day = int.parse(digits.substring(0, 2));
-      month = int.parse(digits.substring(2, 4));
-      year = int.parse(digits.substring(4, 8));
-    }
-
-    return DateTime.utc(year, month, day);
-  }
 }
