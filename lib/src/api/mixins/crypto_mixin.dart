@@ -184,6 +184,46 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
     }
   }
 
+  /// Loads a public key from DER (SubjectPublicKeyInfo).
+  ///
+  /// This is the shape a WebAuthn/passkey public key ends up in after the COSE
+  /// key is re-encoded, so it saves the round trip through base64 + PEM
+  /// headers that [loadPublicKeyPem] would require.
+  EvpPkey loadPublicKeyDer(Uint8List der) {
+    if (der.isEmpty) {
+      throw ArgumentError.value(der, 'der', 'empty SubjectPublicKeyInfo');
+    }
+
+    final arena = Arena();
+    try {
+      final inPtr = arena<UnsignedChar>(der.length);
+      inPtr.cast<Uint8>().asTypedList(der.length).setAll(0, der);
+      final inOutPtr = arena<Pointer<UnsignedChar>>();
+      inOutPtr.value = inPtr;
+
+      final pkey = bindings.d2i_PUBKEY(nullptr, inOutPtr, der.length);
+      if (pkey == nullptr) {
+        final details = _drainOpenSslErrors(bindings);
+        throw OpenSslException(
+          'Failed to read public key from DER. '
+          '${details.isEmpty ? '(no OpenSSL error details)' : details}',
+        );
+      }
+      return EvpPkey(pkey, this as dynamic);
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Loads a public key from DER or PEM, whichever [bytes] holds.
+  EvpPkey loadPublicKeyBytes(Uint8List bytes) {
+    final looksPem = bytes.length > 10 &&
+        String.fromCharCodes(bytes.sublist(0, 11)) == '-----BEGIN ';
+    return looksPem
+        ? loadPublicKeyPem(String.fromCharCodes(bytes))
+        : loadPublicKeyDer(bytes);
+  }
+
   /// Computes SHA-256 digest of [data].
   Uint8List sha256(List<int> data) {
     final ctx = bindings.EVP_MD_CTX_new();

@@ -170,10 +170,52 @@ mixin SignatureMixin on OpenSslContext {
     }
   }
 
+  /// Whether [key] signs the message directly and therefore rejects an
+  /// external digest (Ed25519, Ed448 and the ML-DSA family).
+  ///
+  /// These keys must go through [signOneShot]/[verifyOneShot]; using
+  /// [EVP_DigestSignInit] with a digest yields
+  /// `error:1C80007A:Provider routines::invalid digest`, which does not say
+  /// what is actually wrong.
+  bool keyRequiresOneShotSignature(EvpPkey key) {
+    final id = bindings.EVP_PKEY_get_base_id(key.handle);
+    if (id == NID_ED25519 || id == NID_ED448) return true;
+
+    // ML-DSA ids only exist from OpenSSL 3.5 on; match by name so that older
+    // headers do not break the build.
+    const mlDsaNames = {'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'};
+    return mlDsaNames.contains(_keyTypeName(key));
+  }
+
+  /// Algorithm name of [key] as OpenSSL reports it (`ED25519`, `RSA`, ...),
+  /// or `null` when it cannot be resolved.
+  String? _keyTypeName(EvpPkey key) {
+    final id = bindings.EVP_PKEY_get_base_id(key.handle);
+    if (id == 0) return null;
+    final ptr = bindings.OBJ_nid2sn(id);
+    if (ptr == nullptr) return null;
+    return ptr.cast<Utf8>().toDartString();
+  }
+
   /// Signs [data] using the private [key].
   ///
   /// [algorithm] defaults to 'SHA256'.
-  Uint8List sign(EvpPkey key, Uint8List data, {String algorithm = 'SHA256'}) {
+  ///
+  /// Keys whose algorithm signs the message directly — Ed25519, Ed448 and
+  /// ML-DSA — reject an external digest, so for those this delegates to
+  /// [signOneShot] instead of failing with OpenSSL's opaque
+  /// `invalid digest` error. Pass [allowOneShotFallback] as `false` to get
+  /// that error back.
+  Uint8List sign(
+    EvpPkey key,
+    Uint8List data, {
+    String algorithm = 'SHA256',
+    bool allowOneShotFallback = true,
+  }) {
+    if (allowOneShotFallback && keyRequiresOneShotSignature(key)) {
+      return signOneShot(key, data);
+    }
+
     final bindings = this.bindings;
     final ctx = bindings.EVP_MD_CTX_new();
     if (ctx == nullptr) {
@@ -314,8 +356,21 @@ mixin SignatureMixin on OpenSslContext {
   /// Verifies [signature] for [data] using [key].
   ///
   /// Returns true if valid, false otherwise.
-  bool verify(EvpPkey key, Uint8List data, Uint8List signature,
-      {String algorithm = 'SHA256'}) {
+  ///
+  /// As in [sign], keys that sign the message directly (Ed25519, Ed448,
+  /// ML-DSA) are routed to [verifyOneShot], which is what OpenSSL requires for
+  /// them.
+  bool verify(
+    EvpPkey key,
+    Uint8List data,
+    Uint8List signature, {
+    String algorithm = 'SHA256',
+    bool allowOneShotFallback = true,
+  }) {
+    if (allowOneShotFallback && keyRequiresOneShotSignature(key)) {
+      return verifyOneShot(key, data, signature);
+    }
+
     final bindings = this.bindings;
     final ctx = bindings.EVP_MD_CTX_new();
     if (ctx == nullptr) {
