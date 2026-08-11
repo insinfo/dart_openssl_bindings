@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io' show File;
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 
 import '../../generated/ffi.dart';
 import '../openssl_context.dart';
 import '../../infra/ssl_exception.dart';
+import '../../crypto/evp_digest.dart';
 import '../../crypto/evp_pkey.dart';
+import '../../crypto/jwk.dart';
+import '../../utils/hex.dart';
 import 'bio_mixin.dart';
 
 Pointer<Uint8> _allocUtf8z(String s) {
@@ -214,6 +218,63 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
       arena.releaseAll();
     }
   }
+
+  /// Loads a private key from DER — PKCS#8 or a traditional PKCS#1 key.
+  ///
+  /// The format is detected, so both encodings work without being told apart
+  /// first. Encrypted PKCS#8 is not handled here: use [loadPrivateKeyPem] with
+  /// a password for that.
+  EvpPkey loadPrivateKeyDer(Uint8List der) {
+    if (der.isEmpty) {
+      throw ArgumentError.value(der, 'der', 'empty private key');
+    }
+
+    final arena = Arena();
+    try {
+      final inPtr = arena<UnsignedChar>(der.length);
+      inPtr.cast<Uint8>().asTypedList(der.length).setAll(0, der);
+      final inOutPtr = arena<Pointer<UnsignedChar>>();
+      inOutPtr.value = inPtr;
+
+      final pkey = bindings.d2i_AutoPrivateKey(nullptr, inOutPtr, der.length);
+      if (pkey == nullptr) {
+        final details = _drainOpenSslErrors(bindings);
+        throw OpenSslException(
+          'Failed to read private key from DER. '
+          '${details.isEmpty ? '(no OpenSSL error details)' : details}',
+        );
+      }
+      return EvpPkey(pkey, this as dynamic);
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Loads an RSA private key from a JSON Web Key (RFC 7517).
+  ///
+  /// This is the shape an OpenID Connect identity provider keeps its signing
+  /// key in, and going through it directly avoids converting the key to PEM by
+  /// hand just to sign a token. The CRT parameters (`dp`, `dq`, `qi`) are
+  /// derived when the JWK omits them.
+  ///
+  /// ```dart
+  /// final jwk = jsonDecode(File('idp-private.jwk').readAsStringSync());
+  /// final key = openSsl.loadPrivateKeyJwk(jwk as Map<String, Object?>);
+  /// final signature = openSsl.sign(key, signingInput); // RS256
+  /// ```
+  ///
+  /// Throws [FormatException] when [jwk] is not an RSA key or is missing a
+  /// required parameter.
+  EvpPkey loadPrivateKeyJwk(Map<String, Object?> jwk) =>
+      loadPrivateKeyDer(rsaPrivateKeyDerFromJwk(jwk));
+
+  /// Loads an RSA public key from a JSON Web Key (RFC 7517).
+  ///
+  /// Accepts a private JWK too, ignoring the private parameters, so one key
+  /// file can produce both halves — the private key to sign with and the public
+  /// key to verify with.
+  EvpPkey loadPublicKeyJwk(Map<String, Object?> jwk) =>
+      loadPublicKeyDer(rsaPublicKeyDerFromJwk(jwk));
 
   /// Loads a public key from DER or PEM, whichever [bytes] holds.
   EvpPkey loadPublicKeyBytes(Uint8List bytes) {
@@ -481,6 +542,71 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
       arena.releaseAll();
     }
   }
+
+  /// Digests [data] and returns the result as lowercase hexadecimal.
+  ///
+  /// Same as [digest], in the representation `package:crypto`'s
+  /// `Digest.toString()` produces — the form most systems store and compare.
+  String digestHex(String algorithmName, Uint8List data) =>
+      encodeHex(digest(algorithmName, data));
+
+  /// Starts an incremental digest, for input that arrives in pieces.
+  ///
+  /// Use it when the data is not already in memory — a large file, a socket, a
+  /// request body — or when the total byte count matters as much as the digest
+  /// itself ([EvpDigest.length]). For a buffer in hand, [digest] is simpler.
+  ///
+  /// The returned object owns native memory: [EvpDigest.dispose] it in a
+  /// `finally`.
+  ///
+  /// ```dart
+  /// final digest = openSsl.startDigest('sha256');
+  /// try {
+  ///   await digest.addStream(file.openRead());
+  ///   print('${digest.length} bytes -> ${digest.finish()}');
+  /// } finally {
+  ///   digest.dispose();
+  /// }
+  /// ```
+  EvpDigest startDigest(
+    String algorithmName, {
+    int bufferSize = EvpDigest.defaultBufferSize,
+  }) =>
+      EvpDigest(this, algorithmName, bufferSize: bufferSize);
+
+  /// Digests everything [data] emits, without buffering the whole stream.
+  ///
+  /// Native memory stays bounded by [bufferSize] regardless of how much the
+  /// stream carries. Errors from [data] propagate; the native context is
+  /// released either way.
+  Future<Uint8List> digestStream(
+    String algorithmName,
+    Stream<List<int>> data, {
+    int bufferSize = EvpDigest.defaultBufferSize,
+  }) async {
+    final digest = startDigest(algorithmName, bufferSize: bufferSize);
+    try {
+      await digest.addStream(data);
+      return digest.finish();
+    } finally {
+      digest.dispose();
+    }
+  }
+
+  /// Digests [file] by reading it in chunks, never loading it whole.
+  ///
+  /// This is the safe way to hash an upload or an attachment of unknown size —
+  /// `digest(alg, await file.readAsBytes())` would hold the entire file in
+  /// memory twice, once in Dart and once in native memory.
+  ///
+  /// Use [startDigest] instead when the file's size is needed alongside its
+  /// digest, so the file is not measured in a separate call.
+  Future<Uint8List> digestFile(
+    String algorithmName,
+    File file, {
+    int bufferSize = EvpDigest.defaultBufferSize,
+  }) =>
+      digestStream(algorithmName, file.openRead(), bufferSize: bufferSize);
 
   /// Calcula o HMAC dos dados usando o algoritmo e chave especificados.
   ///

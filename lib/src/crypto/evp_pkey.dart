@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import '../generated/ffi.dart';
 import '../infra/ssl_object.dart';
 import '../infra/ssl_exception.dart';
 import '../api/openssl.dart';
+import 'jwk.dart';
 
 import 'package:ffi/ffi.dart'; // import ffi/ffi
 
@@ -89,6 +91,59 @@ class EvpPkey extends SslObject<EVP_PKEY> {
       _context.freeBio(bio);
     }
   }
+
+  /// Exports the public key as DER (SubjectPublicKeyInfo).
+  ///
+  /// The binary counterpart of [toPublicKeyPem], and what
+  /// `OpenSSL.loadPublicKeyDer` reads back.
+  Uint8List toPublicKeyDer() {
+    final bindings = _context.bindings;
+
+    // i2d with a null output asks for the length, then fills a buffer on the
+    // second call — and advances the pointer it is given, which is why the
+    // walking copy is kept separate from the one that gets freed.
+    final length = bindings.i2d_PUBKEY(handle, nullptr);
+    if (length <= 0) {
+      throw OpenSslException('i2d_PUBKEY failed to size the public key');
+    }
+
+    final buffer = calloc<UnsignedChar>(length);
+    final cursor = calloc<Pointer<UnsignedChar>>();
+    try {
+      cursor.value = buffer;
+      final written = bindings.i2d_PUBKEY(handle, cursor);
+      if (written != length) {
+        throw OpenSslException('i2d_PUBKEY wrote $written of $length bytes');
+      }
+      return Uint8List.fromList(buffer.cast<Uint8>().asTypedList(length));
+    } finally {
+      calloc.free(buffer);
+      calloc.free(cursor);
+    }
+  }
+
+  /// Exports the public half of an RSA key as a JSON Web Key (RFC 7517).
+  ///
+  /// This is what a `jwks_uri` endpoint publishes, so relying parties can
+  /// verify the tokens this key signs. [keyId], [algorithm] and [use] are
+  /// metadata — typically `kid`, `RS256` and `sig` — and are omitted when null.
+  ///
+  /// ```dart
+  /// final jwks = {'keys': [key.toPublicJwk(keyId: kid, algorithm: 'RS256', use: 'sig')]};
+  /// ```
+  ///
+  /// Throws [FormatException] for anything other than an RSA key.
+  Map<String, Object?> toPublicJwk({
+    String? keyId,
+    String? algorithm,
+    String? use,
+  }) =>
+      rsaJwkFromSpkiDer(
+        toPublicKeyDer(),
+        keyId: keyId,
+        algorithm: algorithm,
+        use: use,
+      );
 
   /// Releases the underlying EVP_PKEY structure.
   void dispose() {

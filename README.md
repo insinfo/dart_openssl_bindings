@@ -43,6 +43,15 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 *   **One-shot Signatures**:
     *   `signOneShot` / `verifyOneShot`.
     *   ML-DSA helpers: `signMlDsa` / `verifyMlDsa`.
+*   **JSON Web Keys (RFC 7517)**: `loadPrivateKeyJwk`, `loadPublicKeyJwk` and
+    `EvpPkey.toPublicJwk()` — sign OIDC tokens with the identity provider's JWK
+    without converting it to PEM by hand. See [OIDC signing keys](#14-oidc-signing-keys-jwk).
+*   **Digests**:
+    *   One-shot: `digest(alg, bytes)`, `digestHex(alg, bytes)`, `hmac`.
+    *   Incremental/streaming: `startDigest` (an `EvpDigest` you feed with
+        `add`/`addStream`), plus `digestStream` and `digestFile` for input that
+        does not fit in memory. See [Isolates and concurrency](#isolates-and-concurrency)
+        before using these from worker isolates.
 
 ### Secure Networking (TLS & DTLS)
 *   **Async TLS**: `SecureSocketOpenSslAsync` (API compatible with `dart:io` Socket).
@@ -384,4 +393,181 @@ final candidates = openssl.prefilterIssuerCandidates<Pointer<X509>>(
 );
 
 // Always run full certificate chain validation afterwards.
+```
+
+### 13. Digests: one-shot and streaming
+
+For data already in memory, one call does it:
+
+```dart
+final bytes = utf8.encode('hello') as Uint8List;
+
+final digest = openssl.digest('sha256', bytes);      // Uint8List
+final hex    = openssl.digestHex('sha256', bytes);   // lowercase hex
+final mac    = openssl.hmac('sha256', key, bytes);
+```
+
+For data that does not fit in memory — an upload, an attachment, a socket —
+`startDigest` returns an `EvpDigest` you feed in pieces. Native memory stays
+bounded by its scratch buffer (64 KiB by default) no matter how large the input
+or the individual chunks are:
+
+```dart
+final digest = openssl.startDigest('sha256');
+try {
+  await digest.addStream(File('attachment.pdf').openRead());
+  print('${digest.length} bytes -> ${digest.finishHex()}');
+} finally {
+  digest.dispose();   // idempotent; already done by a successful finish()
+}
+```
+
+`length` reports how many bytes were fed, so code that needs the size of what it
+hashed does not have to `stat` the input separately — which would also leave a
+window for it to change between the two reads.
+
+When only the digest matters, two shortcuts skip the object entirely:
+
+```dart
+final fromStream = await openssl.digestStream('sha256', request.read());
+final fromFile   = await openssl.digestFile('sha256', File('report.pdf'));
+```
+
+Always `dispose()` an `EvpDigest` from a `finally`: it is what releases the
+native context when the input stream fails halfway. A digest that is garbage
+collected without it is still released by a `NativeFinalizer`, but that is a
+safety net, not a strategy.
+
+#### Replacing `package:crypto`
+
+The native implementation is substantially faster than a pure-Dart one on large
+inputs, which is the usual reason to switch. The mapping is mechanical:
+
+| `package:crypto` | This package |
+| --- | --- |
+| `sha256.convert(x).bytes` | `openssl.digest('sha256', x)` |
+| `sha256.convert(x).toString()` | `openssl.digestHex('sha256', x)` |
+| `md5.convert(x).toString()` | `openssl.digestHex('md5', x)` |
+| `Hmac(sha256, key).convert(x).bytes` | `openssl.hmac('sha256', key, x)` |
+| `sha256.startChunkedConversion(AccumulatorSink<Digest>())` | `openssl.startDigest('sha256')` |
+| `Digest` in a signature | `Uint8List`, or `String` for hex |
+
+Two things worth knowing before converting everything:
+
+*   **Small inputs in short-lived isolates may get slower.** Constructing an
+    `OpenSSL` loads libcrypto/libssl, and a one-off `Isolate.run` job pays that
+    on every spawn. Hashing a few kilobytes — a PDF byte range, say — can cost
+    less in pure Dart than the load costs. Measure that case rather than
+    assuming; the native win is on large inputs and on long-lived isolates that
+    amortise the load.
+*   **`package:crypto_keys` is a different package.** It covers JWS/JWT key
+    handling, not digests, and nothing here replaces it.
+
+### 14. OIDC signing keys (JWK)
+
+An OpenID Connect identity provider usually keeps its signing key as a JSON Web
+Key, not as PEM. These load one directly, so signing a token does not require
+converting the key by hand:
+
+```dart
+final jwk = jsonDecode(File('idp-private.jwk').readAsStringSync())
+    as Map<String, Object?>;
+
+final signingKey = openssl.loadPrivateKeyJwk(jwk);
+
+// RS256 signing input: base64url(header) + '.' + base64url(payload)
+final signature = openssl.sign(signingKey, signingInput);
+```
+
+The CRT parameters (`dp`, `dq`, `qi`) are optional in a JWK — `package:jose`
+omits them when it generates a key — so they are derived from `d`, `p` and `q`
+when absent. `loadPublicKeyJwk` accepts a private JWK too, ignoring the private
+parameters, so one key file yields both halves.
+
+For a `jwks_uri` endpoint, export the public half back out:
+
+```dart
+final jwks = {
+  'keys': [signingKey.toPublicJwk(keyId: kid, algorithm: 'RS256', use: 'sig')],
+};
+```
+
+Only RSA keys are handled; EC and OKP JWKs throw rather than silently producing
+a key that cannot verify anything. Load those from PEM or DER instead.
+
+**Interoperability.** RS256 is deterministic, and OpenSSL produces
+byte-identical signatures to `package:jose` for the same key and input — tokens
+signed here verify there and vice versa, and an exported JWK loads back into a
+`jose` key store unchanged. One cosmetic difference: values are emitted without
+base64url padding, as RFC 7515 §2 requires, while `jose` pads its own; both
+decode to the same bytes and each accepts the other's form.
+
+**Why it is worth doing.** Measured on RSA-2048, one process, warm:
+
+| Operation | `package:jose` (pure Dart) | This package | |
+| --- | --- | --- | --- |
+| RS256 sign (full compact JWS) | 3.106 ms | 0.756 ms | **4.1× faster** |
+| RS256 verify | 0.702 ms | 0.090 ms | **7.8× faster** |
+| Load a key from a JWK | — | 0.101 ms | once per process |
+
+Verification is the one that compounds: it runs on every authenticated request,
+not once per login. Do measure your own case before switching — if a request
+spends milliseconds in the database, 0.6 ms of token verification is not what is
+slow.
+
+## Isolates and concurrency
+
+**An `OpenSSL` instance cannot cross an isolate boundary**, and neither can
+anything holding a handle from it — `EvpPkey`, `X509Certificate`, `EvpDigest`.
+The instance owns a `DynamicLibrary` and raw pointers, which are not sendable
+and are only valid in the isolate that created them. Sending one fails with:
+
+```text
+Invalid argument(s): Illegal argument in isolate message: (object is a DynamicLibrary)
+```
+
+Inside a single isolate, one instance is safe to share across concurrent
+operations: each call allocates its own context and frees it before returning,
+and the instance itself only holds the loaded library's function pointers. So
+the rule is **one instance per isolate**, built once and reused — not one per
+call, and not one shared across isolates:
+
+```dart
+// In a long-lived worker isolate:
+final openssl = OpenSSL();            // once, for the isolate's lifetime
+await for (final job in inbox) {      // shared by every job it serves
+  reply.send(openssl.digestHex('sha256', job.data));
+}
+```
+
+The trap is doing it by accident. A closure passed to `Isolate.run` carries its
+entire captured context — including parent scopes it never reads — so writing
+the closure anywhere an `OpenSSL` variable happens to be in scope drags the
+instance along and the spawn fails at runtime:
+
+```dart
+// Wrong: `openssl` is in the enclosing scope, so it is captured and sent,
+// even though the closure never mentions it.
+final openssl = OpenSSL();
+await Isolate.run(() => OpenSSL().digestHex('sha256', data)); // throws
+
+// Right: a top-level function, with nothing but sendable data in scope.
+Future<String> hashInIsolate(Uint8List data) =>
+    Isolate.run(() => OpenSSL().digestHex('sha256', data));
+```
+
+`test/concurrency/multi_isolate_stress_test.dart` pins all of this against a
+workload shaped like a production backend: long-lived worker isolates serving a
+mixed load (digests, streamed file digests, HMAC, AES, RSA sign/verify,
+certificate building) while short-lived `Isolate.run` jobs are spawned and
+discarded underneath them. It asserts that results from every isolate match the
+main isolate's, that an OpenSSL-level failure in one isolate leaves the others
+working, that no isolate dies with an uncaught error, and that the process
+resident-set floor does not climb across rounds. Turn it up with
+`ISOLATE_STRESS_WORKERS`, `ISOLATE_STRESS_JOBS`, `ISOLATE_STRESS_ROUNDS` and
+`ISOLATE_STRESS_MAX_MB`:
+
+```sh
+ISOLATE_STRESS_WORKERS=8 ISOLATE_STRESS_JOBS=40 ISOLATE_STRESS_ROUNDS=12 \
+  dart test test/concurrency/multi_isolate_stress_test.dart
 ```

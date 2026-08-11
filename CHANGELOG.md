@@ -1,3 +1,78 @@
+## 1.1.0
+
+### Incremental digests
+
+Hashing something that does not fit in memory — a multi-hundred-megabyte
+attachment, a socket, a request body — previously meant dropping to the raw FFI
+layer and driving `EVP_MD_CTX` by hand. `EvpDigest` covers that case:
+
+- **`startDigest(alg, {bufferSize})`** returns an `EvpDigest`: `add` /
+  `addStream` to feed it, `finish` / `finishHex` to read the result, `dispose`
+  to release. Native memory stays bounded by `bufferSize` (64 KiB by default)
+  regardless of the input size or the size of each chunk. `length` reports how
+  many bytes were fed, so callers that need the size of what they hashed do not
+  have to measure the input separately.
+- **`digestStream(alg, stream)`** and **`digestFile(alg, file)`** for the common
+  case where only the digest matters.
+- **`digestHex(alg, data)`** and **`EvpDigest.finishHex()`** return lowercase
+  hexadecimal, matching what `package:crypto`'s `Digest.toString()` produces.
+
+The context is freed by `finish`, by `dispose` (idempotent, safe in a
+`finally`), and by a `NativeFinalizer` as a last resort, so an input stream that
+fails halfway does not leak.
+
+No new FFI symbols were needed — `EVP_MD_CTX_new/free`,
+`EVP_DigestInit_ex/Update/Final_ex` and `EVP_get_digestbyname` were already
+generated.
+
+### JSON Web Keys (RFC 7517)
+
+An OpenID Connect provider keeps its signing key as a JWK, and there was no way
+to get one into an `EVP_PKEY` short of converting it to PEM by hand — which is
+why signing OIDC tokens meant staying on a pure-Dart implementation.
+
+- **`loadPrivateKeyJwk`** / **`loadPublicKeyJwk`** load an RSA JWK directly. The
+  CRT parameters (`dp`, `dq`, `qi`) are optional in a JWK — `package:jose` omits
+  them when generating a key — so they are derived from `d`, `p` and `q` when
+  absent. `loadPublicKeyJwk` accepts a private JWK, ignoring the private half,
+  so one key file yields both keys.
+- **`EvpPkey.toPublicJwk()`** exports the public half for a `jwks_uri`
+  endpoint, with optional `kid`, `alg` and `use`.
+- **`loadPrivateKeyDer`** and **`EvpPkey.toPublicKeyDer()`** fill in the DER
+  counterparts of the existing PEM entry points.
+
+RS256 signatures are byte-identical to `package:jose`'s for the same key and
+input, so tokens interoperate in both directions. Measured on RSA-2048, signing
+a compact JWS is ~4× faster and verifying one ~8× faster than the pure-Dart
+path. Only RSA is handled; EC and OKP JWKs throw rather than silently producing
+a key that cannot verify anything.
+
+No new FFI symbols here either — `d2i_AutoPrivateKey` and `i2d_PUBKEY` were
+already generated, and the JWK/DER translation is pure Dart on top of the
+existing DER reader.
+
+### Multi-isolate coverage and documentation
+
+`test/concurrency/multi_isolate_stress_test.dart` runs a workload shaped like a
+production backend — long-lived worker isolates serving a mixed load (digests,
+streamed file digests, HMAC, AES, RSA sign/verify, certificate building) while
+short-lived `Isolate.run` jobs are spawned and discarded underneath them, all in
+one process. It asserts that every isolate's results match the main isolate's,
+that an OpenSSL-level failure stays contained in the isolate that raised it,
+that no isolate dies with an uncaught error, and that the process resident-set
+floor does not climb across rounds. Scale it with `ISOLATE_STRESS_WORKERS`,
+`ISOLATE_STRESS_JOBS`, `ISOLATE_STRESS_ROUNDS` and `ISOLATE_STRESS_MAX_MB`.
+
+Writing it turned up a sharp edge now documented on the `OpenSSL` class and in
+the README: an instance cannot cross an isolate boundary, and a closure passed
+to `Isolate.run` captures its whole enclosing context — so merely writing that
+closure in a scope where an `OpenSSL` variable exists sends the instance along
+and the spawn dies with `Illegal argument in isolate message: (object is a
+DynamicLibrary)`, even when the closure never mentions it. The rule is one
+instance per isolate, and spawns hoisted into a top-level function whose scope
+holds only sendable data. A test pins it.
+
+
 ## 1.0.0
 
 ### Legacy PKCS#12 (RC2/RC4) - the case that drove this release

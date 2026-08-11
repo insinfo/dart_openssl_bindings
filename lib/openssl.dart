@@ -10,7 +10,9 @@ export 'src/api/mixins/verification_mixin.dart';
 export 'src/openssl_loader.dart';
 
 /// Cryptography
+export 'src/crypto/evp_digest.dart';
 export 'src/crypto/evp_pkey.dart';
+export 'src/crypto/jwk.dart';
 
 /// X.509 & PKI
 export 'src/x509/x509_certificate.dart';
