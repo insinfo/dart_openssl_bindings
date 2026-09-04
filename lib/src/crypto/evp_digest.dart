@@ -24,11 +24,12 @@ const int _maxDigestSize = 64;
 /// For data already in memory, `OpenSSL.digest` is simpler.
 ///
 /// Create it with `OpenSSL.startDigest`, feed it with [add] or [addStream], and
-/// read the result with [finish]. [finish] releases the native context on
-/// success; [dispose] releases it on any other path, so call it from a
-/// `finally` — it is idempotent and safe to call after [finish]. A digest that
-/// is garbage collected without either call is still released, by finalizer,
-/// but that is a safety net rather than something to rely on.
+/// read the result with [finish]. [copy] forks the state, for inputs that share
+/// a prefix. [finish] releases the native context on success; [dispose]
+/// releases it on any other path, so call it from a `finally` — it is
+/// idempotent and safe to call after [finish]. A digest that is garbage
+/// collected without either call is still released, by finalizer, but that is
+/// a safety net rather than something to rely on.
 ///
 /// ```dart
 /// final digest = openSsl.startDigest('sha256');
@@ -46,7 +47,8 @@ const int _maxDigestSize = 64;
 /// native pointers cannot be sent anywhere else.
 class EvpDigest implements Finalizable {
   /// Starts a digest with [algorithmName], as named by OpenSSL — `sha256`,
-  /// `sha512`, `sha3-256`, `sha1`, …
+  /// `sha512`, `sha3-256`, `sha1`, … (the `DigestAlgorithm` constants are
+  /// these names, spell-checked by the compiler).
   ///
   /// [bufferSize] is the size of the scratch buffer used to hand chunks to
   /// OpenSSL, and therefore the ceiling on native memory held by this object.
@@ -56,20 +58,21 @@ class EvpDigest implements Finalizable {
   /// Throws [OpenSslException] if the loaded OpenSSL does not know
   /// [algorithmName] — including when it lives in a provider that has not been
   /// loaded, such as the `legacy` provider for older algorithms.
-  EvpDigest(
+  factory EvpDigest(
     OpenSslContext context,
-    this.algorithmName, {
-    this.bufferSize = defaultBufferSize,
-  }) : _bindings = context.bindings {
+    String algorithmName, {
+    int bufferSize = defaultBufferSize,
+  }) {
     if (bufferSize <= 0) {
       throw ArgumentError.value(bufferSize, 'bufferSize', 'must be positive');
     }
+    final bindings = context.bindings;
 
     final arena = Arena();
     final Pointer<EVP_MD> md;
     try {
       final namePtr = algorithmName.toNativeUtf8(allocator: arena);
-      md = _bindings.EVP_get_digestbyname(namePtr.cast());
+      md = bindings.EVP_get_digestbyname(namePtr.cast());
     } finally {
       arena.releaseAll();
     }
@@ -77,26 +80,40 @@ class EvpDigest implements Finalizable {
       throw OpenSslException('Unknown digest algorithm: $algorithmName');
     }
 
-    final ctx = _bindings.EVP_MD_CTX_new();
+    final ctx = bindings.EVP_MD_CTX_new();
     if (ctx == nullptr) {
       throw OpenSslException('Failed to create EVP_MD_CTX');
     }
-    if (_bindings.EVP_DigestInit_ex(ctx, md, nullptr) != 1) {
-      _bindings.EVP_MD_CTX_free(ctx);
+    if (bindings.EVP_DigestInit_ex(ctx, md, nullptr) != 1) {
+      bindings.EVP_MD_CTX_free(ctx);
       throw OpenSslException('EVP_DigestInit_ex failed for $algorithmName');
     }
-    _ctx = ctx;
-    _buffer = malloc<Uint8>(bufferSize);
 
     // Safety net for a digest abandoned without [finish] or [dispose]: the
-    // context and the buffer are freed when this object is collected. Both
-    // attachments are detached in [_release] so nothing is freed twice.
-    _ctxFinalizer = NativeFinalizer(
+    // context is freed when the object is collected. Shared with every copy
+    // taken from this digest, since they free their contexts the same way.
+    final ctxFinalizer = NativeFinalizer(
       context
           .lookup<Void Function(Pointer<EVP_MD_CTX>)>('EVP_MD_CTX_free')
           .cast(),
     );
-    _ctxFinalizer.attach(this, ctx.cast(), detach: this);
+
+    return EvpDigest._(
+        algorithmName, bufferSize, bindings, ctx, ctxFinalizer, 0);
+  }
+
+  /// Takes ownership of an initialised [_ctx] and allocates the scratch
+  /// buffer. Both attachments are detached in [_release] so nothing is freed
+  /// twice.
+  EvpDigest._(
+    this.algorithmName,
+    this.bufferSize,
+    this._bindings,
+    this._ctx,
+    this._ctxFinalizer,
+    this._length,
+  ) : _buffer = malloc<Uint8>(bufferSize) {
+    _ctxFinalizer.attach(this, _ctx.cast(), detach: this);
     _bufferFinalizer.attach(this, _buffer.cast(), detach: this);
   }
 
@@ -113,11 +130,11 @@ class EvpDigest implements Finalizable {
   final int bufferSize;
 
   final OpenSslFfi _bindings;
-  late final Pointer<EVP_MD_CTX> _ctx;
-  late final Pointer<Uint8> _buffer;
-  late final NativeFinalizer _ctxFinalizer;
+  final Pointer<EVP_MD_CTX> _ctx;
+  final Pointer<Uint8> _buffer;
+  final NativeFinalizer _ctxFinalizer;
 
-  int _length = 0;
+  int _length;
   bool _finished = false;
   bool _disposed = false;
 
@@ -160,6 +177,59 @@ class EvpDigest implements Finalizable {
     await for (final chunk in data) {
       add(chunk);
     }
+  }
+
+  /// Forks the digest: a new [EvpDigest] with the same algorithm, buffer size,
+  /// [length] and internal state, which evolves on its own from here on.
+  ///
+  /// This is for inputs that share a prefix. Feed the prefix once, then take a
+  /// copy per variant and feed only what differs — a proof-of-work solver
+  /// hashing a fixed header with a changing nonce, a Merkle tree, a set of
+  /// messages under one envelope. The copy costs one `EVP_MD_CTX_copy_ex`,
+  /// about the size of the hash state, against re-feeding the prefix every
+  /// time.
+  ///
+  /// The copy owns its own native context and scratch buffer: [dispose] it as
+  /// you would the original. Neither side is affected by what the other is fed
+  /// or by its release. Throws [StateError] once this digest is finished or
+  /// disposed.
+  ///
+  /// ```dart
+  /// final header = openSsl.startDigest('sha256')..add(headerBytes);
+  /// for (var nonce = 0; ; nonce++) {
+  ///   final attempt = header.copy();
+  ///   try {
+  ///     attempt.add(encodeNonce(nonce));
+  ///     if (meetsTarget(attempt.finish())) break;
+  ///   } finally {
+  ///     attempt.dispose();
+  ///   }
+  /// }
+  /// ```
+  EvpDigest copy() {
+    _ensureUsable();
+
+    final ctx = _bindings.EVP_MD_CTX_new();
+    if (ctx == nullptr) {
+      throw OpenSslException('Failed to create EVP_MD_CTX');
+    }
+    if (_bindings.EVP_MD_CTX_copy_ex(ctx, _ctx) != 1) {
+      _bindings.EVP_MD_CTX_free(ctx);
+      throw OpenSslException(
+        'EVP_MD_CTX_copy_ex failed for $algorithmName',
+        _bindings.ERR_get_error(),
+        'EVP_MD_CTX_copy_ex',
+      );
+    }
+
+    return EvpDigest._(
+      algorithmName,
+      bufferSize,
+      _bindings,
+      ctx,
+      _ctxFinalizer,
+      _length,
+    );
   }
 
   /// Produces the digest and releases the native context.

@@ -286,6 +286,8 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
   }
 
   /// Computes SHA-256 digest of [data].
+  ///
+  /// [sha256Hex] returns the same as lowercase hexadecimal.
   Uint8List sha256(List<int> data) {
     final ctx = bindings.EVP_MD_CTX_new();
     if (ctx == nullptr) throw OpenSslException('Failed to create EVP_MD_CTX');
@@ -323,6 +325,9 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
       bindings.EVP_MD_CTX_free(ctx);
     }
   }
+
+  /// SHA-256 of [data] as lowercase hexadecimal: [sha256] through [encodeHex].
+  String sha256Hex(List<int> data) => encodeHex(sha256(data));
 
   /// Deriva uma chave a partir de uma senha usando PBKDF2-HMAC-SHA256.
   ///
@@ -499,10 +504,12 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
     );
   }
 
-  /// Calcula o hash (digest) dos dados usando o algoritmo especificado.
+  /// Digests [data] with [algorithmName], as OpenSSL names it: `sha256`,
+  /// `sha512`, `sha3-256`, … The `DigestAlgorithm` constants are these names
+  /// with the spelling checked by the compiler, and go in the same place:
+  /// `digest(DigestAlgorithm.sha256, data)`.
   ///
-  /// [algorithmName]: Nome do algoritmo (ex: 'sha256', 'sha512', 'sha3-256').
-  /// [data]: Dados para hashear.
+  /// [digestHex] returns the same as lowercase hexadecimal.
   Uint8List digest(String algorithmName, Uint8List data) {
     final arena = Arena();
     try {
@@ -608,11 +615,11 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
   }) =>
       digestStream(algorithmName, file.openRead(), bufferSize: bufferSize);
 
-  /// Calcula o HMAC dos dados usando o algoritmo e chave especificados.
+  /// HMAC of [data] under [key], with the digest [algorithmName] names —
+  /// `sha256`, `sha512`, … or a `DigestAlgorithm` constant, which is the same
+  /// string with the spelling checked: `hmac(DigestAlgorithm.sha256, key, data)`.
   ///
-  /// [algorithmName]: Nome do algoritmo de hash (ex: 'sha256').
-  /// [key]: Chave secreta.
-  /// [data]: Dados para autenticar.
+  /// [hmacHex] returns the same as lowercase hexadecimal.
   Uint8List hmac(String algorithmName, Uint8List key, Uint8List data) {
     final arena = Arena();
     try {
@@ -657,6 +664,10 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
       arena.releaseAll();
     }
   }
+
+  /// HMAC as lowercase hexadecimal: [hmac] through [encodeHex].
+  String hmacHex(String algorithmName, Uint8List key, Uint8List data) =>
+      encodeHex(hmac(algorithmName, key, data));
 
   /// Computes shared secret (ECDH) between [privateKey] and [peerPublicKey].
   Uint8List computeSharedSecret(EvpPkey privateKey, EvpPkey peerPublicKey) {

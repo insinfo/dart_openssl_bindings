@@ -336,6 +336,7 @@ functions:
     - EVP_DigestInit_ex
     - EVP_DigestUpdate
     - EVP_DigestFinal_ex
+    - EVP_MD_CTX_copy_ex
     - EVP_DigestSignInit
     - EVP_DigestSign
     - EVP_DigestSignUpdate

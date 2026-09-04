@@ -142,10 +142,10 @@ void main() {
     });
 
     test('two hashes of the same password differ (random salt)', () {
-      final a = openSsl.argon2HashPassword('x',
-          options: Argon2Options.interactive);
-      final b = openSsl.argon2HashPassword('x',
-          options: Argon2Options.interactive);
+      final a =
+          openSsl.argon2HashPassword('x', options: Argon2Options.interactive);
+      final b =
+          openSsl.argon2HashPassword('x', options: Argon2Options.interactive);
       expect(a, isNot(b));
       expect(openSsl.argon2VerifyPassword(a, 'x'), isTrue);
       expect(openSsl.argon2VerifyPassword(b, 'x'), isTrue);
@@ -210,8 +210,8 @@ void main() {
         length: 16,
       );
       final salt = openSsl.randomBytes(16);
-      final phc = openSsl.argon2HashPassword('abc',
-          options: options, salt: salt);
+      final phc =
+          openSsl.argon2HashPassword('abc', options: options, salt: salt);
 
       final parsed = tryParseArgon2Phc(phc)!;
       expect(parsed.options.type, Argon2Type.id);
@@ -220,6 +220,23 @@ void main() {
       expect(parsed.options.lanes, 1);
       expect(parsed.options.length, 16);
       expect(parsed.salt, salt);
+    });
+  });
+
+  group('Pure Dart backend performance', () {
+    test('a 19 MiB derivation takes milliseconds, not seconds', () {
+      // Guards against the JIT failure mode the implementation works around:
+      // Smi speculation on the 32x32-bit multiply, deoptimising at every site
+      // until the VM gives up on optimising the permutation, which turned this
+      // exact call from about 60 ms into about 15 s. The bound is generous so
+      // slow CI runners pass; the regression is two orders of magnitude.
+      final stopwatch = Stopwatch()..start();
+      openSsl.argon2HashPassword(
+        'x',
+        options: Argon2Options.interactive,
+        backend: Argon2Backend.dart,
+      );
+      expect(stopwatch.elapsedMilliseconds, lessThan(3000));
     });
   });
 

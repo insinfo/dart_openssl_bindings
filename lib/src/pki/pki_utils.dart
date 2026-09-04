@@ -5,6 +5,7 @@ import '../api/openssl_context.dart';
 import '../generated/ffi.dart';
 import '../infra/ssl_exception.dart';
 import '../x509/x509_store.dart';
+import '../utils/hex.dart';
 
 /// PKI utilities for production-grade operations.
 mixin PkiMixin on OpenSslContext {
@@ -399,13 +400,7 @@ mixin PkiMixin on OpenSslContext {
     return true;
   }
 
-  String _bytesToHex(Uint8List bytes) {
-    final buffer = StringBuffer();
-    for (final b in bytes) {
-      buffer.write(b.toRadixString(16).padLeft(2, '0'));
-    }
-    return buffer.toString();
-  }
+  String _bytesToHex(Uint8List bytes) => encodeHex(bytes);
 }
 
 final class _TimedEntry<T> {

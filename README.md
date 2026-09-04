@@ -47,11 +47,15 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
     `EvpPkey.toPublicJwk()` — sign OIDC tokens with the identity provider's JWK
     without converting it to PEM by hand. See [OIDC signing keys](#14-oidc-signing-keys-jwk).
 *   **Digests**:
-    *   One-shot: `digest(alg, bytes)`, `digestHex(alg, bytes)`, `hmac`.
+    *   One-shot: `digest`/`digestHex`, `hmac`/`hmacHex`, `sha256`/`sha256Hex`.
+        Algorithm names are OpenSSL's; `DigestAlgorithm.sha256` and friends are
+        the same names checked by the compiler.
     *   Incremental/streaming: `startDigest` (an `EvpDigest` you feed with
-        `add`/`addStream`), plus `digestStream` and `digestFile` for input that
-        does not fit in memory. See [Isolates and concurrency](#isolates-and-concurrency)
-        before using these from worker isolates.
+        `add`/`addStream`, and `copy()` to fork after a shared prefix), plus
+        `digestStream` and `digestFile` for input that does not fit in memory.
+        See [Isolates and concurrency](#isolates-and-concurrency) before using
+        these from worker isolates.
+    *   `encodeHex` / `decodeHex` for the lowercase hex most systems store.
 
 ### Secure Networking (TLS & DTLS)
 *   **Async TLS**: `SecureSocketOpenSslAsync` (API compatible with `dart:io` Socket).
@@ -93,6 +97,7 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 ### Argon2 (RFC 9106)
 *   `argon2HashPassword` / `argon2VerifyPassword` with PHC strings, and `argon2Derive` for raw key derivation.
 *   Native backend through OpenSSL's `EVP_KDF` (3.2+) with a pure Dart fallback; `hasNativeArgon2` tells which is in use.
+*   The fallback runs at about 2x the native time (64 MiB, t=3: ~350 ms against ~175 ms), so a server on OpenSSL 3.0 is not an order of magnitude off.
 
 ### WebAuthn / passkeys
 *   `sign`/`verify` route Ed25519, Ed448 and ML-DSA keys to the one-shot API automatically.
@@ -329,6 +334,15 @@ final key = openssl.argon2DeriveFromString(
 );
 ```
 
+`hasNativeArgon2` says which backend a given libcrypto gives you — it is one
+`EVP_KDF_fetch`, not a trial derivation. Debian 12 and Ubuntu 22.04/24.04 ship
+OpenSSL 3.0, so on those the Dart implementation does the work; it is about
+twice the native time rather than an order of magnitude (64 MiB, t=3, p=1:
+~350 ms against ~175 ms on a 2.3 GHz desktop core), which is what to plan the
+login path's concurrency around. `dart run script/bench_argon2.dart` — or the
+same file through `dart compile exe`, which is what a deployed server runs —
+prints the numbers for the machine at hand.
+
 ### 10. WebAuthn / passkey keys
 
 ```dart
@@ -405,6 +419,24 @@ final bytes = utf8.encode('hello') as Uint8List;
 final digest = openssl.digest('sha256', bytes);      // Uint8List
 final hex    = openssl.digestHex('sha256', bytes);   // lowercase hex
 final mac    = openssl.hmac('sha256', key, bytes);
+final macHex = openssl.hmacHex('sha256', key, bytes);
+```
+
+The algorithm is named the way OpenSSL names it. `DigestAlgorithm` carries the
+usual names as constants — it is a `String` underneath, so it goes in the same
+place, and a typo becomes a compile error instead of an `OpenSslException`:
+
+```dart
+final mac = openssl.hmac(DigestAlgorithm.sha256, key, bytes);
+final hex = openssl.digestHex(DigestAlgorithm.sha3_256, bytes);
+```
+
+`encodeHex` and `decodeHex` are the conversions behind `digestHex`, `hmacHex`
+and `sha256Hex`, exported for serials, fingerprints and stored hashes:
+
+```dart
+final stored = encodeHex(openssl.sha256(bytes));
+final same   = decodeHex(stored);   // strict: odd length or a non-hex char throws
 ```
 
 For data that does not fit in memory — an upload, an attachment, a socket —
@@ -433,6 +465,29 @@ final fromStream = await openssl.digestStream('sha256', request.read());
 final fromFile   = await openssl.digestFile('sha256', File('report.pdf'));
 ```
 
+When many inputs share a prefix, `copy()` forks the digest after the prefix so
+it is hashed once — a proof-of-work solver trying nonces against a fixed header,
+a Merkle tree, a batch of messages under one envelope. It is `EVP_MD_CTX_copy_ex`
+underneath, about the size of the hash state; the copy is its own `EvpDigest`
+and is disposed like one:
+
+```dart
+final header = openssl.startDigest('sha256')..add(headerBytes);
+try {
+  for (var nonce = 0; ; nonce++) {
+    final attempt = header.copy();
+    try {
+      attempt.add(encodeNonce(nonce));
+      if (meetsTarget(attempt.finish())) break;
+    } finally {
+      attempt.dispose();
+    }
+  }
+} finally {
+  header.dispose();
+}
+```
+
 Always `dispose()` an `EvpDigest` from a `finally`: it is what releases the
 native context when the input stream fails halfway. A digest that is garbage
 collected without it is still released by a `NativeFinalizer`, but that is a
@@ -449,7 +504,9 @@ inputs, which is the usual reason to switch. The mapping is mechanical:
 | `sha256.convert(x).toString()` | `openssl.digestHex('sha256', x)` |
 | `md5.convert(x).toString()` | `openssl.digestHex('md5', x)` |
 | `Hmac(sha256, key).convert(x).bytes` | `openssl.hmac('sha256', key, x)` |
+| `Hmac(sha256, key).convert(x).toString()` | `openssl.hmacHex('sha256', key, x)` |
 | `sha256.startChunkedConversion(AccumulatorSink<Digest>())` | `openssl.startDigest('sha256')` |
+| `hex.encode(bytes)` / `hex.decode(text)` from `package:convert` | `encodeHex(bytes)` / `decodeHex(text)` |
 | `Digest` in a signature | `Uint8List`, or `String` for hex |
 
 Two things worth knowing before converting everything:

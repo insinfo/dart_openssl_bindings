@@ -13,6 +13,8 @@ export 'src/openssl_loader.dart';
 export 'src/crypto/evp_digest.dart';
 export 'src/crypto/evp_pkey.dart';
 export 'src/crypto/jwk.dart';
+export 'src/crypto/digest_algorithm.dart';
+export 'src/utils/hex.dart';
 
 /// X.509 & PKI
 export 'src/x509/x509_certificate.dart';

@@ -13,6 +13,7 @@ import 'icp_brasil_info.dart';
 import 'icp_brasil_parser.dart';
 import '../utils/tm_windows.dart';
 import '../utils/tm_unix.dart';
+import '../utils/hex.dart';
 
 const int BIO_CTRL_PENDING = 10;
 
@@ -538,12 +539,5 @@ class X509Certificate extends SslObject<X509> {
     return String.fromCharCodes(codeUnits).trim();
   }
 
-  String _bytesToHex(Uint8List bytes) {
-    final buffer = StringBuffer();
-    for (final b in bytes) {
-      buffer.write(b.toRadixString(16).padLeft(2, '0'));
-    }
-    return buffer.toString();
-  }
-
+  String _bytesToHex(Uint8List bytes) => encodeHex(bytes);
 }

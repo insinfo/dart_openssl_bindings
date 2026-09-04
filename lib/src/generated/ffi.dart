@@ -1094,6 +1094,23 @@ class OpenSslFfi {
   late final _EVP_MD_CTX_free =
       _EVP_MD_CTX_freePtr.asFunction<void Function(ffi.Pointer<EVP_MD_CTX>)>();
 
+  int EVP_MD_CTX_copy_ex(
+    ffi.Pointer<EVP_MD_CTX> out,
+    ffi.Pointer<EVP_MD_CTX> in$,
+  ) {
+    return _EVP_MD_CTX_copy_ex(
+      out,
+      in$,
+    );
+  }
+
+  late final _EVP_MD_CTX_copy_exPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<EVP_MD_CTX>,
+              ffi.Pointer<EVP_MD_CTX>)>>('EVP_MD_CTX_copy_ex');
+  late final _EVP_MD_CTX_copy_ex = _EVP_MD_CTX_copy_exPtr.asFunction<
+      int Function(ffi.Pointer<EVP_MD_CTX>, ffi.Pointer<EVP_MD_CTX>)>();
+
   int EVP_DigestInit_ex(
     ffi.Pointer<EVP_MD_CTX> ctx,
     ffi.Pointer<EVP_MD> type,

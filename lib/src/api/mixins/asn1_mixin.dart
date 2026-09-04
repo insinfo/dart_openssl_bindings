@@ -6,6 +6,7 @@ import '../openssl_context.dart';
 import '../../infra/ssl_exception.dart';
 import '../../x509/x509_certificate.dart';
 import '../../generated/ffi.dart';
+import '../../utils/hex.dart';
 
 /// Mixin for high-level ASN.1 helpers using OpenSSL's ASN.1 APIs.
 mixin Asn1Mixin on OpenSslContext {
@@ -230,13 +231,7 @@ mixin Asn1Mixin on OpenSslContext {
     return bytes;
   }
 
-  String _bytesToHex(Uint8List bytes) {
-    final sb = StringBuffer();
-    for (final b in bytes) {
-      sb.write(b.toRadixString(16).padLeft(2, '0'));
-    }
-    return sb.toString();
-  }
+  String _bytesToHex(Uint8List bytes) => encodeHex(bytes);
 
   bool _isHex(String value) {
     for (final codeUnit in value.codeUnits) {

@@ -1,3 +1,66 @@
+## 1.2.0
+
+### Argon2: the pure Dart fallback is 4x faster
+
+On a libcrypto older than 3.2 — Debian 12 and Ubuntu 22.04/24.04 ship 3.0 —
+`argon2HashPassword` and `argon2VerifyPassword` run the Dart implementation,
+and it was 7x slower than the native one. It has been rewritten for the Dart
+VM: one flat `Uint64List` for the block memory instead of 65 536 small
+objects, the compression function on native 64-bit words instead of pairs of
+32-bit halves, the permutation unrolled over locals, and BLAKE2b on `int`
+instead of `BigInt`. The output is unchanged (RFC 9106 vectors, and it still
+agrees with OpenSSL's Argon2 byte for byte).
+
+| Argon2id | native (OpenSSL 3.6) | Dart, before | Dart, now (JIT) | Dart, now (AOT) |
+|---|---:|---:|---:|---:|
+| m=64 MiB, t=3, p=1 | 174 ms | 1383 ms | 325 ms | 370 ms |
+| m=32 MiB, t=3, p=1 | 87 ms | 683 ms | 163 ms | 182 ms |
+| m=19 MiB, t=2, p=1 | 35 ms | 276 ms | 63 ms | 74 ms |
+
+(i5-10500T, 2.3 GHz.) About 2x native is where scalar Dart tops out: the
+kernel is 64-bit adds, 32x32-bit multiplies and rotates, none of which
+`Int32x4` offers, so there is no SIMD path to take. `script/bench_argon2.dart`
+reproduces the table.
+
+One VM quirk worth knowing about, because it is the difference between 60 ms
+and 15 s: the JIT sees the two 32-bit operands of `lo32(a) * lo32(b)`, guesses
+a Smi multiply, overflows, deoptimises at each of the 32 sites — and past its
+budget stops optimising the function at all. The multiply is written as
+`((lo32(a) | 2^63) * lo32(b)) << 1`, which is the same value (the shift drops
+the extra bit) with a Mint operand the JIT never speculates on. A test pins
+the 19 MiB derivation under 3 s so that cannot silently come back.
+
+### Typed digest names
+
+`DigestAlgorithm` names the usual digests — `sha256`, `sha512`, `sha3_256`,
+`blake2b512`, `md5`, … — so a typo is a compile error rather than an
+`OpenSslException` at runtime. It is an extension type over `String`, so it
+goes wherever the API already takes an algorithm name, with nothing to
+convert: `hmac(DigestAlgorithm.sha256, key, data)`,
+`startDigest(DigestAlgorithm.sha512)`. Any other OpenSSL name still works as
+a plain string, or as `const DigestAlgorithm('whirlpool')`.
+
+### Hex in and out
+
+- **`encodeHex`** and **`decodeHex`** are exported. The encoder was already
+  what `digestHex` and `finishHex` used; it is now public for serials,
+  fingerprints and stored hashes, and the decoder is strict — odd length or a
+  non-hex character is a `FormatException`, not a silently wrong byte.
+- **`sha256Hex`** and **`hmacHex`** join `digestHex`, so no caller has to
+  convert the `Uint8List` by hand.
+
+### `EvpDigest.copy()`
+
+Forks an incremental digest: same algorithm, buffer size, byte count and
+internal state, then each side evolves on its own. It is `EVP_MD_CTX_copy_ex`,
+and exists for inputs that share a prefix — hash the header once, copy, feed
+each nonce — where re-feeding the prefix per attempt is the cost that
+dominates. The copy owns its own native resources and is disposed like any
+other `EvpDigest`; disposing either side leaves the other intact.
+
+`EVP_MD_CTX_copy_ex` is the one new FFI symbol, added to `ffigen.yaml` and
+regenerated.
+
 ## 1.1.0
 
 ### Incremental digests
