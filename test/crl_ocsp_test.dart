@@ -406,6 +406,209 @@ void main() {
       );
     });
 
+    test('Should read thisUpdate and nextUpdate from a parsed CRL', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caCert = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Test Root CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final issuerCert = caCert.sign(caKey);
+
+      // UTCTime has a one second resolution, so drop sub-second digits before
+      // comparing what comes back from the DER.
+      final thisUpdate = DateTime.now().toUtc();
+      final expectedThisUpdate = DateTime.utc(
+        thisUpdate.year,
+        thisUpdate.month,
+        thisUpdate.day,
+        thisUpdate.hour,
+        thisUpdate.minute,
+        thisUpdate.second,
+      );
+      final expectedNextUpdate =
+          expectedThisUpdate.add(const Duration(hours: 24));
+
+      final signed = (openSsl.newCrlBuilder()
+            ..setIssuerFromCertificate(issuerCert)
+            ..setUpdateTimes(
+              thisUpdate: expectedThisUpdate,
+              nextUpdate: expectedNextUpdate,
+            )
+            ..addRevokedSerial(serialNumber: 42, revocationTime: thisUpdate))
+          .sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+
+      for (final crl in [
+        openSsl.loadCrlDer(signed.toDer()),
+        openSsl.loadCrlPem(signed.toPem()),
+      ]) {
+        expect(crl.thisUpdate, equals(expectedThisUpdate));
+        expect(crl.nextUpdate, equals(expectedNextUpdate));
+        expect(crl.thisUpdate!.isUtc, isTrue);
+        expect(crl.nextUpdate!.isUtc, isTrue);
+
+        expect(crl.isExpired(), isFalse);
+        expect(
+          crl.isExpired(expectedNextUpdate.add(const Duration(seconds: 1))),
+          isTrue,
+        );
+        expect(
+          crl.isExpired(expectedNextUpdate.subtract(const Duration(hours: 1))),
+          isFalse,
+        );
+      }
+    });
+
+    test('Should report a CRL past its nextUpdate as expired', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caCert = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Test Root CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final issuerCert = caCert.sign(caKey);
+
+      final past = DateTime.utc(2020, 1, 2, 3, 4, 5);
+      final signed = (openSsl.newCrlBuilder()
+            ..setIssuerFromCertificate(issuerCert)
+            ..setUpdateTimes(
+              thisUpdate: past,
+              nextUpdate: past.add(const Duration(days: 1)),
+            ))
+          .sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+
+      final crl = openSsl.loadCrlDer(signed.toDer());
+      expect(crl.thisUpdate, equals(past));
+      expect(crl.nextUpdate, equals(DateTime.utc(2020, 1, 3, 3, 4, 5)));
+      expect(crl.isExpired(), isTrue);
+    });
+
+    test('Should read issuer, version, CRL number and delta indicator', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caCert = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Delta CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final issuerCert = caCert.sign(caKey);
+
+      final now = DateTime.now().toUtc();
+      final crlNumber = BigInt.parse('FFFFFFFFFFFFFFFFFF', radix: 16);
+      final baseNumber = BigInt.parse('FFFFFFFFFFFFFFFF00', radix: 16);
+
+      final full = (openSsl.newCrlBuilder()
+            ..setIssuerFromCertificate(issuerCert)
+            ..setUpdateTimes(
+              thisUpdate: now,
+              nextUpdate: now.add(const Duration(hours: 24)),
+            )
+            ..setCrlNumberBigInt(number: crlNumber))
+          .sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+
+      final parsedFull = openSsl.loadCrlDer(full.toDer());
+      expect(parsedFull.version, equals(2));
+      expect(parsedFull.issuer, contains('Delta CA'));
+      expect(parsedFull.issuer, equals(issuerCert.subject));
+      expect(parsedFull.crlNumber, equals(crlNumber));
+      expect(parsedFull.baseCrlNumber, isNull);
+      expect(parsedFull.isDeltaCrl, isFalse);
+
+      final delta = (openSsl.newCrlBuilder()
+            ..setIssuerFromCertificate(issuerCert)
+            ..setUpdateTimes(
+              thisUpdate: now,
+              nextUpdate: now.add(const Duration(hours: 1)),
+            )
+            ..setCrlNumberBigInt(number: crlNumber)
+            ..setDeltaCrlIndicatorBigInt(baseCrlNumber: baseNumber))
+          .sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+
+      final parsedDelta = openSsl.loadCrlDer(delta.toDer());
+      expect(parsedDelta.isDeltaCrl, isTrue);
+      expect(parsedDelta.baseCrlNumber, equals(baseNumber));
+      expect(parsedDelta.crlNumber, equals(crlNumber));
+    });
+
+    test('Should enumerate revoked entries with dates and reasons', () {
+      final caKey = openSsl.generateRsa(2048);
+      final caCert = X509CertificateBuilder(openSsl)
+        ..setSubject(commonName: 'Listing CA', organization: 'Test')
+        ..setIssuerAsSubject()
+        ..setPublicKey(caKey)
+        ..setValidity(notAfterOffset: 3600)
+        ..addBasicConstraints(isCa: true, critical: true)
+        ..addKeyUsage(keyCertSign: true, cRLSign: true, critical: true);
+      final issuerCert = caCert.sign(caKey);
+
+      final revokedAt = DateTime.utc(2024, 3, 4, 5, 6, 7);
+      final bigSerial =
+          BigInt.parse('1234567890ABCDEF1234567890ABCDEF', radix: 16);
+
+      final signed = (openSsl.newCrlBuilder()
+            ..setIssuerFromCertificate(issuerCert)
+            ..setUpdateTimes(
+              thisUpdate: revokedAt,
+              nextUpdate: revokedAt.add(const Duration(days: 1)),
+            )
+            ..addRevokedSerial(serialNumber: 7, revocationTime: revokedAt)
+            ..addRevokedSerialWithReasonBigInt(
+              serialNumber: bigSerial,
+              revocationTime: revokedAt.add(const Duration(minutes: 1)),
+              reasonCode: CrlReason.keyCompromise,
+            )
+            ..addRevokedSerialWithReason(
+              serialNumber: 8,
+              revocationTime: revokedAt,
+              reasonCode: CrlReason.unspecified,
+            ))
+          .sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+
+      final entries = openSsl.loadCrlDer(signed.toDer()).revokedEntries;
+      expect(entries, hasLength(3));
+
+      final plain = entries.firstWhere((e) => e.serialNumber == BigInt.from(7));
+      expect(plain.revocationDate, equals(revokedAt));
+      expect(plain.serialNumberDecimal, equals('7'));
+      expect(plain.serialNumberHex, equals('07'));
+      // No reason extension on this entry: RFC 5280 reads that as
+      // unspecified, and the API reports it as absent rather than as 0.
+      expect(plain.reasonCode, isNull);
+
+      // An explicit "unspecified" is a reason of 0, which is not the same as
+      // the absent extension above.
+      final explicitUnspecified =
+          entries.firstWhere((e) => e.serialNumber == BigInt.from(8));
+      expect(explicitUnspecified.reasonCode, equals(CrlReason.unspecified));
+      expect(explicitUnspecified.reasonCode, isNotNull);
+
+      final withReason = entries.firstWhere((e) => e.serialNumber == bigSerial);
+      expect(withReason.reasonCode, equals(CrlReason.keyCompromise));
+      expect(
+        withReason.revocationDate,
+        equals(revokedAt.add(const Duration(minutes: 1))),
+      );
+      expect(
+        withReason.serialNumberHex,
+        equals('1234567890ABCDEF1234567890ABCDEF'),
+      );
+
+      // An empty CRL lists nothing instead of failing.
+      final empty = (openSsl.newCrlBuilder()
+            ..setIssuerFromCertificate(issuerCert)
+            ..setUpdateTimes(
+              thisUpdate: revokedAt,
+              nextUpdate: revokedAt.add(const Duration(days: 1)),
+            ))
+          .sign(issuerKey: caKey, hashAlgorithm: 'SHA256');
+      expect(openSsl.loadCrlDer(empty.toDer()).revokedEntries, isEmpty);
+    });
+
     test('Should read OCSP and CRL URLs from certificate extensions', () {
       final key = openSsl.generateRsa(2048);
       const ocspUrl = 'https://example.test/ocsp';

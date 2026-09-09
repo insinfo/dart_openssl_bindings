@@ -1,5 +1,4 @@
 import 'dart:ffi';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
@@ -7,8 +6,7 @@ import 'package:ffi/ffi.dart';
 import '../api/openssl.dart';
 import '../generated/ffi.dart';
 import '../infra/ssl_exception.dart';
-import '../utils/tm_unix.dart';
-import '../utils/tm_windows.dart';
+import '../utils/asn1_time.dart';
 import 'ocsp_response_builder.dart';
 
 /// Parsed OCSP status for a single certificate in a response.
@@ -292,41 +290,7 @@ class OcspClient {
     }
   }
 
-  int _tmNativeBytes() {
-    if (Platform.isWindows) return sizeOf<TmWindows>();
-    return sizeOf<TmUnix>();
-  }
-
-  Pointer<tm> _allocTmCompat() {
-    final raw = calloc<Uint8>(_tmNativeBytes());
-    return raw.cast<tm>();
-  }
-
-  void _freeTmCompat(Pointer<tm> tmPtr) {
-    calloc.free(tmPtr.cast<Uint8>());
-  }
-
   DateTime? _parseGeneralizedTime(Pointer<ASN1_GENERALIZEDTIME> ptr) {
-    if (ptr == nullptr) return null;
-    final tmPtr = _allocTmCompat();
-    try {
-      final ok = _context.bindings.ASN1_TIME_to_tm(
-        ptr.cast<ASN1_TIME>(),
-        tmPtr,
-      );
-      if (ok != 1) return null;
-
-      final t = tmPtr.ref;
-      return DateTime.utc(
-        t.tm_year + 1900,
-        t.tm_mon + 1,
-        t.tm_mday,
-        t.tm_hour,
-        t.tm_min,
-        t.tm_sec,
-      );
-    } finally {
-      _freeTmCompat(tmPtr);
-    }
+    return parseAsn1Time(_context.bindings, ptr.cast<ASN1_TIME>());
   }
 }

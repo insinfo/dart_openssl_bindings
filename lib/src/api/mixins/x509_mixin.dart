@@ -8,6 +8,8 @@ import '../../x509/x509_certificate.dart';
 import '../../x509/x509_builder.dart';
 import '../../x509/x509_crl.dart';
 import '../../x509/x509_crl_builder.dart';
+import '../../x509/x509_request.dart';
+import '../../x509/x509_request_builder.dart';
 import 'bio_mixin.dart';
 
 /// Mixin for X509 Certificate operations.
@@ -21,6 +23,11 @@ mixin X509Mixin on OpenSslContext, BioMixin {
   /// Creates a new Builder for creating and signing X509 CRLs.
   X509CrlBuilder newCrlBuilder() {
     return X509CrlBuilder(this as OpenSSL);
+  }
+
+  /// Creates a new Builder for creating and signing CSRs.
+  X509RequestBuilder newCsrBuilder() {
+    return X509RequestBuilder(this as OpenSSL);
   }
 
   /// Loads an X509 Certificate from PEM string.
@@ -106,6 +113,49 @@ mixin X509Mixin on OpenSslContext, BioMixin {
       return loadCrlPem(String.fromCharCodes(bytes));
     }
     return loadCrlDer(bytes);
+  }
+
+  /// Loads a CSR (PKCS#10) from PEM string.
+  X509Request loadCsrPem(String pem) {
+    final bio = createBioFromString(pem);
+    try {
+      final req =
+          bindings.PEM_read_bio_X509_REQ(bio, nullptr, nullptr, nullptr);
+      if (req == nullptr) {
+        throw OpenSslException('Failed to read CSR from PEM');
+      }
+      return X509Request(req, this as dynamic);
+    } finally {
+      freeBio(bio);
+    }
+  }
+
+  /// Loads a CSR (PKCS#10) from DER bytes.
+  X509Request loadCsrDer(Uint8List der) {
+    final dataPtr = calloc<Uint8>(der.length);
+    dataPtr.asTypedList(der.length).setAll(0, der);
+
+    final inOutPtr = calloc<Pointer<UnsignedChar>>();
+    inOutPtr.value = dataPtr.cast<UnsignedChar>();
+
+    try {
+      final req = bindings.d2i_X509_REQ(nullptr, inOutPtr, der.length);
+      if (req == nullptr) {
+        throw OpenSslException('Failed to read CSR from DER');
+      }
+      return X509Request(req, this as dynamic);
+    } finally {
+      calloc.free(inOutPtr);
+      calloc.free(dataPtr);
+    }
+  }
+
+  /// Loads a CSR from bytes (auto-detect PEM vs DER).
+  X509Request loadCsrBytes(Uint8List bytes) {
+    if (_looksLikeCsrPem(bytes)) {
+      return loadCsrPem(String.fromCharCodes(bytes));
+    }
+    return loadCsrDer(bytes);
   }
 
   /// Encodes an X509 Certificate to DER bytes.
@@ -195,6 +245,12 @@ mixin X509Mixin on OpenSslContext, BioMixin {
     final text = String.fromCharCodes(bytes);
     return text.contains('-----BEGIN X509 CRL-----') ||
         text.contains('-----BEGIN CRL-----');
+  }
+
+  bool _looksLikeCsrPem(Uint8List bytes) {
+    final text = String.fromCharCodes(bytes);
+    return text.contains('-----BEGIN CERTIFICATE REQUEST-----') ||
+        text.contains('-----BEGIN NEW CERTIFICATE REQUEST-----');
   }
 
   /// Creates a new empty X509 Certificate structure.

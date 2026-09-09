@@ -1,3 +1,103 @@
+## 1.3.0
+
+### A loaded CRL is now readable, not just queryable
+
+`X509Crl` could say whether a serial was revoked and nothing else: for how long
+that answer was good, who issued the CRL, which entries it carried — all of that
+was in the DER and nowhere in the API. It is now read straight from the
+structure.
+
+```dart
+final crl = openSsl.loadCrlBytes(bytes);
+
+print('${crl.issuer} #${crl.crlNumber}');   // issuer DN and CRL number
+print(crl.thisUpdate);                      // when the CA issued it
+print(crl.nextUpdate);                      // when the next one is due
+if (crl.isDeltaCrl) print(crl.baseCrlNumber);
+
+for (final entry in crl.revokedEntries) {
+  print('${entry.serialNumberHex} at ${entry.revocationDate} '
+      'reason ${entry.reasonCode}');
+}
+```
+
+**`nextUpdate` is optional in RFC 5280, and this API keeps that distinction.**
+`null` means the CRL states no expiry — *not* that it has expired — and
+`isExpired()` returns `false` for such a CRL rather than treating an absent
+field as an expired one. `isExpired([reference])` takes the instant to validate
+at: pass the moment a signature was made to judge the CRL as it stood then, omit
+it to check against now.
+
+```dart
+crl.isExpired();                 // stale as of right now?
+crl.isExpired(signedAt);         // was it still current when this was signed?
+```
+
+Entry reasons follow the same rule: `X509RevokedEntry.reasonCode` is `null` when
+the entry carries no reason extension, which RFC 5280 reads as `unspecified` —
+distinct from an entry that explicitly says `CrlReason.unspecified` (0).
+Serials are `BigInt`, with `serialNumberHex` and `serialNumberDecimal` for the
+forms CAs print, so a 128-bit serial survives intact. `version` reports 1 or 2,
+counting the way people do, not the zero-based encoded value.
+
+### CSRs can be loaded and inspected
+
+A CSR could be built and signed, but never read back: `X509Request` had exactly
+one method, `toPem()`. It now round-trips.
+
+```dart
+final csr = openSsl.loadCsrBytes(bytes);   // or loadCsrPem / loadCsrDer
+print(csr.subject);
+print(csr.version);
+if (!csr.verifySignature()) {
+  // The CSR does not prove possession of its own private key — reject it
+  // before issuing anything.
+}
+```
+
+`toDer()`, `publicKey` and `openSsl.newCsrBuilder()` round out the type, the
+last one matching `newCertificateBuilder()` and `newCrlBuilder()`.
+
+### Subject Alternative Names, in both directions
+
+The builder could only write `otherName` SANs (the ICP-Brasil case), and a
+loaded certificate exposed none of the SAN at all. Both sides are filled in:
+
+```dart
+builder.addSubjectAltNames(
+  dnsNames: ['example.test', 'www.example.test'],
+  ipAddresses: ['192.0.2.10', '2001:db8::1'],
+);
+
+cert.dnsNames;                   // ['example.test', 'www.example.test']
+cert.ipAddresses;                // ['192.0.2.10', '2001:db8::1']
+cert.emailAddresses;
+cert.subjectAltNameUris;
+cert.subjectAltNameOtherNames;   // by OID, what icpBrasilInfo parses
+cert.certificatePolicyOids;
+```
+
+This is what a TLS certificate needs — clients match the host against the SAN,
+not the CN. Values go through OpenSSL's configuration syntax, which separates
+entries by comma, so a value containing one is rejected with an `ArgumentError`
+instead of being silently split into two names.
+
+### Bindings and internals
+
+New symbols in `ffigen.yaml`: `X509_CRL_get0_lastUpdate`,
+`X509_CRL_get0_nextUpdate`, `X509_CRL_get_issuer`, `X509_CRL_get_version`,
+`X509_CRL_get_REVOKED`, `X509_CRL_get_ext_d2i`,
+`X509_REVOKED_get0_serialNumber`, `X509_REVOKED_get0_revocationDate`,
+`X509_REVOKED_get_ext_d2i`, `ASN1_ENUMERATED_get`, `PEM_read_bio_X509_REQ`,
+`d2i_X509_REQ` and `i2d_X509_REQ`. Until now only the builders' write-side
+counterparts were bound, so reading these fields meant parsing the DER by hand.
+
+The `ASN1_TIME` to `DateTime` conversion behind
+`X509Certificate.notBefore`/`notAfter` and the `X509_NAME` to DN string
+formatting behind `subject`/`issuer` moved to shared internal helpers, now used
+by the certificate, CRL, CSR and OCSP paths alike. Existing accessors parse and
+format exactly as before.
+
 ## 1.2.0
 
 ### Argon2: the pure Dart fallback is 4x faster

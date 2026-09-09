@@ -896,6 +896,20 @@ class OpenSslFfi {
   late final _ASN1_ENUMERATED_set = _ASN1_ENUMERATED_setPtr.asFunction<
       int Function(ffi.Pointer<ASN1_ENUMERATED>, int)>();
 
+  int ASN1_ENUMERATED_get(
+    ffi.Pointer<ASN1_ENUMERATED> a,
+  ) {
+    return _ASN1_ENUMERATED_get(
+      a,
+    );
+  }
+
+  late final _ASN1_ENUMERATED_getPtr = _lookup<
+          ffi.NativeFunction<ffi.Long Function(ffi.Pointer<ASN1_ENUMERATED>)>>(
+      'ASN1_ENUMERATED_get');
+  late final _ASN1_ENUMERATED_get = _ASN1_ENUMERATED_getPtr.asFunction<
+      int Function(ffi.Pointer<ASN1_ENUMERATED>)>();
+
   int ASN1_GENERALIZEDTIME_print(
     ffi.Pointer<BIO> fp,
     ffi.Pointer<ASN1_GENERALIZEDTIME> a,
@@ -3021,6 +3035,46 @@ class OpenSslFfi {
   late final _X509_REQ_free =
       _X509_REQ_freePtr.asFunction<void Function(ffi.Pointer<X509_REQ>)>();
 
+  ffi.Pointer<X509_REQ> d2i_X509_REQ(
+    ffi.Pointer<ffi.Pointer<X509_REQ>> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> in$,
+    int len,
+  ) {
+    return _d2i_X509_REQ(
+      a,
+      in$,
+      len,
+    );
+  }
+
+  late final _d2i_X509_REQPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<X509_REQ> Function(
+              ffi.Pointer<ffi.Pointer<X509_REQ>>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>,
+              ffi.Long)>>('d2i_X509_REQ');
+  late final _d2i_X509_REQ = _d2i_X509_REQPtr.asFunction<
+      ffi.Pointer<X509_REQ> Function(ffi.Pointer<ffi.Pointer<X509_REQ>>,
+          ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>, int)>();
+
+  int i2d_X509_REQ(
+    ffi.Pointer<X509_REQ> a,
+    ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>> out,
+  ) {
+    return _i2d_X509_REQ(
+      a,
+      out,
+    );
+  }
+
+  late final _i2d_X509_REQPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<X509_REQ>,
+              ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>>('i2d_X509_REQ');
+  late final _i2d_X509_REQ = _i2d_X509_REQPtr.asFunction<
+      int Function(
+          ffi.Pointer<X509_REQ>, ffi.Pointer<ffi.Pointer<ffi.UnsignedChar>>)>();
+
   void X509_EXTENSION_free(
     ffi.Pointer<X509_EXTENSION> a,
   ) {
@@ -3670,6 +3724,96 @@ class OpenSslFfi {
   late final _X509_CRL_sort =
       _X509_CRL_sortPtr.asFunction<int Function(ffi.Pointer<X509_CRL>)>();
 
+  int X509_CRL_get_version(
+    ffi.Pointer<X509_CRL> crl,
+  ) {
+    return _X509_CRL_get_version(
+      crl,
+    );
+  }
+
+  late final _X509_CRL_get_versionPtr =
+      _lookup<ffi.NativeFunction<ffi.Long Function(ffi.Pointer<X509_CRL>)>>(
+          'X509_CRL_get_version');
+  late final _X509_CRL_get_version = _X509_CRL_get_versionPtr.asFunction<
+      int Function(ffi.Pointer<X509_CRL>)>();
+
+  ffi.Pointer<ASN1_TIME> X509_CRL_get0_lastUpdate(
+    ffi.Pointer<X509_CRL> crl,
+  ) {
+    return _X509_CRL_get0_lastUpdate(
+      crl,
+    );
+  }
+
+  late final _X509_CRL_get0_lastUpdatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_TIME> Function(
+              ffi.Pointer<X509_CRL>)>>('X509_CRL_get0_lastUpdate');
+  late final _X509_CRL_get0_lastUpdate = _X509_CRL_get0_lastUpdatePtr
+      .asFunction<ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<X509_CRL>)>();
+
+  ffi.Pointer<ASN1_TIME> X509_CRL_get0_nextUpdate(
+    ffi.Pointer<X509_CRL> crl,
+  ) {
+    return _X509_CRL_get0_nextUpdate(
+      crl,
+    );
+  }
+
+  late final _X509_CRL_get0_nextUpdatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_TIME> Function(
+              ffi.Pointer<X509_CRL>)>>('X509_CRL_get0_nextUpdate');
+  late final _X509_CRL_get0_nextUpdate = _X509_CRL_get0_nextUpdatePtr
+      .asFunction<ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<X509_CRL>)>();
+
+  ffi.Pointer<X509_NAME> X509_CRL_get_issuer(
+    ffi.Pointer<X509_CRL> crl,
+  ) {
+    return _X509_CRL_get_issuer(
+      crl,
+    );
+  }
+
+  late final _X509_CRL_get_issuerPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<X509_NAME> Function(
+              ffi.Pointer<X509_CRL>)>>('X509_CRL_get_issuer');
+  late final _X509_CRL_get_issuer = _X509_CRL_get_issuerPtr.asFunction<
+      ffi.Pointer<X509_NAME> Function(ffi.Pointer<X509_CRL>)>();
+
+  ffi.Pointer<stack_st_X509_REVOKED> X509_CRL_get_REVOKED(
+    ffi.Pointer<X509_CRL> crl,
+  ) {
+    return _X509_CRL_get_REVOKED(
+      crl,
+    );
+  }
+
+  late final _X509_CRL_get_REVOKEDPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<stack_st_X509_REVOKED> Function(
+              ffi.Pointer<X509_CRL>)>>('X509_CRL_get_REVOKED');
+  late final _X509_CRL_get_REVOKED = _X509_CRL_get_REVOKEDPtr.asFunction<
+      ffi.Pointer<stack_st_X509_REVOKED> Function(ffi.Pointer<X509_CRL>)>();
+
+  ffi.Pointer<ASN1_INTEGER> X509_REVOKED_get0_serialNumber(
+    ffi.Pointer<X509_REVOKED> x,
+  ) {
+    return _X509_REVOKED_get0_serialNumber(
+      x,
+    );
+  }
+
+  late final _X509_REVOKED_get0_serialNumberPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_INTEGER> Function(
+              ffi.Pointer<X509_REVOKED>)>>('X509_REVOKED_get0_serialNumber');
+  late final _X509_REVOKED_get0_serialNumber =
+      _X509_REVOKED_get0_serialNumberPtr.asFunction<
+          ffi.Pointer<ASN1_INTEGER> Function(ffi.Pointer<X509_REVOKED>)>();
+
   int X509_REVOKED_set_serialNumber(
     ffi.Pointer<X509_REVOKED> x,
     ffi.Pointer<ASN1_INTEGER> serial,
@@ -3687,6 +3831,22 @@ class OpenSslFfi {
   late final _X509_REVOKED_set_serialNumber =
       _X509_REVOKED_set_serialNumberPtr.asFunction<
           int Function(ffi.Pointer<X509_REVOKED>, ffi.Pointer<ASN1_INTEGER>)>();
+
+  ffi.Pointer<ASN1_TIME> X509_REVOKED_get0_revocationDate(
+    ffi.Pointer<X509_REVOKED> x,
+  ) {
+    return _X509_REVOKED_get0_revocationDate(
+      x,
+    );
+  }
+
+  late final _X509_REVOKED_get0_revocationDatePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ASN1_TIME> Function(
+              ffi.Pointer<X509_REVOKED>)>>('X509_REVOKED_get0_revocationDate');
+  late final _X509_REVOKED_get0_revocationDate =
+      _X509_REVOKED_get0_revocationDatePtr.asFunction<
+          ffi.Pointer<ASN1_TIME> Function(ffi.Pointer<X509_REVOKED>)>();
 
   int X509_REVOKED_set_revocationDate(
     ffi.Pointer<X509_REVOKED> r,
@@ -3892,6 +4052,31 @@ class OpenSslFfi {
   late final _X509_CRL_add_ext = _X509_CRL_add_extPtr.asFunction<
       int Function(ffi.Pointer<X509_CRL>, ffi.Pointer<X509_EXTENSION>, int)>();
 
+  ffi.Pointer<ffi.Void> X509_CRL_get_ext_d2i(
+    ffi.Pointer<X509_CRL> x,
+    int nid,
+    ffi.Pointer<ffi.Int> crit,
+    ffi.Pointer<ffi.Int> idx,
+  ) {
+    return _X509_CRL_get_ext_d2i(
+      x,
+      nid,
+      crit,
+      idx,
+    );
+  }
+
+  late final _X509_CRL_get_ext_d2iPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Void> Function(
+              ffi.Pointer<X509_CRL>,
+              ffi.Int,
+              ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Int>)>>('X509_CRL_get_ext_d2i');
+  late final _X509_CRL_get_ext_d2i = _X509_CRL_get_ext_d2iPtr.asFunction<
+      ffi.Pointer<ffi.Void> Function(ffi.Pointer<X509_CRL>, int,
+          ffi.Pointer<ffi.Int>, ffi.Pointer<ffi.Int>)>();
+
   int X509_CRL_add1_ext_i2d(
     ffi.Pointer<X509_CRL> x,
     int nid,
@@ -3919,6 +4104,32 @@ class OpenSslFfi {
   late final _X509_CRL_add1_ext_i2d = _X509_CRL_add1_ext_i2dPtr.asFunction<
       int Function(
           ffi.Pointer<X509_CRL>, int, ffi.Pointer<ffi.Void>, int, int)>();
+
+  ffi.Pointer<ffi.Void> X509_REVOKED_get_ext_d2i(
+    ffi.Pointer<X509_REVOKED> x,
+    int nid,
+    ffi.Pointer<ffi.Int> crit,
+    ffi.Pointer<ffi.Int> idx,
+  ) {
+    return _X509_REVOKED_get_ext_d2i(
+      x,
+      nid,
+      crit,
+      idx,
+    );
+  }
+
+  late final _X509_REVOKED_get_ext_d2iPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<ffi.Void> Function(
+              ffi.Pointer<X509_REVOKED>,
+              ffi.Int,
+              ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Int>)>>('X509_REVOKED_get_ext_d2i');
+  late final _X509_REVOKED_get_ext_d2i =
+      _X509_REVOKED_get_ext_d2iPtr.asFunction<
+          ffi.Pointer<ffi.Void> Function(ffi.Pointer<X509_REVOKED>, int,
+              ffi.Pointer<ffi.Int>, ffi.Pointer<ffi.Int>)>();
 
   int X509_REVOKED_add1_ext_i2d(
     ffi.Pointer<X509_REVOKED> x,
@@ -4051,6 +4262,34 @@ class OpenSslFfi {
               ffi.Pointer<BIO>, ffi.Pointer<X509>)>>('PEM_write_bio_X509');
   late final _PEM_write_bio_X509 = _PEM_write_bio_X509Ptr.asFunction<
       int Function(ffi.Pointer<BIO>, ffi.Pointer<X509>)>();
+
+  ffi.Pointer<X509_REQ> PEM_read_bio_X509_REQ(
+    ffi.Pointer<BIO> out,
+    ffi.Pointer<ffi.Pointer<X509_REQ>> x,
+    ffi.Pointer<pem_password_cb> cb,
+    ffi.Pointer<ffi.Void> u,
+  ) {
+    return _PEM_read_bio_X509_REQ(
+      out,
+      x,
+      cb,
+      u,
+    );
+  }
+
+  late final _PEM_read_bio_X509_REQPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<X509_REQ> Function(
+              ffi.Pointer<BIO>,
+              ffi.Pointer<ffi.Pointer<X509_REQ>>,
+              ffi.Pointer<pem_password_cb>,
+              ffi.Pointer<ffi.Void>)>>('PEM_read_bio_X509_REQ');
+  late final _PEM_read_bio_X509_REQ = _PEM_read_bio_X509_REQPtr.asFunction<
+      ffi.Pointer<X509_REQ> Function(
+          ffi.Pointer<BIO>,
+          ffi.Pointer<ffi.Pointer<X509_REQ>>,
+          ffi.Pointer<pem_password_cb>,
+          ffi.Pointer<ffi.Void>)>();
 
   int PEM_write_bio_X509_REQ(
     ffi.Pointer<BIO> out,

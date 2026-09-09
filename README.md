@@ -16,11 +16,19 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 
 ### X.509 & PKI
 *   **Complete Parsing**: Read Version, Serial, Validity (`notBefore`, `notAfter`), Subject, and Issuer.
+*   **Subject Alternative Names**: `dnsNames`, `emailAddresses`, `ipAddresses`,
+    `subjectAltNameUris` and `subjectAltNameOtherNames` on a loaded certificate,
+    plus `certificatePolicyOids`.
+*   **CSRs round-trip**: `loadCsrPem` / `loadCsrDer` / `loadCsrBytes`, then read
+    `subject`, `version`, `publicKey`, `toDer()` and check the proof of possession
+    with `verifySignature()`.
 *   **Large Serial Support (ASN.1/BN)**:
   *   `x509GetSerialBytes`, `x509GetSerialHex`, `x509GetSerialDecimal`.
   *   `asn1IntegerToHex`, `asn1IntegerToDecimal`, `asn1IntegerFromHex`.
 *   **Fluent Builders**:
-    *   `X509CertificateBuilder`: Create Self-Signed or CA-Signed certificates.
+    *   `X509CertificateBuilder`: Create Self-Signed or CA-Signed certificates,
+        including `addSubjectAltNames` for the DNS/e-mail/IP/URI names TLS clients
+        match against.
     *   `X509RequestBuilder`: Generate CSRs (Certificate Signing Requests).
   *   `X509CrlBuilder`: Generate and sign CRLs directly via FFI.
 *   **Formats**: Full support for PEM and DER.
@@ -64,6 +72,15 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
 
 ### CRL & OCSP (New)
 *   `X509Crl` and `X509CrlBuilder`: Generate and sign CRLs without invoking the OpenSSL executable.
+*   **Reading a loaded CRL**: `issuer`, `version`, `crlNumber`, `baseCrlNumber` /
+    `isDeltaCrl`, `thisUpdate` / `nextUpdate`, and `revokedEntries` (serial number,
+    revocation date and reason code per entry).
+    *   `nextUpdate` is **optional** in RFC 5280. `null` means the CRL states no expiry —
+        not that it expired — and `isExpired()` returns `false` for those rather than
+        treating an absent field as expired. A `null` `thisUpdate` only happens when
+        OpenSSL cannot parse the field.
+    *   `isExpired([reference])` takes the instant to validate at: pass the moment a
+        signature was made to check the CRL as it stood then, omit it to check against now.
 *   `OcspResponseBuilder` and `OcspMixin`: Build DER OCSP responses via FFI.
 *   `PkiMixin` cache helpers: `getCachedCrl`/`putCachedCrl` and `getCachedOcsp`/`putCachedOcsp` (TTL-based).
 

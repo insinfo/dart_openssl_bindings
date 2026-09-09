@@ -364,6 +364,52 @@ class X509CertificateBuilder implements Finalizable {
     _addExtensionByName('subjectAltName', parts);
   }
 
+  /// Adds Subject Alternative Names (2.5.29.17) of the common types.
+  ///
+  /// This is what a TLS certificate needs: clients match the host against the
+  /// SAN entries, not against the CN. Names of every listed type end up in a
+  /// single extension, in the order dNSName, rfc822Name, iPAddress, URI.
+  ///
+  /// Values travel through OpenSSL's configuration syntax, which separates
+  /// entries by comma, so a value containing one is rejected instead of being
+  /// silently split in two.
+  void addSubjectAltNames({
+    List<String> dnsNames = const [],
+    List<String> emailAddresses = const [],
+    List<String> ipAddresses = const [],
+    List<String> uris = const [],
+    bool critical = false,
+  }) {
+    _ensureUsable();
+
+    final entries = <String>[
+      ...dnsNames.map((v) => 'DNS:${_checkSanValue(v, 'dnsNames')}'),
+      ...emailAddresses
+          .map((v) => 'email:${_checkSanValue(v, 'emailAddresses')}'),
+      ...ipAddresses.map((v) => 'IP:${_checkSanValue(v, 'ipAddresses')}'),
+      ...uris.map((v) => 'URI:${_checkSanValue(v, 'uris')}'),
+    ];
+    if (entries.isEmpty) return;
+
+    final parts = [if (critical) 'critical', ...entries].join(',');
+    _addExtensionByName('subjectAltName', parts);
+  }
+
+  String _checkSanValue(String value, String field) {
+    final normalized = value.trim();
+    if (normalized.isEmpty) {
+      throw ArgumentError.value(value, field, 'SAN value cannot be empty');
+    }
+    if (normalized.contains(',')) {
+      throw ArgumentError.value(
+        value,
+        field,
+        'SAN value cannot contain a comma',
+      );
+    }
+    return normalized;
+  }
+
   /// Adds CRL Distribution Points URLs.
   void addCrlDistributionPoints(List<String> urls) {
     _ensureUsable();

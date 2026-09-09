@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ffi';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import '../generated/ffi.dart';
@@ -11,9 +10,10 @@ import '../crypto/evp_pkey.dart';
 
 import 'icp_brasil_info.dart';
 import 'icp_brasil_parser.dart';
-import '../utils/tm_windows.dart';
-import '../utils/tm_unix.dart';
+import '../utils/asn1_time.dart';
 import '../utils/hex.dart';
+import '../utils/ip_text.dart';
+import '../utils/x509_name_text.dart';
 
 const int BIO_CTRL_PENDING = 10;
 
@@ -80,43 +80,14 @@ class X509Certificate extends SslObject<X509> {
   String get subject {
     final namePtr = _context.bindings.X509_get_subject_name(handle);
     if (namePtr == nullptr) return '';
-    return _x509NameToString(namePtr);
+    return x509NameToString(_context.bindings, namePtr);
   }
 
   /// Gets the Issuer DN as a string.
   String get issuer {
     final namePtr = _context.bindings.X509_get_issuer_name(handle);
     if (namePtr == nullptr) return '';
-    return _x509NameToString(namePtr);
-  }
-
-  String _x509NameToString(Pointer<X509_NAME> namePtr) {
-    if (namePtr == nullptr) return '';
-
-    final bio = _context.bindings.BIO_new(_context.bindings.BIO_s_mem());
-    if (bio == nullptr) return '';
-
-    try {
-      // XN_FLAG_RFC2253 (0) -> C=BR,O=... (comma separated)
-      // XN_FLAG_ONELINE (~0) ?
-      // Use XN_FLAG_SEP_COMMA_PLUS (0x10000) | XN_FLAG_DN_REV (0x2000000) for RFC2253-like
-      // Let's use simple RFC2253 format which is standard
-      _context.bindings.X509_NAME_print_ex(
-          bio, namePtr, 0, 0); // 0 indent, 0 flags (RFC2253?)
-
-      final len = _context.bindings.BIO_ctrl(bio, BIO_CTRL_PENDING, 0, nullptr);
-      if (len <= 0) return '';
-
-      final buffer = calloc<Uint8>(len + 1);
-      try {
-        _context.bindings.BIO_read(bio, buffer.cast(), len);
-        return buffer.cast<Utf8>().toDartString(length: len);
-      } finally {
-        calloc.free(buffer);
-      }
-    } finally {
-      _context.bindings.BIO_free(bio);
-    }
+    return x509NameToString(_context.bindings, namePtr);
   }
 
   /// Public key of the certificate.
@@ -164,64 +135,13 @@ class X509Certificate extends SslObject<X509> {
   /// Valid NotBefore date (Start Date).
   DateTime? get notBefore {
     final timePtr = _context.bindings.X509_getm_notBefore(handle);
-    return _parseAsn1Time(timePtr);
+    return parseAsn1Time(_context.bindings, timePtr);
   }
 
   /// Valid NotAfter date (End Date).
   DateTime? get notAfter {
     final timePtr = _context.bindings.X509_getm_notAfter(handle);
-    return _parseAsn1Time(timePtr);
-  }
-
-  /// Calculates the native size of struct tm for proper allocation.
-  /// Windows (MSVCRT): 36 bytes (9 int fields)
-  /// Unix/Linux (glibc): 56 bytes (9 ints + long tm_gmtoff + char* tm_zone)
-  int _tmNativeBytes() {
-    if (Platform.isWindows) return sizeOf<TmWindows>();
-    return sizeOf<TmUnix>();
-  }
-
-  /// Allocates a buffer large enough for struct tm on all platforms.
-  Pointer<tm> _allocTmCompat() {
-    final bytes = _tmNativeBytes();
-    final raw = calloc<Uint8>(bytes);
-    return raw.cast<tm>();
-  }
-
-  /// Frees the buffer allocated by _allocTmCompat.
-  void _freeTmCompat(Pointer<tm> tmPtr) {
-    calloc.free(tmPtr.cast<Uint8>());
-  }
-
-  DateTime? _parseAsn1Time(Pointer<ASN1_TIME> timePtr) {
-    if (timePtr == nullptr) return null;
-
-    // Allocate a buffer large enough for struct tm on all platforms.
-    // Windows (MSVCRT): 36 bytes (9 int fields)
-    // Unix/Linux (glibc): ~56 bytes (9 fields + tm_gmtoff + tm_zone)
-    // We calculate the size dynamically and cast to Pointer<tm> for OpenSSL.
-    final tmPtr = _allocTmCompat();
-    try {
-      final success = _context.bindings.ASN1_TIME_to_tm(timePtr, tmPtr);
-      if (success != 1) return null;
-
-      final t = tmPtr.ref;
-      // tm_year is years since 1900
-      final year = t.tm_year + 1900;
-      // tm_mon is 0-11
-      final month = t.tm_mon + 1;
-
-      return DateTime.utc(
-        year,
-        month,
-        t.tm_mday,
-        t.tm_hour,
-        t.tm_min,
-        t.tm_sec,
-      );
-    } finally {
-      _freeTmCompat(tmPtr);
-    }
+    return parseAsn1Time(_context.bindings, timePtr);
   }
 
   /// Extracts ICP-Brasil fields (name, CPF/CNPJ, birth date, policies) from
@@ -272,12 +192,94 @@ class X509Certificate extends SslObject<X509> {
   /// CRL distribution point URLs from CRL Distribution Points extension.
   List<String> get crlDistributionPointUrls => _getCrlDistributionPointUrls();
 
+  /// dNSName entries of the Subject Alternative Name extension (2.5.29.17).
+  ///
+  /// Empty when the certificate has no SAN extension or no name of this type.
+  List<String> get dnsNames => _sanIa5Strings(_genDns);
+
+  /// rfc822Name (e-mail) entries of the Subject Alternative Name extension.
+  List<String> get emailAddresses => _sanIa5Strings(_genEmail);
+
+  /// uniformResourceIdentifier entries of the Subject Alternative Name
+  /// extension. This is the SAN, not the CRL distribution points — those are
+  /// [crlDistributionPointUrls].
+  List<String> get subjectAltNameUris => _sanIa5Strings(_genUri);
+
+  /// iPAddress entries of the Subject Alternative Name extension, as text.
+  List<String> get ipAddresses {
+    return _mapSubjectAltNames(_genIpAdd, (generalName) {
+      final octets = generalName.ref.d.iPAddress;
+      if (octets == nullptr) return null;
+
+      final len = _context.bindings.ASN1_STRING_length(octets.cast());
+      final data = _context.bindings.ASN1_STRING_get0_data(octets.cast());
+      if (len <= 0 || data == nullptr) return null;
+
+      return ipBytesToText(
+        Uint8List.fromList(data.cast<Uint8>().asTypedList(len)),
+      );
+    });
+  }
+
+  /// otherName entries of the Subject Alternative Name extension, keyed by
+  /// OID. ICP-Brasil certificates carry their person and company data here;
+  /// [icpBrasilInfo] parses those into typed fields.
+  Map<String, String> get subjectAltNameOtherNames =>
+      _getSubjectAltNameOtherNames();
+
+  /// Policy OIDs of the Certificate Policies extension (2.5.29.32).
+  List<String> get certificatePolicyOids => _getCertificatePolicyOids();
+
+  List<String> _sanIa5Strings(int type) {
+    return _mapSubjectAltNames(type, (generalName) {
+      final value = generalName.ref.d.ia5;
+      if (value == nullptr) return null;
+      return _asn1StringToString(value.cast<ASN1_STRING>());
+    });
+  }
+
+  /// Walks the SAN extension and collects what [read] returns for every entry
+  /// of [type], skipping the ones it maps to `null` or to an empty string.
+  List<String> _mapSubjectAltNames(
+    int type,
+    String? Function(Pointer<GENERAL_NAME> generalName) read,
+  ) {
+    final nid = _objTxtToNid(_oidSubjectAltName);
+    if (nid == 0) return const [];
+
+    final namesPtr =
+        _context.bindings.X509_get_ext_d2i(handle, nid, nullptr, nullptr);
+    if (namesPtr == nullptr) return const [];
+
+    final names = namesPtr.cast<GENERAL_NAMES>();
+    final result = <String>[];
+    try {
+      final count = _context.bindings.OPENSSL_sk_num(names.cast());
+      for (var i = 0; i < count; i++) {
+        final value = _context.bindings.OPENSSL_sk_value(names.cast(), i);
+        if (value == nullptr) continue;
+
+        final generalName = value.cast<GENERAL_NAME>();
+        if (generalName.ref.type != type) continue;
+
+        final text = read(generalName);
+        if (text != null && text.isNotEmpty) result.add(text);
+      }
+    } finally {
+      _context.bindings.GENERAL_NAMES_free(names);
+    }
+    return result;
+  }
+
   static const String _oidSubjectAltName = '2.5.29.17';
   static const String _oidCertificatePolicies = '2.5.29.32';
   static const String _oidAuthorityInfoAccess = '1.3.6.1.5.5.7.1.1';
   static const String _oidOcspAccessMethod = '1.3.6.1.5.5.7.48.1';
   static const String _oidCrlDistributionPoints = '2.5.29.31';
+  static const int _genEmail = 1;
+  static const int _genDns = 2;
   static const int _genUri = 6;
+  static const int _genIpAdd = 7;
   static const int _distPointTypeFullName = 0;
 
   String? _extractDnValue(String dn, String key) {

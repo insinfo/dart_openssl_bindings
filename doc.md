@@ -42,6 +42,17 @@ O foco é fornecer uma camada de abstração segura, evitando vazamentos de mem�
 
 ### CRL & OCSP (Novo)
 *   `X509Crl` e `X509CrlBuilder`: geração e assinatura de CRLs sem uso do executável OpenSSL.
+*   Leitura de uma CRL carregada: `issuer`, `version`, `crlNumber`, `baseCrlNumber` /
+    `isDeltaCrl`, `thisUpdate` / `nextUpdate` e `revokedEntries` (serial, data de
+    revogação e código do motivo).
+    *   `nextUpdate` é opcional na RFC 5280: `null` significa que a CRL não declara
+        expiração — não que ela expirou — e `isExpired()` devolve `false` nesse caso.
+    *   `isExpired([referência])` recebe o instante a validar; sem argumento, valida agora.
+*   Leitura de CSR: `loadCsrPem` / `loadCsrDer` / `loadCsrBytes`, com `subject`,
+    `version`, `publicKey`, `toDer()` e `verifySignature()`.
+*   SAN do certificado: `dnsNames`, `emailAddresses`, `ipAddresses`,
+    `subjectAltNameUris`, `subjectAltNameOtherNames` e `certificatePolicyOids`;
+    no builder, `addSubjectAltNames`.
 *   `OcspResponseBuilder` e `OcspMixin`: geração de respostas OCSP em DER via FFI.
 *   **CRL Reason/Number**: suporte a `CRLReason` por revogado e extensão `CRLNumber`.
 
