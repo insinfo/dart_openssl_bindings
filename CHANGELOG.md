@@ -105,7 +105,8 @@ same way.
 The crossover where the FFI call starts paying for itself moved from 128 bytes
 to 16. Large inputs are unaffected — there the copy was never the cost.
 
-The API did not change, and neither did any digest it produces.
+The API did not change, and neither did any digest it produces; the class
+holding the cache is internal and is not exported.
 
 **Isolates and memory.** The cache hangs off the `OpenSSL` instance and is
 never static, so each isolate works on contexts nothing else can reach —
@@ -120,8 +121,10 @@ and the process resident set.
 
 `script/bench_vs_package_crypto.dart` is the comparison against
 `package:crypto` (a dev dependency, used only by that script), checking that
-both sides agree on every digest before timing them. Above 256 bytes the
-native path runs 2.5x to 6x faster, and the streaming path 6x.
+both sides agree on every digest before timing them. It is already ahead at
+256 bytes, and from a kilobyte up it runs 2x faster on MD5 through 10x on
+SHA-512, with the streaming path at 6x. The README has the full tables under
+[Benchmarks](README.md#benchmarks-digests-against-packagecrypto).
 
 ### Bindings and internals
 
