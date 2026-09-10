@@ -64,6 +64,9 @@ It focuses on **memory safety** (automatic resource management), **flexibility**
         See [Isolates and concurrency](#isolates-and-concurrency) before using
         these from worker isolates.
     *   `encodeHex` / `decodeHex` for the lowercase hex most systems store.
+    *   One-shot digests reuse an initialised context per algorithm, so a small
+        hash costs ~0.8 us instead of ~1.9 us. See
+        [Benchmarks against `package:crypto`](#benchmarks-digests-against-packagecrypto).
 
 ### Secure Networking (TLS & DTLS)
 *   **Async TLS**: `SecureSocketOpenSslAsync` (API compatible with `dart:io` Socket).
@@ -588,6 +591,89 @@ Verification is the one that compounds: it runs on every authenticated request,
 not once per login. Do measure your own case before switching — if a request
 spends milliseconds in the database, 0.6 ms of token verification is not what is
 slow.
+
+## Benchmarks: digests against `package:crypto`
+
+`package:crypto` is the pure Dart reference for hashing, so it is the honest
+comparison for the digest APIs. `script/bench_vs_package_crypto.dart` runs it,
+and checks that both sides produce the same digest for every case before timing
+anything — a win here is never a wrong answer computed faster.
+
+```sh
+dart run script/bench_vs_package_crypto.dart
+
+# What a deployed backend actually runs:
+dart compile exe script/bench_vs_package_crypto.dart -o bench.exe && ./bench.exe
+```
+
+Numbers below: AOT, libcrypto 3.6.0, `package:crypto` 3.0.7, i5-10500T at
+2.3 GHz, best of five batches per case. `ratio` is how many times faster this
+package is.
+
+### One-shot digest
+
+| Algorithm | Size | This package | `package:crypto` | Ratio |
+| --- | --- | --- | --- | --- |
+| MD5 | 32 B | 0.70 us | 0.48 us | **0.69×** |
+| MD5 | 1 KiB | 2.66 us | 5.68 us | 2.14× |
+| MD5 | 1 MiB | 2.17 ms | 5.36 ms | 2.47× |
+| SHA-1 | 32 B | 0.74 us | 0.84 us | 1.13× |
+| SHA-1 | 1 KiB | 2.30 us | 11.16 us | 4.85× |
+| SHA-1 | 1 MiB | 1.80 ms | 10.66 ms | 5.93× |
+| SHA-256 | 32 B | 0.79 us | 1.15 us | 1.46× |
+| SHA-256 | 1 KiB | 3.53 us | 15.67 us | 4.44× |
+| SHA-256 | 1 MiB | 3.04 ms | 14.85 ms | 4.88× |
+| SHA-256 | 16 MiB | 48.2 ms | 235.0 ms | 4.87× |
+| SHA-512 | 32 B | 0.86 us | 2.89 us | 3.38× |
+| SHA-512 | 1 KiB | 2.89 us | 23.72 us | 8.21× |
+| SHA-512 | 1 MiB | 2.25 ms | 21.03 ms | 9.33× |
+
+Throughput at 1 MiB: 461 vs 187 MB/s (MD5), 556 vs 94 (SHA-1), 329 vs 67
+(SHA-256), 444 vs 48 (SHA-512).
+
+### HMAC, streaming and hex
+
+| Case | Size | This package | `package:crypto` | Ratio |
+| --- | --- | --- | --- | --- |
+| HMAC-SHA256 | 32 B | 2.45 us | 4.24 us | 1.73× |
+| HMAC-SHA256 | 1 KiB | 5.09 us | 18.72 us | 3.68× |
+| HMAC-SHA256 | 1 MiB | 2.99 ms | 15.56 ms | 5.21× |
+| SHA-256, 64 KiB chunks | 1 MiB | 2.28 ms | 14.78 ms | 6.48× |
+| SHA-256, 64 KiB chunks | 16 MiB | 36.9 ms | 239.7 ms | 6.50× |
+| SHA-256 to hex | 32 B | 1.45 us | 1.35 us | **0.93×** |
+| SHA-256 to hex | 1 MiB | 2.99 ms | 15.11 ms | 5.06× |
+
+The streaming path ([13. Digests](#13-digests-one-shot-and-streaming)) is where
+the gap is widest, and it is the one that runs on files and uploads.
+
+### Where `package:crypto` still wins
+
+MD5 of 32 bytes, by about 0.2 us, and SHA-256 to hex at 32 bytes is a tie. That
+is the whole list: for everything at or above 64 bytes, and for SHA-256 from
+16 bytes up, the native path is ahead. Under JIT the picture is the same except
+that `package:crypto`'s SHA-512 is 2× faster than its own AOT build (so our
+SHA-512 lead narrows from 3.4× to 1.5× on small inputs) and SHA-1 at 32 bytes
+flips to a small loss; the numbers here barely move between JIT and AOT, since
+the work happens in libcrypto either way.
+
+### Why, and why there is no size-based dispatch
+
+Pure Dart is not faster at hashing — SHA-256 runs at ~67 MB/s there against
+~330 MB/s here. It was faster at *starting*: an FFI digest used to pay ~1.8 us
+of setup before hashing a single byte, most of it `EVP_DigestInit_ex`, which on
+OpenSSL 3 re-fetches the algorithm from its provider on every call. Each
+`OpenSSL` instance now keeps one initialised context per algorithm and starts a
+call by copying it (~30 ns instead of ~400 ns), which took a 32-byte SHA-256
+from 1.86 us to 0.83 us and moved the break-even point from 128 bytes to 16.
+
+That is also why there is no hybrid API that picks a pure Dart implementation
+for small payloads: the package's own pure Dart SHA-256 (used by the PKCS#12
+fallback) hashes 32 bytes in ~1.0 us, slower than the 0.79 us the native path
+now needs, so no threshold would ever select it. Pure Dart earns its place for
+*portability* — no libcrypto to load — not for payload size.
+
+Digests of algorithms `package:crypto` does not ship (SHA-3, BLAKE2b, SM3,
+RIPEMD-160) have no comparison to make.
 
 ## Isolates and concurrency
 

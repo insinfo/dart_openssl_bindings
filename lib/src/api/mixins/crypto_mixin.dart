@@ -7,6 +7,7 @@ import 'package:ffi/ffi.dart';
 import '../../generated/ffi.dart';
 import '../openssl_context.dart';
 import '../../infra/ssl_exception.dart';
+import '../../crypto/digest_fast_path.dart';
 import '../../crypto/evp_digest.dart';
 import '../../crypto/evp_pkey.dart';
 import '../../crypto/jwk.dart';
@@ -35,6 +36,24 @@ String _drainOpenSslErrors(OpenSslFfi lib) {
 
 /// Mixin para operações criptográficas e gerenciamento de chaves.
 mixin CryptoMixin on OpenSslContext, BioMixin {
+  /// Native state reused by [digest] and [hmac], built on first use.
+  ///
+  /// Per instance, never static: an isolate that builds its own [OpenSSL] gets
+  /// its own contexts, and libcrypto only asks that one context is not shared
+  /// by two threads at once. Released by a finalizer when this instance is
+  /// collected, so nothing leaks when an instance is dropped.
+  DigestFastPath? _fastPath;
+
+  DigestFastPath get _digestState => _fastPath ??= DigestFastPath(
+        bindings,
+        NativeFinalizer(
+          lookup<Void Function(Pointer<EVP_MD_CTX>)>('EVP_MD_CTX_free').cast(),
+        ),
+        NativeFinalizer(
+          lookup<Void Function(Pointer<HMAC_CTX>)>('HMAC_CTX_free').cast(),
+        ),
+      );
+
   EvpPkey _generateKeyFromName(
     String algorithmName, {
     Map<String, String>? utf8Params,
@@ -288,43 +307,10 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
   /// Computes SHA-256 digest of [data].
   ///
   /// [sha256Hex] returns the same as lowercase hexadecimal.
-  Uint8List sha256(List<int> data) {
-    final ctx = bindings.EVP_MD_CTX_new();
-    if (ctx == nullptr) throw OpenSslException('Failed to create EVP_MD_CTX');
-
-    try {
-      final sha256 = bindings.EVP_sha256();
-      if (bindings.EVP_DigestInit_ex(ctx, sha256, nullptr) != 1) {
-        throw OpenSslException('EVP_DigestInit_ex failed');
-      }
-
-      final dataPtr = calloc<Uint8>(data.length);
-      dataPtr.asTypedList(data.length).setAll(0, data);
-
-      try {
-        if (bindings.EVP_DigestUpdate(ctx, dataPtr.cast(), data.length) != 1) {
-          throw OpenSslException('EVP_DigestUpdate failed');
-        }
-      } finally {
-        calloc.free(dataPtr);
-      }
-
-      final hashPart = calloc<Uint8>(32); // SHA256 is 32 bytes
-      final lenPtr = calloc<UnsignedInt>();
-
-      try {
-        if (bindings.EVP_DigestFinal_ex(ctx, hashPart.cast(), lenPtr) != 1) {
-          throw OpenSslException('EVP_DigestFinal_ex failed');
-        }
-        return Uint8List.fromList(hashPart.asTypedList(lenPtr.value));
-      } finally {
-        calloc.free(hashPart);
-        calloc.free(lenPtr);
-      }
-    } finally {
-      bindings.EVP_MD_CTX_free(ctx);
-    }
-  }
+  Uint8List sha256(List<int> data) => digest(
+        'sha256',
+        data is Uint8List ? data : Uint8List.fromList(data),
+      );
 
   /// SHA-256 of [data] as lowercase hexadecimal: [sha256] through [encodeHex].
   String sha256Hex(List<int> data) => encodeHex(sha256(data));
@@ -511,40 +497,31 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
   ///
   /// [digestHex] returns the same as lowercase hexadecimal.
   Uint8List digest(String algorithmName, Uint8List data) {
+    final state = _digestState;
+    // Throws for an unknown algorithm, and leaves the working context ready.
+    state.beginDigest(algorithmName);
+    final ctx = state.workContext;
+
     final arena = Arena();
     try {
-      final namePtr = algorithmName.toNativeUtf8(allocator: arena);
-      final md = bindings.EVP_get_digestbyname(namePtr.cast());
-      if (md == nullptr)
-        throw OpenSslException('Unknown digest algorithm: $algorithmName');
-
-      final ctx = bindings.EVP_MD_CTX_new();
-      if (ctx == nullptr) throw OpenSslException('Failed to create EVP_MD_CTX');
-
-      try {
-        if (bindings.EVP_DigestInit_ex(ctx, md, nullptr) != 1) {
-          throw OpenSslException('EVP_DigestInit_ex failed');
-        }
-
+      if (data.isNotEmpty) {
         final dataPtr = arena<UnsignedChar>(data.length);
         dataPtr.cast<Uint8>().asTypedList(data.length).setAll(0, data);
 
         if (bindings.EVP_DigestUpdate(ctx, dataPtr.cast(), data.length) != 1) {
           throw OpenSslException('EVP_DigestUpdate failed');
         }
-
-        final outPtr = arena<UnsignedChar>(128); // Safe size
-        final outLenPtr = arena<UnsignedInt>(1);
-
-        if (bindings.EVP_DigestFinal_ex(ctx, outPtr, outLenPtr) != 1) {
-          throw OpenSslException('EVP_DigestFinal_ex failed');
-        }
-
-        return Uint8List.fromList(
-            outPtr.cast<Uint8>().asTypedList(outLenPtr.value));
-      } finally {
-        bindings.EVP_MD_CTX_free(ctx);
       }
+
+      final outPtr = arena<UnsignedChar>(64); // Longest digest OpenSSL emits.
+      final outLenPtr = arena<UnsignedInt>(1);
+
+      if (bindings.EVP_DigestFinal_ex(ctx, outPtr, outLenPtr) != 1) {
+        throw OpenSslException('EVP_DigestFinal_ex failed');
+      }
+
+      return Uint8List.fromList(
+          outPtr.cast<Uint8>().asTypedList(outLenPtr.value));
     } finally {
       arena.releaseAll();
     }
@@ -621,45 +598,39 @@ mixin CryptoMixin on OpenSslContext, BioMixin {
   ///
   /// [hmacHex] returns the same as lowercase hexadecimal.
   Uint8List hmac(String algorithmName, Uint8List key, Uint8List data) {
+    final state = _digestState;
+    // Throws for an unknown algorithm, and caches the lookup.
+    final md = state.digestByName(algorithmName);
+    final ctx = state.hmacContext;
+
     final arena = Arena();
     try {
-      final namePtr = algorithmName.toNativeUtf8(allocator: arena);
-      final md = bindings.EVP_get_digestbyname(namePtr.cast());
-      if (md == nullptr)
-        throw OpenSslException('Unknown digest algorithm: $algorithmName');
+      final keyPtr = arena<UnsignedChar>(key.length);
+      keyPtr.cast<Uint8>().asTypedList(key.length).setAll(0, key);
 
-      final ctx = bindings.HMAC_CTX_new();
-      if (ctx == nullptr) throw OpenSslException('Failed to create HMAC_CTX');
+      if (bindings.HMAC_Init_ex(ctx, keyPtr.cast(), key.length, md, nullptr) !=
+          1) {
+        throw OpenSslException('HMAC_Init_ex failed');
+      }
 
-      try {
-        final keyPtr = arena<UnsignedChar>(key.length);
-        keyPtr.cast<Uint8>().asTypedList(key.length).setAll(0, key);
-
-        if (bindings.HMAC_Init_ex(
-                ctx, keyPtr.cast(), key.length, md, nullptr) !=
-            1) {
-          throw OpenSslException('HMAC_Init_ex failed');
-        }
-
+      if (data.isNotEmpty) {
         final dataPtr = arena<UnsignedChar>(data.length);
         dataPtr.cast<Uint8>().asTypedList(data.length).setAll(0, data);
 
         if (bindings.HMAC_Update(ctx, dataPtr.cast(), data.length) != 1) {
           throw OpenSslException('HMAC_Update failed');
         }
-
-        final outPtr = arena<UnsignedChar>(128);
-        final outLenPtr = arena<UnsignedInt>(1);
-
-        if (bindings.HMAC_Final(ctx, outPtr, outLenPtr) != 1) {
-          throw OpenSslException('HMAC_Final failed');
-        }
-
-        return Uint8List.fromList(
-            outPtr.cast<Uint8>().asTypedList(outLenPtr.value));
-      } finally {
-        bindings.HMAC_CTX_free(ctx);
       }
+
+      final outPtr = arena<UnsignedChar>(64);
+      final outLenPtr = arena<UnsignedInt>(1);
+
+      if (bindings.HMAC_Final(ctx, outPtr, outLenPtr) != 1) {
+        throw OpenSslException('HMAC_Final failed');
+      }
+
+      return Uint8List.fromList(
+          outPtr.cast<Uint8>().asTypedList(outLenPtr.value));
     } finally {
       arena.releaseAll();
     }

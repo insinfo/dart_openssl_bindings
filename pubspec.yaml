@@ -14,5 +14,6 @@ dependencies:
 dev_dependencies:   
   test: ^1.26.3  
   ffigen: ^19.0.0
+  crypto: ^3.0.7
 
  

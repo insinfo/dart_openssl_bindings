@@ -93,6 +93,67 @@ Future<String> _digestInFreshIsolate(Uint8List data) => Isolate.run(() {
       return isolateSsl.digestHex('sha256', data);
     });
 
+/// Runs a mixed digest/HMAC workload over several [OpenSSL] instances built
+/// inside one isolate, checking every result against [spec]'s expectations.
+///
+/// Top-level for the reason spelled out on [_digestInFreshIsolate]: the
+/// closure must not capture the parent isolate's instance.
+///
+/// The point is the native state each instance caches for one-shot digests.
+/// Instances in the same isolate must not see each other's contexts, and
+/// instances in different isolates must not see each other's at all — the
+/// contexts live on the Dart object, and only the immutable algorithm
+/// descriptors are shared with libcrypto.
+String _multiInstanceWork(List<Object> spec) {
+  final worker = spec[0] as int;
+  final instanceCount = spec[1] as int;
+  final rounds = spec[2] as int;
+  final algorithms = (spec[3] as List).cast<String>();
+  final expectedDigests = (spec[4] as List).cast<String>();
+  final expectedHmacs = (spec[5] as List).cast<String>();
+  final data = spec[6] as Uint8List;
+  final key = spec[7] as Uint8List;
+
+  // Several independent instances in one isolate, each loading the library
+  // again and caching its own contexts.
+  final instances = List.generate(instanceCount, (_) => OpenSSL());
+
+  for (var round = 0; round < rounds; round++) {
+    for (var i = 0; i < instances.length; i++) {
+      // Interleaved on purpose: instance 0 and instance 2 alternate on the
+      // same algorithm, so a context shared by mistake would show up as a
+      // wrong digest rather than as a crash only.
+      final instance = instances[(i + round) % instances.length];
+      for (var a = 0; a < algorithms.length; a++) {
+        final gotDigest = instance.digestHex(algorithms[a], data);
+        if (gotDigest != expectedDigests[a]) {
+          return 'worker $worker: ${algorithms[a]} digest differs on round '
+              '$round instance $i: $gotDigest != ${expectedDigests[a]}';
+        }
+        final gotHmac = instance.hmacHex(algorithms[a], key, data);
+        if (gotHmac != expectedHmacs[a]) {
+          return 'worker $worker: ${algorithms[a]} hmac differs on round '
+              '$round instance $i: $gotHmac != ${expectedHmacs[a]}';
+        }
+      }
+    }
+  }
+  return 'ok';
+}
+
+/// Spawns [isolates] concurrent isolates, each running [_multiInstanceWork]
+/// over [spec].
+///
+/// Top-level for the same reason as [_digestInFreshIsolate]: written inline in
+/// a test, the spawn closure would capture that test's scope — and with it the
+/// main isolate's [OpenSSL], which cannot cross an isolate boundary.
+Future<List<String>> _multiInstanceWave(int isolates, List<Object> spec) {
+  return Future.wait([
+    for (var worker = 0; worker < isolates; worker++)
+      Isolate.run(() => _multiInstanceWork([worker, ...spec])),
+  ]);
+}
+
 void main() {
   final workerCount = _envInt('ISOLATE_STRESS_WORKERS', 4);
   final jobsPerWorker = _envInt('ISOLATE_STRESS_JOBS', 12);
@@ -323,12 +384,114 @@ void main() {
     );
   });
 
+  group('Many instances at once', () {
+    // The question these answer: does the native state an instance caches for
+    // one-shot digests survive several instances in one process, several
+    // isolates, and both at the same time?
+    const algorithms = ['sha256', 'sha512', 'md5', 'sha1'];
+
+    test('instances in one isolate keep their own digest state', () {
+      final data = _payload(21, 3000);
+      final key = _payload(22, 32);
+      final expectedDigests = [
+        for (final algorithm in algorithms) openSsl.digestHex(algorithm, data),
+      ];
+      final expectedHmacs = [
+        for (final algorithm in algorithms)
+          openSsl.hmacHex(algorithm, key, data),
+      ];
+
+      final result = _multiInstanceWork([
+        0,
+        3,
+        50,
+        algorithms,
+        expectedDigests,
+        expectedHmacs,
+        data,
+        key,
+      ]);
+      expect(result, equals('ok'));
+    });
+
+    test(
+      'many instances across concurrent isolates agree and stay flat',
+      () async {
+        final data = _payload(23, 3000);
+        final key = _payload(24, 32);
+        final expectedDigests = [
+          for (final algorithm in algorithms)
+            openSsl.digestHex(algorithm, data),
+        ];
+        final expectedHmacs = [
+          for (final algorithm in algorithms)
+            openSsl.hmacHex(algorithm, key, data),
+        ];
+
+        final isolates = _envInt('ISOLATE_STRESS_WORKERS', 4);
+        const instancesPerIsolate = 3;
+        final rounds = _envInt('ISOLATE_STRESS_INSTANCE_ROUNDS', 200);
+
+        final samples = <int>[];
+        for (var wave = 0; wave < 3; wave++) {
+          // Every isolate in a wave builds its own instances and hammers them
+          // at the same time as the others.
+          final results = await _multiInstanceWave(isolates, [
+            instancesPerIsolate,
+            rounds,
+            algorithms,
+            expectedDigests,
+            expectedHmacs,
+            data,
+            key,
+          ]);
+          for (final result in results) {
+            expect(result, equals('ok'));
+          }
+
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          final rss = ProcessInfo.currentRss;
+          samples.add(rss);
+          print('RSS after wave ${wave + 1} '
+              '($isolates isolates x $instancesPerIsolate instances x '
+              '$rounds rounds): ${_formatBytes(rss)}');
+        }
+
+        // Contexts cached per instance must go away with the instance: if they
+        // did not, discarding this many of them would show here.
+        final growthMb = _floorGrowthMb(samples);
+        print('RSS floor growth across waves: '
+            '${growthMb.toStringAsFixed(2)} MB');
+        expect(growthMb, lessThan(_envDouble('ISOLATE_STRESS_MAX_MB', 100.0)));
+      },
+      timeout: const Timeout(Duration(minutes: 10)),
+    );
+
+    test('instances dropped in a loop do not grow the process', () {
+      // Each instance caches contexts on first use; nothing disposes them by
+      // hand, so this only stays flat if the finalizer really runs.
+      final data = _payload(25, 512);
+      final expected = openSsl.digestHex('sha256', data);
+
+      for (var i = 0; i < 200; i++) {
+        final instance = OpenSSL();
+        expect(instance.digestHex('sha256', data), equals(expected));
+        expect(instance.digestHex('sha3-256', data),
+            equals(openSsl.digestHex('sha3-256', data)));
+      }
+
+      final rss = ProcessInfo.currentRss;
+      print('RSS after 200 discarded instances: ${_formatBytes(rss)}');
+    });
+  });
+
   group('Isolate boundary', () {
     test('an OpenSSL instance cannot be sent to another isolate', () async {
       // Pins the rule every other test here is built around. The instance holds
-      // a `DynamicLibrary`, which is not sendable, so it — and anything holding
-      // a handle from it (`EvpPkey`, `X509Certificate`, `EvpDigest`) — belongs
-      // to the isolate that created it. Each isolate must build its own.
+      // native state that is not sendable — a `DynamicLibrary`, and the digest
+      // contexts cached for one isolate — so it, and anything holding a handle
+      // from it (`EvpPkey`, `X509Certificate`, `EvpDigest`), belongs to the
+      // isolate that created it. Each isolate must build its own.
       //
       // The trap is that this is easy to do by accident: a closure passed to
       // `Isolate.run` carries its whole captured context, so merely writing it
@@ -343,7 +506,10 @@ void main() {
       }
 
       expect(failure, isA<ArgumentError>());
-      expect('$failure', contains('DynamicLibrary'));
+      // Which field trips the check is an implementation detail; that the
+      // instance is unsendable is not.
+      expect('$failure', contains('unsendable'));
+      expect('$failure', contains('OpenSSL'));
     });
 
     test('a fresh instance per isolate agrees with the main one', () async {

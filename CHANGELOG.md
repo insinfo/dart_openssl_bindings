@@ -82,6 +82,47 @@ not the CN. Values go through OpenSSL's configuration syntax, which separates
 entries by comma, so a value containing one is rejected with an `ArgumentError`
 instead of being silently split into two names.
 
+### One-shot digests are 2–5x faster on small inputs
+
+`digest`, `digestHex`, `sha256` and `hmac` were paying more to set up the hash
+than to compute it. On OpenSSL 3 an `EVP_DigestInit_ex` re-fetches the
+algorithm from its provider and costs around 400 ns; on top of that every call
+looked the name up, allocated an `EVP_MD_CTX`, and freed it again. For a
+32-byte input that was ~1.8 us of overhead around ~0.1 us of hashing — slower
+than hashing in pure Dart.
+
+Each `OpenSSL` instance now keeps one context per algorithm, initialised once,
+and starts every call by copying it: `EVP_MD_CTX_copy_ex` costs about 30 ns
+against those 400 ns. The algorithm handles and the HMAC context are cached the
+same way.
+
+| SHA-256 | before | now | package:crypto |
+|---|---:|---:|---:|
+| 32 B | 1.86 us | 0.83 us | 1.12 us |
+| 1 KiB | 4.58 us | 3.38 us | 14.90 us |
+| 1 MiB | 2.97 ms | 2.95 ms | 14.41 ms |
+
+The crossover where the FFI call starts paying for itself moved from 128 bytes
+to 16. Large inputs are unaffected — there the copy was never the cost.
+
+The API did not change, and neither did any digest it produces.
+
+**Isolates and memory.** The cache hangs off the `OpenSSL` instance and is
+never static, so each isolate works on contexts nothing else can reach —
+libcrypto only asks that one context is not used by two threads at once. The
+contexts are attached to a `NativeFinalizer`, so an instance that goes out of
+scope releases them without anything being disposed by hand, and the number of
+cached templates is capped so runtime-built algorithm names cannot grow it
+without bound. `test/concurrency/multi_isolate_stress_test.dart` pins all of
+that: several instances interleaved in one isolate, then 8 isolates x 3
+instances x 1500 rounds of mixed digest and HMAC work, checking every result
+and the process resident set.
+
+`script/bench_vs_package_crypto.dart` is the comparison against
+`package:crypto` (a dev dependency, used only by that script), checking that
+both sides agree on every digest before timing them. Above 256 bytes the
+native path runs 2.5x to 6x faster, and the streaming path 6x.
+
 ### Bindings and internals
 
 New symbols in `ffigen.yaml`: `X509_CRL_get0_lastUpdate`,
